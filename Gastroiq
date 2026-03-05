@@ -3396,7 +3396,7 @@ window.onload = async function() {
   if(db) {
     try {
       const { data: { session } } = await db.auth.getSession();
-      if(!session) { window.location.href = '/gastroiq-auth.html'; return; }
+      if(!session) { window.location.href = '/gastroiq-auth'; return; }
       currentUser = session.user;
     } catch(e) {
       // Supabase nicht erreichbar → Demo-Zugang erlauben
@@ -3417,7 +3417,7 @@ async function handleLogout() {
   if(db) {
     try { await db.auth.signOut(); } catch(e) {}
   }
-  window.location.href = '/gastroiq-auth.html';
+  window.location.href = '/gastroiq-auth';
 }
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{
