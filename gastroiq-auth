@@ -456,7 +456,7 @@ async function handleLogin() {
   if(!supabaseClient) {
     // DEMO MODE
     showMessage('Demo-Modus: Supabase-Key nicht konfiguriert. Weiterleitung simuliert...','success');
-    setTimeout(()=>{ window.location.href='gastroiq.html'; },1500);
+    setTimeout(()=>{ window.location.href='/gastroiq.html'; },1500);
     return;
   }
 
