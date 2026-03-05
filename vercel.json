@@ -1,3 +1,18 @@
 {
-  "cleanUrls": false
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/gastroiq-auth", "destination": "/gastroiq-auth.html" },
+    { "source": "/gastroiq", "destination": "/gastroiq.html" },
+    { "source": "/login", "destination": "/gastroiq-auth.html" },
+    { "source": "/dashboard", "destination": "/gastroiq.html" }
+  ]
 }
