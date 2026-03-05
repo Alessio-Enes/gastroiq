@@ -456,7 +456,7 @@ async function handleLogin() {
   if(!supabaseClient) {
     // DEMO MODE
     showMessage('Demo-Modus: Supabase-Key nicht konfiguriert. Weiterleitung simuliert...','success');
-    setTimeout(()=>{ window.location.href='/gastroiq'; },1500);
+    setTimeout(()=>{ window.location.href='/gastroiq.html'; },1500);
     return;
   }
 
@@ -464,7 +464,7 @@ async function handleLogin() {
   try {
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
     if(error) throw error;
-    window.location.href = '/gastroiq';
+    window.location.href = '/gastroiq.html';
   } catch(e) {
     showMessage(translateError(e.message));
   } finally {
@@ -551,7 +551,7 @@ async function handleGoogleLogin() {
   try {
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin+'/gastroiq' }
+      options: { redirectTo: window.location.origin+'/gastroiq.html' }
     });
     if(error) throw error;
   } catch(e) {
@@ -563,7 +563,7 @@ async function handleGoogleLogin() {
 async function checkSession() {
   if(!supabaseClient) return;
   const { data: { session } } = await supabaseClient.auth.getSession();
-  if(session) window.location.href = '/gastroiq';
+  if(session) window.location.href = '/gastroiq.html';
 }
 
 function translateError(msg) {
