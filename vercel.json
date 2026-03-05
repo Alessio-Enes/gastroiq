@@ -1,17 +1,3 @@
 {
-  "rewrites": [
-    { "source": "/gastroiq-auth", "destination": "/gastroiq-auth.html" },
-    { "source": "/gastroiq", "destination": "/gastroiq.html" },
-    { "source": "/auth/callback", "destination": "/gastroiq-auth.html" }
-  ],
-  "headers": [
-    {
-      "source": "/gastroiq.html",
-      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
-    },
-    {
-      "source": "/gastroiq-auth.html",
-      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
-    }
-  ]
+  "cleanUrls": false
 }
