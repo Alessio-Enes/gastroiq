@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/gastroiq-auth", "destination": "/gastroiq-auth.html" },
+    { "source": "/gastroiq", "destination": "/gastroiq.html" },
     { "source": "/auth/callback", "destination": "/gastroiq-auth.html" }
   ],
   "headers": [
