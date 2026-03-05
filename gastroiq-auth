@@ -464,7 +464,7 @@ async function handleLogin() {
   try {
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
     if(error) throw error;
-    window.location.href = 'gastroiq.html';
+    window.location.href = '/gastroiq.html';
   } catch(e) {
     showMessage(translateError(e.message));
   } finally {
@@ -563,7 +563,7 @@ async function handleGoogleLogin() {
 async function checkSession() {
   if(!supabaseClient) return;
   const { data: { session } } = await supabaseClient.auth.getSession();
-  if(session) window.location.href = 'gastroiq.html';
+  if(session) window.location.href = '/gastroiq.html';
 }
 
 function translateError(msg) {
