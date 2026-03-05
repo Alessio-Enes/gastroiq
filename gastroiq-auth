@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GastroIQ – Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital@1&display=swap" rel="stylesheet">
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;
+  --surface:#1a1d27;
+  --surface2:#222635;
+  --border:#2d3148;
+  --primary:#3b82f6;
+  --primary-dark:#2563eb;
+  --green:#22c55e;
+  --red:#ef4444;
+  --ink:#f1f5f9;
+  --ink2:#94a3b8;
+  --ink3:#475569;
+  --radius:14px;
+}
+html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink)}
+
+/* BACKGROUND */
+.bg-grid{
+  position:fixed;inset:0;z-index:0;
+  background-image:linear-gradient(rgba(59,130,246,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.04) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(59,130,246,.12) 0%,transparent 70%);z-index:0;pointer-events:none}
+
+/* LAYOUT */
+.auth-wrapper{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+
+/* LEFT PANEL */
+.left-panel{padding:3rem;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:.75rem}
+.brand-logo{width:36px;height:36px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.brand-name{font-size:1.1rem;font-weight:800;letter-spacing:-.03em}
+.brand-name span{color:var(--primary)}
+.left-content{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2rem 0}
+.left-headline{font-size:2.8rem;font-weight:800;line-height:1.1;letter-spacing:-.04em;margin-bottom:1.2rem}
+.left-headline em{font-family:'Lora',serif;font-style:italic;color:var(--primary)}
+.left-sub{color:var(--ink2);font-size:.95rem;line-height:1.7;margin-bottom:2.5rem;max-width:380px}
+.feature-list{display:flex;flex-direction:column;gap:.8rem}
+.feature-item{display:flex;align-items:center;gap:.75rem;font-size:.875rem;color:var(--ink2)}
+.feature-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.fi-blue{background:rgba(59,130,246,.15)}
+.fi-green{background:rgba(34,197,94,.15)}
+.fi-orange{background:rgba(249,115,22,.15)}
+.fi-purple{background:rgba(168,85,247,.15)}
+.left-footer{color:var(--ink3);font-size:.75rem}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;align-items:center;justify-content:center;padding:2rem}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,.4)}
+
+/* TABS */
+.auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:.3rem;margin-bottom:2rem}
+.auth-tab{flex:1;padding:.6rem;text-align:center;border-radius:7px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--ink2);transition:all .2s}
+.auth-tab.active{background:var(--surface2);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+/* FORM */
+.auth-title{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.3rem}
+.auth-sub{font-size:.82rem;color:var(--ink2);margin-bottom:1.8rem}
+
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.72rem;font-weight:700;color:var(--ink2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em}
+.input-wrap{position:relative}
+.input-icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none}
+.field input{
+  width:100%;padding:.75rem .9rem .75rem 2.5rem;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:10px;font-family:inherit;font-size:.9rem;color:var(--ink);
+  outline:none;transition:border-color .2s,box-shadow .2s
+}
+.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.field input::placeholder{color:var(--ink3)}
+.field input.error{border-color:var(--red)}
+
+/* PASSWORD STRENGTH */
+.pw-strength{margin-top:.5rem;display:none}
+.pw-bars{display:flex;gap:.3rem;margin-bottom:.3rem}
+.pw-bar{height:3px;flex:1;border-radius:100px;background:var(--border);transition:background .3s}
+.pw-bar.active-weak{background:var(--red)}
+.pw-bar.active-medium{background:#f59e0b}
+.pw-bar.active-strong{background:var(--green)}
+.pw-label{font-size:.7rem;color:var(--ink2)}
+
+/* RESTAURANT TYPE */
+.resto-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
+.resto-option{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:.8rem;cursor:pointer;text-align:center;transition:all .2s}
+.resto-option:hover{border-color:var(--primary);background:rgba(59,130,246,.05)}
+.resto-option.selected{border-color:var(--primary);background:rgba(59,130,246,.1)}
+.resto-option .ro-icon{font-size:1.4rem;margin-bottom:.3rem}
+.resto-option .ro-label{font-size:.75rem;font-weight:600;color:var(--ink2)}
+.resto-option.selected .ro-label{color:var(--primary)}
+
+/* SUBMIT BTN */
+.submit-btn{
+  width:100%;padding:.85rem;background:var(--primary);color:white;
+  border:none;border-radius:10px;font-family:inherit;font-size:.9rem;
+  font-weight:700;cursor:pointer;margin-top:.5rem;
+  transition:transform .15s,box-shadow .15s,background .2s;
+  display:flex;align-items:center;justify-content:center;gap:.6rem
+}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.35)}
+.submit-btn:active{transform:translateY(0)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.submit-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.submit-btn.loading .btn-text{display:none}
+.submit-btn.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* DIVIDER */
+.auth-divider{display:flex;align-items:center;gap:.8rem;margin:1.2rem 0;color:var(--ink3);font-size:.75rem}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* GOOGLE BTN */
+.google-btn{
+  width:100%;padding:.75rem;background:var(--surface2);color:var(--ink);
+  border:1.5px solid var(--border);border-radius:10px;font-family:inherit;
+  font-size:.875rem;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:.7rem;
+  transition:border-color .2s,background .2s
+}
+.google-btn:hover{border-color:var(--ink2);background:var(--bg)}
+
+/* ERROR / SUCCESS */
+.auth-message{border-radius:8px;padding:.75rem 1rem;font-size:.82rem;font-weight:500;margin-bottom:1rem;display:none}
+.auth-message.error{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}
+.auth-message.success{background:rgba(34,197,94,.1);color:#86efac;border:1px solid rgba(34,197,94,.2)}
+
+/* FORGOT PW */
+.forgot-link{font-size:.78rem;color:var(--primary);text-decoration:none;float:right;margin-top:.4rem}
+.forgot-link:hover{text-decoration:underline}
+
+/* TERMS */
+.terms-note{font-size:.72rem;color:var(--ink3);text-align:center;margin-top:1.2rem;line-height:1.6}
+.terms-note a{color:var(--primary);text-decoration:none}
+
+/* PLAN SELECTOR */
+.plan-select{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
+.plan-card{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .2s;position:relative}
+.plan-card.selected{border-color:var(--primary);background:rgba(59,130,246,.08)}
+.plan-card .pc-name{font-size:.8rem;font-weight:700}
+.plan-card .pc-price{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:.2rem 0}
+.plan-card .pc-price span{font-size:.72rem;font-weight:400;color:var(--ink3)}
+.plan-card .pc-feat{font-size:.7rem;color:var(--ink2)}
+.plan-badge{position:absolute;top:.5rem;right:.5rem;background:var(--primary);color:white;font-size:.6rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;text-transform:uppercase}
+
+/* SUCCESS SCREEN */
+.success-screen{text-align:center;padding:1rem 0;display:none}
+.success-icon{width:64px;height:64px;background:rgba(34,197,94,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.2rem}
+.success-screen h3{font-size:1.2rem;font-weight:800;margin-bottom:.5rem}
+.success-screen p{color:var(--ink2);font-size:.85rem;line-height:1.6;margin-bottom:1.5rem}
+.success-screen .check-steps{text-align:left;background:var(--bg);border-radius:10px;padding:1.1rem}
+.check-step{display:flex;align-items:center;gap:.7rem;font-size:.82rem;padding:.4rem 0}
+.cs-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.cs-done{background:rgba(34,197,94,.2);color:var(--green)}
+.cs-wait{background:var(--border);color:var(--ink3)}
+
+/* DEMO BADGE */
+.demo-note{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:.7rem 1rem;font-size:.78rem;color:#93c5fd;margin-bottom:1.2rem;text-align:center}
+
+@media(max-width:768px){
+  .auth-wrapper{grid-template-columns:1fr}
+  .left-panel{display:none}
+  .right-panel{padding:1.5rem}
+  .auth-card{padding:2rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="auth-wrapper">
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="brand">
+      <div class="brand-logo">🍽️</div>
+      <div class="brand-name">Gastro<span>IQ</span></div>
+    </div>
+    <div class="left-content">
+      <h1 class="left-headline">Dein Restaurant.<br><em>Vollständig</em><br>im Griff.</h1>
+      <p class="left-sub">GastroIQ verbindet Food Cost, Personal, Umsatz und KI-Analyse in einem System. Jeder Kunde sieht nur seine eigenen Daten.</p>
+      <div class="feature-list">
+        <div class="feature-item"><div class="feature-icon fi-blue">📊</div>Live-Dashboard mit 8 KPIs</div>
+        <div class="feature-item"><div class="feature-icon fi-green">🍽️</div>Food Cost & DB pro Gericht</div>
+        <div class="feature-item"><div class="feature-icon fi-orange">📈</div>KI-Prognose & Forecast</div>
+        <div class="feature-item"><div class="feature-icon fi-purple">🤖</div>Automatische Risikoanalyse</div>
+      </div>
+    </div>
+    <div class="left-footer">© 2025 GastroIQ · Alle Daten sicher verschlüsselt</div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="auth-card">
+
+
+      <div class="auth-tabs">
+        <div class="auth-tab active" onclick="switchTab('login')" id="tab-login">Anmelden</div>
+        <div class="auth-tab" onclick="switchTab('register')" id="tab-register">Registrieren</div>
+      </div>
+
+      <div id="auth-message" class="auth-message"></div>
+
+      <!-- LOGIN FORM -->
+      <div id="form-login">
+        <div class="auth-title">Willkommen zurück</div>
+        <div class="auth-sub">Melde dich mit deinem Account an</div>
+
+        <div class="field">
+          <label>E-Mail</label>
+          <div class="input-wrap">
+            <span class="input-icon">📧</span>
+            <input type="email" id="login-email" placeholder="chef@meinrestaurant.de" autocomplete="email" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Passwort <a href="#" class="forgot-link" onclick="switchTab('reset')">Vergessen?</a></label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+        </div>
+
+        <button class="submit-btn" id="login-btn" onclick="handleLogin()">
+          <span class="btn-text">Anmelden →</span>
+          <div class="spinner"></div>
+        </button>
+
+        <div class="auth-divider">oder</div>
+
+        <button class="google-btn" onclick="handleGoogleLogin()">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 6.294C4.672 4.169 6.656 3.58 9 3.58z"/></svg>
+          Mit Google anmelden
+        </button>
+
+        <p class="terms-note">Noch kein Account? <a href="#" onclick="switchTab('register')">Jetzt registrieren</a></p>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="form-register" style="display:none">
+        <div class="auth-title">Account erstellen</div>
+        <div class="auth-sub">14 Tage kostenlos testen</div>
+
+        <div class="field">
+          <label>Restaurantname</label>
+          <div class="input-wrap">
+            <span class="input-icon">🏠</span>
+            <input type="text" id="reg-restaurant" placeholder="Zur goldenen Gabel" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Dein Name</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="reg-name" placeholder="Max Mustermann" />
+          </div>
+        </div>
+        <div class="field">
+          <label>E-Mail</label>
+          <div class="input-wrap">
+            <span class="input-icon">📧</span>
+            <input type="email" id="reg-email" placeholder="chef@meinrestaurant.de" autocomplete="email" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Passwort</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="reg-pw" placeholder="Min. 8 Zeichen" oninput="checkPasswordStrength(this.value)" />
+          </div>
+          <div class="pw-strength" id="pw-strength">
+            <div class="pw-bars">
+              <div class="pw-bar" id="pw-b1"></div>
+              <div class="pw-bar" id="pw-b2"></div>
+              <div class="pw-bar" id="pw-b3"></div>
+              <div class="pw-bar" id="pw-b4"></div>
+            </div>
+            <div class="pw-label" id="pw-label">Schwach</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:.8rem">
+          <label style="font-size:.72rem;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.6rem">Restauranttyp</label>
+          <div class="resto-grid">
+            <div class="resto-option selected" onclick="selectResto(this,'restaurant')"><div class="ro-icon">🍽️</div><div class="ro-label">Restaurant</div></div>
+            <div class="resto-option" onclick="selectResto(this,'bistro')"><div class="ro-icon">☕</div><div class="ro-label">Bistro / Café</div></div>
+            <div class="resto-option" onclick="selectResto(this,'fastfood')"><div class="ro-icon">🍔</div><div class="ro-label">Fast Food</div></div>
+            <div class="resto-option" onclick="selectResto(this,'fine')"><div class="ro-icon">🥂</div><div class="ro-label">Fine Dining</div></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.1rem">
+          <label style="font-size:.72rem;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.6rem">Plan wählen</label>
+          <div class="plan-select">
+            <div class="plan-card selected" onclick="selectPlan(this,'free')">
+              <div class="pc-name">Free</div>
+              <div class="pc-price">0 € <span>/ Monat</span></div>
+              <div class="pc-feat">1 Restaurant · Basis-KPIs</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(this,'pro')">
+              <div class="plan-badge">Beliebt</div>
+              <div class="pc-name">Pro</div>
+              <div class="pc-price">29 € <span>/ Monat</span></div>
+              <div class="pc-feat">KI-Analyse · API-Sync</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="submit-btn" id="register-btn" onclick="handleRegister()">
+          <span class="btn-text">Account erstellen →</span>
+          <div class="spinner"></div>
+        </button>
+
+        <p class="terms-note">Mit der Registrierung stimmst du den <a href="#">AGB</a> und der <a href="#">Datenschutzerklärung</a> zu.</p>
+      </div>
+
+      <!-- RESET FORM -->
+      <div id="form-reset" style="display:none">
+        <div class="auth-title">Passwort zurücksetzen</div>
+        <div class="auth-sub">Wir schicken dir einen Reset-Link</div>
+        <div class="field">
+          <label>E-Mail</label>
+          <div class="input-wrap">
+            <span class="input-icon">📧</span>
+            <input type="email" id="reset-email" placeholder="chef@meinrestaurant.de" />
+          </div>
+        </div>
+        <button class="submit-btn" onclick="handleReset()">
+          <span class="btn-text">Reset-Link senden →</span>
+          <div class="spinner"></div>
+        </button>
+        <p class="terms-note" style="margin-top:1rem"><a href="#" onclick="switchTab('login')">← Zurück zum Login</a></p>
+      </div>
+
+      <!-- SUCCESS SCREEN -->
+      <div class="success-screen" id="success-screen">
+        <div class="success-icon">✅</div>
+        <h3>Account erstellt!</h3>
+        <p>Bitte bestätige deine E-Mail-Adresse. Danach wirst du automatisch weitergeleitet.</p>
+        <div class="check-steps">
+          <div class="check-step"><div class="cs-icon cs-done">✓</div>Account angelegt</div>
+          <div class="check-step"><div class="cs-icon cs-done">✓</div>Datenbank vorbereitet</div>
+          <div class="check-step"><div class="cs-icon cs-wait">⏳</div>E-Mail bestätigen</div>
+          <div class="check-step"><div class="cs-icon cs-wait">⏳</div>GastroIQ starten</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// SUPABASE KONFIGURATION
+// ══════════════════════════════════════════════
+// ⚠️ HIER deine Supabase-Daten eintragen:
+const SUPABASE_URL = 'https://bmqlbnfigsrhdfwhxnia.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcWxibmZpZ3NyaGRmd2h4bmlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMjEyNzYsImV4cCI6MjA4Nzc5NzI3Nn0.8f81QqGLCe-baIcNKaxKNGUiUrT5n5dGMc_LCzM2-v4';
+
+// Supabase Client initialisieren
+let supabaseClient = null;
+try {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch(e) {
+  console.log('Supabase Demo-Modus (kein Key konfiguriert)');
+}
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let selectedRestoType = 'restaurant';
+let selectedPlan = 'free';
+
+// ══════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════
+function switchTab(tab) {
+  ['login','register','reset'].forEach(t => {
+    const form = document.getElementById('form-'+t);
+    const tabEl = document.getElementById('tab-'+t);
+    if(form) form.style.display = t===tab ? 'block' : 'none';
+    if(tabEl) tabEl.classList.toggle('active', t===tab);
+  });
+  clearMessage();
+}
+
+// ══════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════
+function showMessage(msg, type='error') {
+  const el = document.getElementById('auth-message');
+  el.textContent = msg;
+  el.className = 'auth-message '+type;
+  el.style.display = 'block';
+}
+function clearMessage() {
+  const el = document.getElementById('auth-message');
+  el.style.display = 'none';
+}
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if(!btn) return;
+  btn.classList.toggle('loading', loading);
+  btn.disabled = loading;
+}
+
+function selectResto(el, type) {
+  document.querySelectorAll('.resto-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRestoType = type;
+}
+function selectPlan(el, plan) {
+  document.querySelectorAll('.plan-card').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPlan = plan;
+}
+
+function checkPasswordStrength(pw) {
+  const bar = document.getElementById('pw-strength');
+  bar.style.display = 'block';
+  let score = 0;
+  if(pw.length >= 8) score++;
+  if(/[A-Z]/.test(pw)) score++;
+  if(/[0-9]/.test(pw)) score++;
+  if(/[^A-Za-z0-9]/.test(pw)) score++;
+  const bars = [1,2,3,4].map(i=>document.getElementById('pw-b'+i));
+  const label = document.getElementById('pw-label');
+  const cls = score<=1?'active-weak':score<=2?'active-medium':'active-strong';
+  const labels = ['','Schwach','Mittel','Stark','Sehr stark'];
+  bars.forEach((b,i)=>{ b.className='pw-bar'; if(i<score) b.classList.add(cls); });
+  label.textContent = labels[score]||'';
+}
+
+// ══════════════════════════════════════════════
+// AUTH HANDLERS
+// ══════════════════════════════════════════════
+async function handleLogin() {
+  clearMessage();
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-pw').value;
+
+  if(!email || !pw) { showMessage('Bitte E-Mail und Passwort eingeben.'); return; }
+
+  if(!supabaseClient) {
+    // DEMO MODE
+    showMessage('Demo-Modus: Supabase-Key nicht konfiguriert. Weiterleitung simuliert...','success');
+    setTimeout(()=>{ window.location.href='gastroiq.html'; },1500);
+    return;
+  }
+
+  setLoading('login-btn', true);
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
+    if(error) throw error;
+    window.location.href = 'gastroiq.html';
+  } catch(e) {
+    showMessage(translateError(e.message));
+  } finally {
+    setLoading('login-btn', false);
+  }
+}
+
+async function handleRegister() {
+  clearMessage();
+  const restaurant = document.getElementById('reg-restaurant').value.trim();
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw = document.getElementById('reg-pw').value;
+
+  if(!restaurant || !name || !email || !pw) { showMessage('Bitte alle Felder ausfüllen.'); return; }
+  if(pw.length < 8) { showMessage('Passwort muss mindestens 8 Zeichen haben.'); return; }
+
+  if(!supabaseClient) {
+    // DEMO MODE
+    document.getElementById('form-register').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    return;
+  }
+
+  setLoading('register-btn', true);
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email,
+      password: pw,
+      options: {
+        data: {
+          full_name: name,
+          restaurant_name: restaurant,
+          restaurant_type: selectedRestoType,
+          plan: selectedPlan
+        }
+      }
+    });
+    if(error) throw error;
+
+    // Erstelle Restaurant-Eintrag in DB
+    if(data.user) {
+      await supabaseClient.from('restaurants').insert({
+        user_id: data.user.id,
+        name: restaurant,
+        type: selectedRestoType,
+        plan: selectedPlan,
+        owner_name: name
+      });
+    }
+
+    document.getElementById('form-register').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  } catch(e) {
+    showMessage(translateError(e.message));
+  } finally {
+    setLoading('register-btn', false);
+  }
+}
+
+async function handleReset() {
+  clearMessage();
+  const email = document.getElementById('reset-email').value.trim();
+  if(!email) { showMessage('Bitte E-Mail eingeben.'); return; }
+
+  if(!supabaseClient) {
+    showMessage('Demo: Reset-E-Mail würde gesendet an '+email,'success');
+    return;
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin+'/reset-confirm.html'
+    });
+    if(error) throw error;
+    showMessage('Reset-Link gesendet! Prüfe deine E-Mails.','success');
+  } catch(e) {
+    showMessage(translateError(e.message));
+  }
+}
+
+async function handleGoogleLogin() {
+  if(!supabaseClient) { showMessage('Demo: Google-Login benötigt Supabase-Konfiguration.'); return; }
+  try {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin+'/gastroiq.html' }
+    });
+    if(error) throw error;
+  } catch(e) {
+    showMessage(translateError(e.message));
+  }
+}
+
+// Session check – wenn schon eingeloggt → redirect
+async function checkSession() {
+  if(!supabaseClient) return;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(session) window.location.href = 'gastroiq.html';
+}
+
+function translateError(msg) {
+  const map = {
+    'Invalid login credentials': 'E-Mail oder Passwort falsch.',
+    'Email not confirmed': 'Bitte bestätige zuerst deine E-Mail.',
+    'User already registered': 'Diese E-Mail ist bereits registriert.',
+    'Password should be at least 6 characters': 'Passwort zu kurz (min. 6 Zeichen).',
+    'Unable to validate email address: invalid format': 'Ungültige E-Mail-Adresse.',
+  };
+  return map[msg] || 'Fehler: '+msg;
+}
+
+// Enter key
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const activeTab = document.querySelector('.auth-tab.active')?.id;
+  if(activeTab==='tab-login') handleLogin();
+  else if(activeTab==='tab-register') handleRegister();
+});
+
+checkSession();
+</script>
+</body>
+</html>
