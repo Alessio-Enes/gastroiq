@@ -622,7 +622,7 @@ table tr:hover td{background:var(--bg)}
 
     <!-- Utility -->
     <div class="nav-util">
-      <div class="nav-util-item" onclick="handleLogout()" style="color:rgba(255,100,80,.5)">
+      <div class="nav-util-item" onclick="handleLogout()" style="color:rgba(255,100,80,.55)">
         <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Abmelden
       </div>
@@ -2238,13 +2238,13 @@ table tr:hover td{background:var(--bg)}
 // ════════════════════════════════════════════════════
 // CONFIG & STATE
 // ════════════════════════════════════════════════════
-const DEMO_MODE = true; // Daten lokal (localStorage) – Supabase-Auth bleibt aktiv
+const DEMO_MODE = true;
 const SUPABASE_URL = 'https://bmqlbnfigsrhdfwhxnia.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcWxibmZpZ3NyaGRmd2h4bmlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMjEyNzYsImV4cCI6MjA4Nzc5NzI3Nn0.8f81QqGLCe-baIcNKaxKNGUiUrT5n5dGMc_LCzM2-v4';
 
 let db = null;
 let currentUser = null;
-try { db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e){ console.warn('Supabase init fehlgeschlagen:', e); }
+try { db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e){ console.warn('Supabase init failed:', e); }
 
 let state = {
   gerichte: [],
@@ -3396,11 +3396,10 @@ window.onload = async function() {
   if(db) {
     try {
       const { data: { session } } = await db.auth.getSession();
-      if(!session) { window.location.href = '/gastroiq-auth'; return; }
+      if(!session) { window.location.href = '/gastroiq-auth.html'; return; }
       currentUser = session.user;
     } catch(e) {
-      // Supabase nicht erreichbar → Demo-Zugang erlauben
-      console.warn('Session-Check fehlgeschlagen, Demo-Modus aktiv:', e);
+      console.warn('Session check failed:', e);
     }
   }
   await loadAllData();
@@ -3414,10 +3413,8 @@ window.onload = async function() {
 };
 
 async function handleLogout() {
-  if(db) {
-    try { await db.auth.signOut(); } catch(e) {}
-  }
-  window.location.href = '/gastroiq-auth';
+  if(db) { try { await db.auth.signOut(); } catch(e){} }
+  window.location.href = '/gastroiq-auth.html';
 }
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{
