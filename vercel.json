@@ -1,16 +1,16 @@
 {
-  "cleanUrls": false,
+  "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/auth/callback", "destination": "/gastroiq-auth.html" }
+    { "source": "/auth/callback", "destination": "/gastroiq-auth" }
   ],
   "headers": [
     {
-      "source": "/gastroiq.html",
+      "source": "/gastroiq",
       "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     },
     {
-      "source": "/gastroiq-auth.html",
+      "source": "/gastroiq-auth",
       "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     }
   ]
