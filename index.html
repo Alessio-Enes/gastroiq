@@ -3,589 +3,829 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GastroIQ – Login</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital@1&display=swap" rel="stylesheet">
-<!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>GastroIQ – Intelligentes Restaurant-Controlling</title>
+<meta name="description" content="Food Cost, Personal, Umsatz und KI-Analyse in einem Dashboard. Das Controlling-Tool für moderne Gastronomen.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f1117;
-  --surface:#1a1d27;
-  --surface2:#222635;
-  --border:#2d3148;
-  --primary:#3b82f6;
-  --primary-dark:#2563eb;
-  --green:#22c55e;
-  --red:#ef4444;
-  --ink:#f1f5f9;
-  --ink2:#94a3b8;
-  --ink3:#475569;
+  --cream:#faf7f2;
+  --cream2:#f3ede3;
+  --ink:#1a1208;
+  --ink2:#4a3f2f;
+  --ink3:#8a7a65;
+  --primary:#c8440a;
+  --primary-light:#fff0eb;
+  --green:#2d6a4f;
+  --gold:#b8860b;
+  --border:#e8ddd0;
+  --surface:#ffffff;
   --radius:14px;
 }
-html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink)}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
 
-/* BACKGROUND */
-.bg-grid{
-  position:fixed;inset:0;z-index:0;
-  background-image:linear-gradient(rgba(59,130,246,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.04) 1px,transparent 1px);
-  background-size:48px 48px;
-}
-.bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(59,130,246,.12) 0%,transparent 70%);z-index:0;pointer-events:none}
+/* ── TYPOGRAPHY ── */
+.serif{font-family:'Fraunces',serif}
 
-/* LAYOUT */
-.auth-wrapper{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;transition:background .3s,box-shadow .3s}
+nav.scrolled{background:rgba(250,247,242,.95);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--border)}
+.nav-logo{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:900;color:var(--ink);text-decoration:none}
+.nav-logo span{color:var(--primary)}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--ink2);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--primary)}
+.nav-cta{background:var(--ink);color:white;padding:.6rem 1.4rem;border-radius:100px;font-size:.875rem;font-weight:600;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(26,18,8,.2)}
 
-/* LEFT PANEL */
-.left-panel{padding:3rem;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border)}
-.brand{display:flex;align-items:center;gap:.75rem}
-.brand-logo{width:36px;height:36px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
-.brand-name{font-size:1.1rem;font-weight:800;letter-spacing:-.03em}
-.brand-name span{color:var(--primary)}
-.left-content{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2rem 0}
-.left-headline{font-size:2.8rem;font-weight:800;line-height:1.1;letter-spacing:-.04em;margin-bottom:1.2rem}
-.left-headline em{font-family:'Lora',serif;font-style:italic;color:var(--primary)}
-.left-sub{color:var(--ink2);font-size:.95rem;line-height:1.7;margin-bottom:2.5rem;max-width:380px}
-.feature-list{display:flex;flex-direction:column;gap:.8rem}
-.feature-item{display:flex;align-items:center;gap:.75rem;font-size:.875rem;color:var(--ink2)}
-.feature-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
-.fi-blue{background:rgba(59,130,246,.15)}
-.fi-green{background:rgba(34,197,94,.15)}
-.fi-orange{background:rgba(249,115,22,.15)}
-.fi-purple{background:rgba(168,85,247,.15)}
-.left-footer{color:var(--ink3);font-size:.75rem}
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg-circle{position:absolute;border-radius:50%;filter:blur(80px);opacity:.35}
+.hero-bg-circle.c1{width:600px;height:600px;background:radial-gradient(circle,#f4a261,transparent);top:-100px;right:-100px}
+.hero-bg-circle.c2{width:400px;height:400px;background:radial-gradient(circle,#2d6a4f33,transparent);bottom:-50px;left:-50px}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.3}
+.hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--primary-light);color:var(--primary);border:1px solid #ffd0b8;border-radius:100px;padding:.35rem 1rem;font-size:.78rem;font-weight:600;margin-bottom:1.8rem;animation:fadeUp .6s ease both}
+.hero-title{font-family:'Fraunces',serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:900;line-height:1.0;letter-spacing:-.03em;margin-bottom:1.5rem;animation:fadeUp .6s .1s ease both}
+.hero-title em{font-style:italic;color:var(--primary)}
+.hero-title .line2{display:block;color:var(--ink2);font-weight:300}
+.hero-sub{font-size:1.1rem;color:var(--ink2);line-height:1.7;max-width:520px;margin-bottom:2.5rem;font-weight:400;animation:fadeUp .6s .2s ease both}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp .6s .3s ease both}
+.btn-primary{background:var(--primary);color:white;padding:.9rem 2rem;border-radius:100px;font-size:.95rem;font-weight:600;text-decoration:none;transition:transform .2s,box-shadow .2s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,68,10,.3)}
+.btn-secondary{background:transparent;color:var(--ink);padding:.9rem 2rem;border-radius:100px;font-size:.95rem;font-weight:600;text-decoration:none;border:1.5px solid var(--border);transition:border-color .2s,background .2s}
+.btn-secondary:hover{border-color:var(--ink2);background:white}
+.hero-stats{display:flex;gap:3rem;margin-top:3.5rem;animation:fadeUp .6s .4s ease both}
+.hero-stat-num{font-family:'Fraunces',serif;font-size:2rem;font-weight:900;color:var(--ink)}
+.hero-stat-label{font-size:.78rem;color:var(--ink3);margin-top:.1rem}
 
-/* RIGHT PANEL */
-.right-panel{display:flex;align-items:center;justify-content:center;padding:2rem}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,.4)}
+/* ── SECTION ── */
+section{padding:6rem 2rem}
+.container{max-width:1100px;margin:0 auto}
+.section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--primary);margin-bottom:.8rem}
+.section-title{font-family:'Fraunces',serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:1rem}
+.section-title em{font-style:italic;color:var(--primary)}
+.section-sub{font-size:1rem;color:var(--ink2);line-height:1.7;max-width:520px}
 
-/* TABS */
-.auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:.3rem;margin-bottom:2rem}
-.auth-tab{flex:1;padding:.6rem;text-align:center;border-radius:7px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--ink2);transition:all .2s}
-.auth-tab.active{background:var(--surface2);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+/* ── PROBLEM ── */
+.problem{background:var(--ink)}
+.problem .section-label{color:#f4a261}
+.problem .section-title{color:white}
+.problem .section-title em{color:#f4a261}
+.problem .section-sub{color:rgba(255,255,255,.6)}
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.problem-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1.8rem}
+.problem-icon{width:48px;height:48px;background:rgba(244,162,97,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+.problem-card h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:white;margin-bottom:.6rem}
+.problem-card p{font-size:.875rem;color:rgba(255,255,255,.5);line-height:1.6}
 
-/* FORM */
-.auth-title{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.3rem}
-.auth-sub{font-size:.82rem;color:var(--ink2);margin-bottom:1.8rem}
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:3rem}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--primary);transform:scaleX(0);transition:transform .3s;transform-origin:left}
+.feature-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(26,18,8,.08)}
+.feature-card:hover::before{transform:scaleX(1)}
+.feature-emoji{width:52px;height:52px;background:var(--primary-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+.feature-card.highlight .feature-emoji{background:rgba(244,162,97,.1)}
+.feature-card h3{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;margin-bottom:.6rem}
+.feature-card p{font-size:.875rem;color:var(--ink2);line-height:1.6}
+.feature-tag{display:inline-block;background:var(--primary-light);color:var(--primary);font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:100px;margin-top:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.feature-card.highlight{background:linear-gradient(135deg,#1a1208,#2d1f0f);border-color:transparent}
+.feature-card.highlight h3{color:white}
+.feature-card.highlight p{color:rgba(255,255,255,.6)}
+.feature-card.highlight .feature-tag{background:rgba(200,68,10,.2);color:#f4a261}
 
-.field{margin-bottom:1.1rem}
-.field label{display:block;font-size:.72rem;font-weight:700;color:var(--ink2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em}
-.input-wrap{position:relative}
-.input-icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none}
-.field input{
-  width:100%;padding:.75rem .9rem .75rem 2.5rem;
-  background:var(--bg);border:1.5px solid var(--border);
-  border-radius:10px;font-family:inherit;font-size:.9rem;color:var(--ink);
-  outline:none;transition:border-color .2s,box-shadow .2s
-}
-.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-.field input::placeholder{color:var(--ink3)}
-.field input.error{border-color:var(--red)}
+/* ── HOW IT WORKS ── */
+.howitworks{background:var(--cream2)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem;position:relative}
+.steps::before{content:'';position:absolute;top:28px;left:12%;right:12%;height:1px;background:var(--border);z-index:0}
+.step{text-align:center;position:relative;z-index:1}
+.step-num{width:56px;height:56px;background:var(--surface);border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-family:'Fraunces',serif;font-size:1.1rem;font-weight:900;color:var(--primary);transition:background .2s,border-color .2s}
+.step:hover .step-num{background:var(--primary);border-color:var(--primary);color:white}
+.step h3{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.step p{font-size:.8rem;color:var(--ink3);line-height:1.5}
 
-/* PASSWORD STRENGTH */
-.pw-strength{margin-top:.5rem;display:none}
-.pw-bars{display:flex;gap:.3rem;margin-bottom:.3rem}
-.pw-bar{height:3px;flex:1;border-radius:100px;background:var(--border);transition:background .3s}
-.pw-bar.active-weak{background:var(--red)}
-.pw-bar.active-medium{background:#f59e0b}
-.pw-bar.active-strong{background:var(--green)}
-.pw-label{font-size:.7rem;color:var(--ink2)}
+/* ── KPI SHOWCASE ── */
+.kpi-showcase{background:var(--ink);padding:5rem 2rem}
+.kpi-showcase .section-title{color:white}
+.kpi-showcase .section-label{color:#f4a261}
+.kpi-grid-show{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:3rem}
+.kpi-show-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.5rem;text-align:center;transition:background .2s}
+.kpi-show-card:hover{background:rgba(255,255,255,.08)}
+.kpi-show-icon{width:44px;height:44px;background:rgba(255,255,255,.07);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem}
+.kpi-show-val{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;color:white;margin-bottom:.3rem}
+.kpi-show-label{font-size:.72rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+.kpi-show-delta{font-size:.72rem;font-weight:600;margin-top:.3rem}
+.delta-green{color:#4ade80}
+.delta-red{color:#f87171}
 
-/* RESTAURANT TYPE */
-.resto-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
-.resto-option{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:.8rem;cursor:pointer;text-align:center;transition:all .2s}
-.resto-option:hover{border-color:var(--primary);background:rgba(59,130,246,.05)}
-.resto-option.selected{border-color:var(--primary);background:rgba(59,130,246,.1)}
-.resto-option .ro-icon{font-size:1.4rem;margin-bottom:.3rem}
-.resto-option .ro-label{font-size:.75rem;font-weight:600;color:var(--ink2)}
-.resto-option.selected .ro-label{color:var(--primary)}
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem;align-items:start}
+.pricing-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:2rem;position:relative}
+.pricing-card.featured{background:var(--ink);border-color:var(--ink);transform:scale(1.03)}
+.pricing-card.featured *:not(.price-btn){color:white!important}
+.pricing-card.featured .price-btn{background:var(--primary);color:white}
+.pricing-card.featured .price-features li::before{color:#4ade80}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--primary);color:white;font-size:.68rem;font-weight:700;padding:.3rem .9rem;border-radius:100px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.price-tier{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.8rem}
+.price-amount{font-family:'Fraunces',serif;font-size:3rem;font-weight:900;line-height:1;margin-bottom:.3rem}
+.price-amount span{font-size:1rem;font-weight:400;font-family:'DM Sans',sans-serif;color:var(--ink3)}
+.price-desc{font-size:.82rem;color:var(--ink3);margin-bottom:1.5rem;line-height:1.5}
+.price-features{list-style:none;margin-bottom:1.8rem}
+.price-features li{font-size:.85rem;color:var(--ink2);padding:.4rem 0;display:flex;align-items:center;gap:.6rem}
+.price-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.price-btn{display:block;text-align:center;padding:.8rem;border-radius:100px;font-size:.875rem;font-weight:600;text-decoration:none;transition:transform .15s,box-shadow .15s;background:var(--cream2);color:var(--ink)}
+.price-btn:hover{transform:translateY(-1px)}
+.price-btn.primary{background:var(--primary);color:white}
+.price-btn.primary:hover{box-shadow:0 4px 16px rgba(200,68,10,.3)}
 
-/* SUBMIT BTN */
-.submit-btn{
-  width:100%;padding:.85rem;background:var(--primary);color:white;
-  border:none;border-radius:10px;font-family:inherit;font-size:.9rem;
-  font-weight:700;cursor:pointer;margin-top:.5rem;
-  transition:transform .15s,box-shadow .15s,background .2s;
-  display:flex;align-items:center;justify-content:center;gap:.6rem
-}
-.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.35)}
-.submit-btn:active{transform:translateY(0)}
-.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.submit-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
-.submit-btn.loading .btn-text{display:none}
-.submit-btn.loading .spinner{display:block}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── TESTIMONIAL ── */
+.testimonial-section{background:var(--cream2)}
+.testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.testimonial-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem}
+.testimonial-stars{color:#f59e0b;font-size:1rem;margin-bottom:1rem;letter-spacing:.1em}
+.testimonial-text{font-family:'Fraunces',serif;font-size:1rem;font-style:italic;color:var(--ink);line-height:1.6;margin-bottom:1.2rem}
+.testimonial-author{display:flex;align-items:center;gap:.8rem}
+.testimonial-avatar{width:40px;height:40px;border-radius:50%;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.testimonial-name{font-size:.875rem;font-weight:600}
+.testimonial-role{font-size:.75rem;color:var(--ink3)}
 
-/* DIVIDER */
-.auth-divider{display:flex;align-items:center;gap:.8rem;margin:1.2rem 0;color:var(--ink3);font-size:.75rem}
-.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+/* ── CTA ── */
+.cta-section{background:var(--primary);padding:6rem 2rem;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:-50%;left:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,.08),transparent);border-radius:50%}
+.cta-section .section-title{color:white;margin-bottom:1rem}
+.cta-section .section-sub{color:rgba(255,255,255,.75);max-width:480px;margin:0 auto 2.5rem}
+.cta-btn{background:white;color:var(--primary);padding:1rem 2.5rem;border-radius:100px;font-size:1rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:transform .2s,box-shadow .2s}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.2)}
+.cta-note{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:1rem}
 
-/* GOOGLE BTN */
-.google-btn{
-  width:100%;padding:.75rem;background:var(--surface2);color:var(--ink);
-  border:1.5px solid var(--border);border-radius:10px;font-family:inherit;
-  font-size:.875rem;font-weight:600;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:.7rem;
-  transition:border-color .2s,background .2s
-}
-.google-btn:hover{border-color:var(--ink2);background:var(--bg)}
+/* ── FOOTER ── */
+footer{background:var(--ink);color:rgba(255,255,255,.5);padding:3rem 2rem;text-align:center}
+footer .footer-logo{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:900;color:white;margin-bottom:.5rem}
+footer .footer-logo span{color:#f4a261}
+footer p{font-size:.82rem;line-height:1.6}
+footer a{color:rgba(255,255,255,.4);text-decoration:none}
+footer a:hover{color:white}
+.footer-links{display:flex;justify-content:center;gap:2rem;margin:1rem 0;font-size:.82rem}
 
-/* ERROR / SUCCESS */
-.auth-message{border-radius:8px;padding:.75rem 1rem;font-size:.82rem;font-weight:500;margin-bottom:1rem;display:none}
-.auth-message.error{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}
-.auth-message.success{background:rgba(34,197,94,.1);color:#86efac;border:1px solid rgba(34,197,94,.2)}
+/* ── FAQ ── */
+.faq-grid{max-width:700px;margin:3rem auto 0}
+.faq-item{border-bottom:1px solid var(--border);padding:1.2rem 0;cursor:pointer}
+.faq-question{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.95rem}
+.faq-answer{font-size:.875rem;color:var(--ink2);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,margin .3s}
+.faq-item.open .faq-answer{max-height:200px;margin-top:.8rem}
+.faq-arrow{transition:transform .3s;color:var(--ink3);font-size:.8rem}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
 
-/* FORGOT PW */
-.forgot-link{font-size:.78rem;color:var(--primary);text-decoration:none;float:right;margin-top:.4rem}
-.forgot-link:hover{text-decoration:underline}
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
-/* TERMS */
-.terms-note{font-size:.72rem;color:var(--ink3);text-align:center;margin-top:1.2rem;line-height:1.6}
-.terms-note a{color:var(--primary);text-decoration:none}
-
-/* PLAN SELECTOR */
-.plan-select{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
-.plan-card{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .2s;position:relative}
-.plan-card.selected{border-color:var(--primary);background:rgba(59,130,246,.08)}
-.plan-card .pc-name{font-size:.8rem;font-weight:700}
-.plan-card .pc-price{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin:.2rem 0}
-.plan-card .pc-price span{font-size:.72rem;font-weight:400;color:var(--ink3)}
-.plan-card .pc-feat{font-size:.7rem;color:var(--ink2)}
-.plan-badge{position:absolute;top:.5rem;right:.5rem;background:var(--primary);color:white;font-size:.6rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;text-transform:uppercase}
-
-/* SUCCESS SCREEN */
-.success-screen{text-align:center;padding:1rem 0;display:none}
-.success-icon{width:64px;height:64px;background:rgba(34,197,94,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.2rem}
-.success-screen h3{font-size:1.2rem;font-weight:800;margin-bottom:.5rem}
-.success-screen p{color:var(--ink2);font-size:.85rem;line-height:1.6;margin-bottom:1.5rem}
-.success-screen .check-steps{text-align:left;background:var(--bg);border-radius:10px;padding:1.1rem}
-.check-step{display:flex;align-items:center;gap:.7rem;font-size:.82rem;padding:.4rem 0}
-.cs-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
-.cs-done{background:rgba(34,197,94,.2);color:var(--green)}
-.cs-wait{background:var(--border);color:var(--ink3)}
-
-/* DEMO BADGE */
-.demo-note{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:.7rem 1rem;font-size:.78rem;color:#93c5fd;margin-bottom:1.2rem;text-align:center}
-
+/* ── RESPONSIVE ── */
 @media(max-width:768px){
-  .auth-wrapper{grid-template-columns:1fr}
-  .left-panel{display:none}
-  .right-panel{padding:1.5rem}
-  .auth-card{padding:2rem 1.5rem}
+  #be-demo-grid{grid-template-columns:1fr!important}
+  nav{padding:1rem}
+  .nav-links{display:none}
+  .hero{padding:7rem 1.2rem 3rem}
+  .hero-stats{gap:1.5rem}
+  .problem-grid,.features-grid,.steps,.kpi-grid-show,.pricing-grid,.testimonial-grid{grid-template-columns:1fr}
+  .steps::before{display:none}
+  .pricing-card.featured{transform:none}
+  section{padding:4rem 1.2rem}
 }
 </style>
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
-
-<div class="auth-wrapper">
-
-  <!-- LEFT -->
-  <div class="left-panel">
-    <div class="brand">
-      <div class="brand-logo">🍽️</div>
-      <div class="brand-name">Gastro<span>IQ</span></div>
-    </div>
-    <div class="left-content">
-      <h1 class="left-headline">Dein Restaurant.<br><em>Vollständig</em><br>im Griff.</h1>
-      <p class="left-sub">GastroIQ verbindet Food Cost, Personal, Umsatz und KI-Analyse in einem System. Jeder Kunde sieht nur seine eigenen Daten.</p>
-      <div class="feature-list">
-        <div class="feature-item"><div class="feature-icon fi-blue">📊</div>Live-Dashboard mit 8 KPIs</div>
-        <div class="feature-item"><div class="feature-icon fi-green">🍽️</div>Food Cost & DB pro Gericht</div>
-        <div class="feature-item"><div class="feature-icon fi-orange">📈</div>KI-Prognose & Forecast</div>
-        <div class="feature-item"><div class="feature-icon fi-purple">🤖</div>Automatische Risikoanalyse</div>
-      </div>
-    </div>
-    <div class="left-footer">© 2025 GastroIQ · Alle Daten sicher verschlüsselt</div>
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Gastro<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="#features">Leistungen</a>
+    <a href="#breakeven">Kalkulator</a>
+    <a href="#preise">Preise</a>
+    <a href="#services">Services</a>
+    <a href="#faq">FAQ</a>
+    <a href="/gastroiq-auth" class="nav-cta">Kostenlos testen →</a>
   </div>
+</nav>
 
-  <!-- RIGHT -->
-  <div class="right-panel">
-    <div class="auth-card">
-
-
-      <div class="auth-tabs">
-        <div class="auth-tab active" onclick="switchTab('login')" id="tab-login">Anmelden</div>
-        <div class="auth-tab" onclick="switchTab('register')" id="tab-register">Registrieren</div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-bg-circle c1"></div>
+    <div class="hero-bg-circle c2"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-badge">Neu: Break-even Simulator &amp; Gewinnhistorie</div>
+    <h1 class="hero-title serif">
+      Wann verdienst du<br>
+      <em>wirklich</em> Geld?
+      <span class="line2">GastroIQ zeigt es dir.</span>
+    </h1>
+    <p class="hero-sub">Kein Excel. Kein Rätselraten. GastroIQ berechnet deinen Break-even, zeigt Nettogewinn pro Gericht und warnt dich bevor Verluste entstehen.</p>
+    <div class="hero-actions">
+      <a href="/gastroiq-auth" class="btn-primary">Jetzt kostenlos starten →</a>
+      <a href="#features" class="btn-secondary">Features ansehen</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num serif">14 Tage</div>
+        <div class="hero-stat-label">kostenlos testen</div>
       </div>
-
-      <div id="auth-message" class="auth-message"></div>
-
-      <!-- LOGIN FORM -->
-      <div id="form-login">
-        <div class="auth-title">Willkommen zurück</div>
-        <div class="auth-sub">Melde dich mit deinem Account an</div>
-
-        <div class="field">
-          <label>E-Mail</label>
-          <div class="input-wrap">
-            <span class="input-icon">📧</span>
-            <input type="email" id="login-email" placeholder="chef@meinrestaurant.de" autocomplete="email" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Passwort <a href="#" class="forgot-link" onclick="switchTab('reset')">Vergessen?</a></label>
-          <div class="input-wrap">
-            <span class="input-icon">🔒</span>
-            <input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" />
-          </div>
-        </div>
-
-        <button class="submit-btn" id="login-btn" onclick="handleLogin()">
-          <span class="btn-text">Anmelden →</span>
-          <div class="spinner"></div>
-        </button>
-
-        <div class="auth-divider">oder</div>
-
-        <button class="google-btn" onclick="handleGoogleLogin()">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 6.294C4.672 4.169 6.656 3.58 9 3.58z"/></svg>
-          Mit Google anmelden
-        </button>
-
-        <p class="terms-note">Noch kein Account? <a href="#" onclick="switchTab('register')">Jetzt registrieren</a></p>
+      <div>
+        <div class="hero-stat-num serif">Break-even</div>
+        <div class="hero-stat-label">live berechnet</div>
       </div>
-
-      <!-- REGISTER FORM -->
-      <div id="form-register" style="display:none">
-        <div class="auth-title">Account erstellen</div>
-        <div class="auth-sub">14 Tage kostenlos testen</div>
-
-        <div class="field">
-          <label>Restaurantname</label>
-          <div class="input-wrap">
-            <span class="input-icon">🏠</span>
-            <input type="text" id="reg-restaurant" placeholder="Zur goldenen Gabel" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Dein Name</label>
-          <div class="input-wrap">
-            <span class="input-icon">👤</span>
-            <input type="text" id="reg-name" placeholder="Max Mustermann" />
-          </div>
-        </div>
-        <div class="field">
-          <label>E-Mail</label>
-          <div class="input-wrap">
-            <span class="input-icon">📧</span>
-            <input type="email" id="reg-email" placeholder="chef@meinrestaurant.de" autocomplete="email" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Passwort</label>
-          <div class="input-wrap">
-            <span class="input-icon">🔒</span>
-            <input type="password" id="reg-pw" placeholder="Min. 8 Zeichen" oninput="checkPasswordStrength(this.value)" />
-          </div>
-          <div class="pw-strength" id="pw-strength">
-            <div class="pw-bars">
-              <div class="pw-bar" id="pw-b1"></div>
-              <div class="pw-bar" id="pw-b2"></div>
-              <div class="pw-bar" id="pw-b3"></div>
-              <div class="pw-bar" id="pw-b4"></div>
-            </div>
-            <div class="pw-label" id="pw-label">Schwach</div>
-          </div>
-        </div>
-
-        <div style="margin-bottom:.8rem">
-          <label style="font-size:.72rem;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.6rem">Restauranttyp</label>
-          <div class="resto-grid">
-            <div class="resto-option selected" onclick="selectResto(this,'restaurant')"><div class="ro-icon">🍽️</div><div class="ro-label">Restaurant</div></div>
-            <div class="resto-option" onclick="selectResto(this,'bistro')"><div class="ro-icon">☕</div><div class="ro-label">Bistro / Café</div></div>
-            <div class="resto-option" onclick="selectResto(this,'fastfood')"><div class="ro-icon">🍔</div><div class="ro-label">Fast Food</div></div>
-            <div class="resto-option" onclick="selectResto(this,'fine')"><div class="ro-icon">🥂</div><div class="ro-label">Fine Dining</div></div>
-          </div>
-        </div>
-
-        <div style="margin-bottom:1.1rem">
-          <label style="font-size:.72rem;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.6rem">Plan wählen</label>
-          <div class="plan-select">
-            <div class="plan-card selected" onclick="selectPlan(this,'free')">
-              <div class="pc-name">Free</div>
-              <div class="pc-price">0 € <span>/ Monat</span></div>
-              <div class="pc-feat">1 Restaurant · Basis-KPIs</div>
-            </div>
-            <div class="plan-card" onclick="selectPlan(this,'pro')">
-              <div class="plan-badge">Beliebt</div>
-              <div class="pc-name">Pro</div>
-              <div class="pc-price">29 € <span>/ Monat</span></div>
-              <div class="pc-feat">KI-Analyse · API-Sync</div>
-            </div>
-          </div>
-        </div>
-
-        <button class="submit-btn" id="register-btn" onclick="handleRegister()">
-          <span class="btn-text">Account erstellen →</span>
-          <div class="spinner"></div>
-        </button>
-
-        <p class="terms-note">Mit der Registrierung stimmst du den <a href="#">AGB</a> und der <a href="#">Datenschutzerklärung</a> zu.</p>
+      <div>
+        <div class="hero-stat-num serif">100%</div>
+        <div class="hero-stat-label">DSGVO-konform</div>
       </div>
-
-      <!-- RESET FORM -->
-      <div id="form-reset" style="display:none">
-        <div class="auth-title">Passwort zurücksetzen</div>
-        <div class="auth-sub">Wir schicken dir einen Reset-Link</div>
-        <div class="field">
-          <label>E-Mail</label>
-          <div class="input-wrap">
-            <span class="input-icon">📧</span>
-            <input type="email" id="reset-email" placeholder="chef@meinrestaurant.de" />
-          </div>
-        </div>
-        <button class="submit-btn" onclick="handleReset()">
-          <span class="btn-text">Reset-Link senden →</span>
-          <div class="spinner"></div>
-        </button>
-        <p class="terms-note" style="margin-top:1rem"><a href="#" onclick="switchTab('login')">← Zurück zum Login</a></p>
-      </div>
-
-      <!-- SUCCESS SCREEN -->
-      <div class="success-screen" id="success-screen">
-        <div class="success-icon">✅</div>
-        <h3>Account erstellt!</h3>
-        <p>Bitte bestätige deine E-Mail-Adresse. Danach wirst du automatisch weitergeleitet.</p>
-        <div class="check-steps">
-          <div class="check-step"><div class="cs-icon cs-done">✓</div>Account angelegt</div>
-          <div class="check-step"><div class="cs-icon cs-done">✓</div>Datenbank vorbereitet</div>
-          <div class="check-step"><div class="cs-icon cs-wait">⏳</div>E-Mail bestätigen</div>
-          <div class="check-step"><div class="cs-icon cs-wait">⏳</div>GastroIQ starten</div>
-        </div>
-      </div>
-
     </div>
   </div>
-</div>
+</section>
 
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <div class="section-label">Das Problem</div>
+    <h2 class="section-title serif">Restaurants scheitern <em>nicht</em><br>am Kochen.</h2>
+    <p class="section-sub">Sie scheitern daran, dass niemand die Zahlen im Griff hat – bis es zu spät ist.</p>
+    <div class="problem-grid reveal">
+      <div class="problem-card">
+        <div class="problem-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3>Keine Transparenz</h3>
+        <p>Food Cost und Personalquote werden erst am Monatsende bekannt – wenn man ohnehin nichts mehr ändern kann.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+        </div>
+        <h3>Fehlende Struktur</h3>
+        <p>Viele verschiedene Tabellen, keine einheitliche Sicht. Fehler bleiben unentdeckt, Entscheidungen basieren auf Bauchgefühl.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3>Stille Kostenfresser</h3>
+        <p>Schwund, hohe Wareneinsätze, ineffiziente Schichtplanung – jeder dieser Faktoren kostet täglich hunderte Euro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-label reveal">Die Lösung</div>
+    <h2 class="section-title serif reveal">Alles was du brauchst.<br><em>Nichts</em> was du nicht brauchst.</h2>
+    <div class="features-grid reveal">
+      <div class="feature-card highlight">
+        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <h3>Break-even Simulator</h3>
+        <p>Wie viele Gäste brauchen Sie täglich um Gewinn zu machen? GastroIQ berechnet es live – mit interaktivem Diagramm das Gewinn- und Verlustzone sofort zeigt.</p>
+        <span class="feature-tag">Exklusiv</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Nettogewinn pro Gericht</h3>
+        <p>Schnitzel oder Lachs – welches Gericht verdient wirklich Geld? Sehen Sie Nettogewinn, Food Cost und Marge pro Portion auf einen Blick.</p>
+        <span class="feature-tag">Speisekarte</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Monatshistorie &amp; Trends</h3>
+        <p>12 Monate auf einen Blick. Ausreißer farbig markiert. Vergleichstabelle mit Nettogewinn, Food Cost und Gästezahl – Trends sofort erkennbar.</p>
+        <span class="feature-tag">Analyse</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+        <h3>KI-Morgenbriefing</h3>
+        <p>Jeden Morgen in 30 Sekunden: gestrige Performance, heutige Priorität, konkreter Handlungstipp. KI erklärt Ihre Zahlen in verständlicher Sprache.</p>
+        <span class="feature-tag">KI · Pro</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3>Flexibler Schichtplaner</h3>
+        <p>Individuelle Schichtmodelle definieren und speichern. Eigene Start- und Endzeiten, mehrere Schichtvorlagen, automatische Konflikt-Erkennung.</p>
+        <span class="feature-tag">Team</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M2 20h.01M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg></div>
+        <h3>Was-wäre-wenn Simulator</h3>
+        <p>Preiserhöhung +5%? Schließtag einführen? Simulieren Sie Entscheidungen mit echten Zahlen – bevor Sie sie umsetzen.</p>
+        <span class="feature-tag">Planung</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="howitworks" id="howto">
+  <div class="container">
+    <div class="section-label reveal">So einfach</div>
+    <h2 class="section-title serif reveal">In <em>4 Schritten</em> zum vollständigen Überblick.</h2>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num serif">1</div>
+        <h3>Account erstellen</h3>
+        <p>Kostenlos registrieren, Restauranttyp wählen – fertig in 2 Minuten.</p>
+      </div>
+      <div class="step">
+        <div class="step-num serif">2</div>
+        <h3>Stammdaten eintragen</h3>
+        <p>Speisekarte, Personal und Fixkosten einmalig hinterlegen.</p>
+      </div>
+      <div class="step">
+        <div class="step-num serif">3</div>
+        <h3>Täglich erfassen</h3>
+        <p>Umsatz, Gäste und Top-Gericht – dauert 60 Sekunden pro Tag.</p>
+      </div>
+      <div class="step">
+        <div class="step-num serif">4</div>
+        <h3>KI analysiert</h3>
+        <p>Auf Knopfdruck: vollständige Auswertung mit Handlungsempfehlungen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KPI SHOWCASE -->
+<section class="kpi-showcase">
+  <div class="container">
+    <div class="section-label">Live Dashboard</div>
+    <h2 class="section-title serif reveal">Nicht Umsatz. <em>Gewinn.</em></h2>
+    <p style="color:rgba(255,255,255,.55);max-width:500px;margin:0 auto 3rem;font-size:.95rem;line-height:1.6;text-align:center">
+      GastroIQ zeigt dir nicht nur was reinkommt – sondern was wirklich übrig bleibt.
+    </p>
+    <div class="kpi-grid-show reveal">
+      <div class="kpi-show-card">
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="kpi-show-val serif">487</div>
+        <div class="kpi-show-label">Break-even Gäste/Monat</div>
+        <div class="kpi-show-delta delta-green">Aktuell 612 Gäste – im Plus</div>
+      </div>
+      <div class="kpi-show-card">
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="kpi-show-val serif">+1.840 €</div>
+        <div class="kpi-show-label">Nettogewinn (Monat)</div>
+        <div class="kpi-show-delta delta-green">+340 € gegenüber Vormonat</div>
+      </div>
+      <div class="kpi-show-card" style="position:relative;overflow:hidden">
+        <div style="position:absolute;top:.5rem;right:.5rem;font-size:.65rem;background:rgba(244,162,97,.15);color:#f4a261;padding:.2rem .5rem;border-radius:100px;font-weight:700">AUSREISSER</div>
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="kpi-show-val serif">Jun +18%</div>
+        <div class="kpi-show-label">Bester Monat</div>
+        <div class="kpi-show-delta delta-green">Automatisch markiert in Verlaufsansicht</div>
+      </div>
+      <div class="kpi-show-card">
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <div class="kpi-show-val serif">7,20 €</div>
+        <div class="kpi-show-label">Gewinn Schnitzel / Portion</div>
+        <div class="kpi-show-delta delta-green">Profitabelstes Gericht</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- BREAK-EVEN DEMO -->
+<section id="breakeven" style="background:var(--cream2);padding:6rem 2rem">
+  <div class="container">
+    <div class="section-label reveal">Interaktive Demo</div>
+    <h2 class="section-title serif reveal">Ab wann verdienst du <em>wirklich</em> Geld?</h2>
+    <p class="section-sub reveal">Teste den Break-even Rechner jetzt – mit deinen eigenen Zahlen. Keine Anmeldung nötig.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:2rem;margin-top:3rem;align-items:start" class="reveal" id="be-demo-grid">
+      <!-- Controls -->
+      <div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:2rem">
+        <h3 style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;margin-bottom:1.4rem">📥 Deine Zahlen eingeben</h3>
+        <div style="display:flex;flex-direction:column;gap:1.2rem">
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--ink2);display:block;margin-bottom:.4rem">Monatliche Fixkosten (Miete, Strom…)</label>
+            <div style="display:flex;align-items:center;gap:.8rem">
+              <input type="range" id="demo-fixkosten" min="1000" max="12000" value="4500" step="100" oninput="updateDemoBreakeven()" style="flex:1;accent-color:var(--primary)">
+              <span id="demo-fixkosten-val" style="font-weight:800;font-size:.95rem;width:70px;text-align:right">4.500 €</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--ink2);display:block;margin-bottom:.4rem">Variable Kosten pro Gast (Essen + Personal)</label>
+            <div style="display:flex;align-items:center;gap:.8rem">
+              <input type="range" id="demo-varkosten" min="4" max="20" value="9.50" step="0.50" oninput="updateDemoBreakeven()" style="flex:1;accent-color:var(--primary)">
+              <span id="demo-varkosten-val" style="font-weight:800;font-size:.95rem;width:70px;text-align:right">9,50 €</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--ink2);display:block;margin-bottom:.4rem">Ø Umsatz pro Gast (Bon)</label>
+            <div style="display:flex;align-items:center;gap:.8rem">
+              <input type="range" id="demo-bon" min="12" max="60" value="22" step="0.50" oninput="updateDemoBreakeven()" style="flex:1;accent-color:var(--green)">
+              <span id="demo-bon-val" style="font-weight:800;font-size:.95rem;width:70px;text-align:right">22,00 €</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--ink2);display:block;margin-bottom:.4rem">Öffnungstage / Monat</label>
+            <div style="display:flex;align-items:center;gap:.8rem">
+              <input type="range" id="demo-tage" min="10" max="31" value="25" step="1" oninput="updateDemoBreakeven()" style="flex:1;accent-color:var(--primary)">
+              <span id="demo-tage-val" style="font-weight:800;font-size:.95rem;width:70px;text-align:right">25 Tage</span>
+            </div>
+          </div>
+        </div>
+        <!-- Result Card -->
+        <div id="demo-result" style="margin-top:1.6rem;background:var(--cream2);border-radius:var(--radius-sm);padding:1.2rem;text-align:center;border:1.5px solid var(--border)">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.4rem">Break-even Punkt</div>
+          <div id="demo-be-val" style="font-family:'Fraunces',serif;font-size:2.5rem;font-weight:900;color:var(--primary)">–</div>
+          <div id="demo-be-sub" style="font-size:.82rem;color:var(--ink3);margin-top:.2rem">Gäste pro Monat</div>
+          <div id="demo-be-tag" style="font-size:.78rem;font-weight:600;color:var(--ink2);margin-top:.4rem"></div>
+        </div>
+        <a href="/gastroiq-auth" style="display:block;text-align:center;margin-top:1rem;padding:.7rem;background:var(--primary);color:white;border-radius:100px;font-weight:700;font-size:.875rem;text-decoration:none;transition:transform .15s">
+          Im Dashboard mit echten Daten öffnen →
+        </a>
+      </div>
+
+      <!-- Chart -->
+      <div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:2rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <h3 style="font-family:'Fraunces',serif;font-size:1rem;font-weight:700">📊 Gewinn & Verlust Visualisierung</h3>
+          <div id="demo-status-badge" style="font-size:.72rem;font-weight:700;padding:.25rem .7rem;border-radius:100px;background:var(--cream2);color:var(--ink3)">–</div>
+        </div>
+        <div style="position:relative;height:280px"><canvas id="demo-chart-breakeven"></canvas></div>
+        <div style="display:flex;gap:1.2rem;margin-top:.8rem;font-size:.73rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:.35rem"><div style="width:14px;height:3px;background:#dc2626;border-radius:2px"></div>Gesamtkosten</div>
+          <div style="display:flex;align-items:center;gap:.35rem"><div style="width:14px;height:3px;background:#16a34a;border-radius:2px"></div>Umsatz</div>
+          <div style="display:flex;align-items:center;gap:.35rem"><div style="width:10px;height:10px;background:#f59e0b;border-radius:50%"></div>Break-even</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="preise">
+  <div class="container">
+    <div class="section-label reveal">Abonnements</div>
+    <h2 class="section-title serif reveal">Transparent. <em>Fair.</em> Kein Kleingedrucktes.</h2>
+    <p class="section-sub reveal" style="margin-bottom:3rem">Alle Pakete beinhalten 14 Tage kostenlose Testphase. Monatlich kündbar, keine Vertragsbindung.</p>
+    <div class="pricing-grid reveal">
+      <!-- BRONZE -->
+      <div class="pricing-card">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+          <div style="width:10px;height:10px;background:#cd7f32;border-radius:50%"></div>
+          <div class="price-tier" style="margin-bottom:0">Bronze</div>
+        </div>
+        <div class="price-amount serif">49 € <span>/ Monat</span></div>
+        <div class="price-desc">Für Einzelbetriebe die professionelles Controlling einführen möchten.</div>
+        <ul class="price-features">
+          <li>Vollständiges KPI-Dashboard</li>
+          <li>Speisekarte &amp; Food Cost Analyse</li>
+          <li>Tageserfassung &amp; Auswertung</li>
+          <li>Break-even Simulator</li>
+          <li>Schichtplaner</li>
+          <li>1 Standort</li>
+          <li>E-Mail Support</li>
+        </ul>
+        <a href="/gastroiq-auth" class="price-btn">14 Tage kostenlos testen</a>
+      </div>
+      <!-- SILBER -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Empfohlen</div>
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+          <div style="width:10px;height:10px;background:#c0c0c0;border-radius:50%"></div>
+          <div class="price-tier" style="margin-bottom:0;color:rgba(255,255,255,.6)">Silber</div>
+        </div>
+        <div class="price-amount serif">79 € <span>/ Monat</span></div>
+        <div class="price-desc">Für wachsende Betriebe mit höherem Analyse- und Planungsbedarf.</div>
+        <ul class="price-features">
+          <li>Alles aus Bronze</li>
+          <li>KI-Auswertung &amp; Risikoanalyse</li>
+          <li>Prognose &amp; Forecast (6 Monate)</li>
+          <li>Monatshistorie &amp; Trendanalyse</li>
+          <li>Preisempfehlung auf Basis von Nachfrage</li>
+          <li>Was-wäre-wenn Simulator</li>
+          <li>Bis zu 3 Standorte</li>
+          <li>Prioritäts-Support</li>
+        </ul>
+        <a href="/gastroiq-auth" class="price-btn primary">14 Tage kostenlos testen</a>
+      </div>
+      <!-- GOLD -->
+      <div class="pricing-card">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+          <div style="width:10px;height:10px;background:#b8860b;border-radius:50%"></div>
+          <div class="price-tier" style="margin-bottom:0">Gold</div>
+        </div>
+        <div class="price-amount serif">199 € <span>/ Monat</span></div>
+        <div class="price-desc">Für Unternehmen, Ketten und Betriebe mit mehreren Standorten.</div>
+        <ul class="price-features">
+          <li>Alles aus Silber</li>
+          <li>Unbegrenzte Standorte</li>
+          <li>Standort-Vergleich &amp; Konsolidierung</li>
+          <li>CSV / API-Export</li>
+          <li>Individuelle Kennzahlen &amp; Berichte</li>
+          <li>Persönliches Onboarding</li>
+          <li>Dedizierter Account Manager</li>
+          <li>SLA-Garantie &amp; Premium-Support</li>
+        </ul>
+        <a href="/gastroiq-auth" class="price-btn">Beratungsgespräch anfragen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDIVIDUELLE DIENSTLEISTUNGEN -->
+<section style="background:var(--ink);padding:6rem 2rem" id="services">
+  <div class="container">
+    <div class="section-label reveal" style="color:#f4a261">Individuelle Dienstleistungen</div>
+    <h2 class="section-title serif reveal" style="color:white">Mehr als Software –<br><em>Ihr digitaler Partner.</em></h2>
+    <p class="section-sub reveal" style="color:rgba(255,255,255,.6);margin-bottom:3rem">Neben dem Abonnement bieten wir maßgeschneiderte Leistungen für Unternehmen mit spezifischen Anforderungen. Jedes Projekt wird individuell konzipiert und realisiert.</p>
+    <div class="problem-grid reveal">
+      <div class="problem-card" style="border-color:rgba(200,68,10,.25)">
+        <div style="width:40px;height:40px;background:rgba(200,68,10,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <h3>Unternehmens-Websites</h3>
+        <p>Professionelle, individuelle Webpräsenzen – entwickelt nach Ihren CI-Vorgaben, optimiert für Konversion und Suchmaschinen.</p>
+      </div>
+      <div class="problem-card" style="border-color:rgba(200,68,10,.25)">
+        <div style="width:40px;height:40px;background:rgba(200,68,10,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h3>Business-Dashboards</h3>
+        <p>Maßgeschneiderte Controlling-Lösungen und Reporting-Systeme – präzise auf Ihre Kennzahlen und Prozesse ausgerichtet.</p>
+      </div>
+      <div class="problem-card" style="border-color:rgba(200,68,10,.25)">
+        <div style="width:40px;height:40px;background:rgba(200,68,10,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Systemanbindungen</h3>
+        <p>Integration Ihrer bestehenden ERP-, CRM- und POS-Systeme. Wir schaffen nahtlose Datenflüsse und vermeiden Medienbrüche.</p>
+      </div>
+      <div class="problem-card" style="border-color:rgba(200,68,10,.25)">
+        <div style="width:40px;height:40px;background:rgba(200,68,10,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h3>Individuelle Datenanalysen</h3>
+        <p>Tiefgehende Analysen Ihrer Betriebsdaten – von der Datenaggregation über die Visualisierung bis zur strategischen Handlungsempfehlung.</p>
+      </div>
+      <div class="problem-card" style="border-color:rgba(200,68,10,.25)">
+        <div style="width:40px;height:40px;background:rgba(200,68,10,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Persönliche Beratung</h3>
+        <p>Strategiegespräche und operative Begleitung – wir analysieren Ihre Zahlen gemeinsam mit Ihnen und erarbeiten konkrete Maßnahmen.</p>
+      </div>
+      <div class="problem-card" style="border-color:rgba(200,68,10,.25);background:rgba(200,68,10,.06)">
+        <div style="width:40px;height:40px;background:rgba(200,68,10,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4a261" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.36 13 19.79 19.79 0 0 1 1.27 4.4a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.66 2.81a2 2 0 0 1-.45 2.11L7.09 9.91A16 16 0 0 0 13 15.91l1.27-1.27a2 2 0 0 1 2.11-.45c.91.31 1.85.53 2.81.66a2 2 0 0 1 1.72 2.02z"/></svg>
+        </div>
+        <h3 style="color:#f4a261">Beratungsgespräch vereinbaren</h3>
+        <p>Schildern Sie uns Ihre Anforderungen – wir melden uns innerhalb von 24 Stunden mit einem unverbindlichen Konzeptvorschlag.</p>
+        <a href="/cdn-cgi/l/email-protection#dcb7b3b2a8bdb7a89cbbbdafa8aeb3b5adf2b8b9" style="display:inline-block;margin-top:1rem;background:var(--primary);color:white;padding:.6rem 1.4rem;border-radius:100px;font-size:.8rem;font-weight:700;text-decoration:none">Jetzt Kontakt aufnehmen →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonial-section">
+  <div class="container">
+    <div class="section-label reveal">Stimmen</div>
+    <h2 class="section-title serif reveal">Was Gastronomen <em>sagen</em>.</h2>
+    <div class="testimonial-grid reveal">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text serif">"Endlich sehe ich auf einen Blick was meine Schnitzel wirklich kosten und was der Lachs mir bringt. Das hat mein Denken verändert."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">👨‍🍳</div>
+          <div>
+            <div class="testimonial-name">Marco R.</div>
+            <div class="testimonial-role">Inhaber, Trattoria Roma · München</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text serif">"Die KI hat mir in der ersten Woche gezeigt dass meine Personalkosten freitags explodieren. Das war Gold wert."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">👩‍💼</div>
+          <div>
+            <div class="testimonial-name">Sandra K.</div>
+            <div class="testimonial-role">Geschäftsführerin, Bistro Klara · Hamburg</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text serif">"Ich dachte ich kenne meine Zahlen. GastroIQ hat mir in 10 Minuten drei Kostenfresser gezeigt die ich jahrelang übersehen hatte."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">🧑‍🍳</div>
+          <div>
+            <div class="testimonial-name">Tobias M.</div>
+            <div class="testimonial-role">Küchenchef & Inhaber · Frankfurt</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container" style="text-align:center">
+    <div class="section-label reveal">FAQ</div>
+    <h2 class="section-title serif reveal">Häufige <em>Fragen</em>.</h2>
+    <div class="faq-grid">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">Brauche ich technisches Wissen? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">Nein. GastroIQ funktioniert komplett im Browser – kein Download, keine Installation. Wenn du ein Smartphone bedienen kannst, kannst du GastroIQ nutzen.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">Sind meine Daten sicher? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">Ja. Alle Daten liegen auf europäischen Servern (Frankfurt), sind verschlüsselt und DSGVO-konform gespeichert. Kein Dritter hat Zugriff auf deine Betriebsdaten.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">Wie funktioniert die 14-Tage-Testphase? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">Du registrierst dich kostenlos und hast 14 Tage vollen Zugriff auf alle Pro-Features. Keine Kreditkarte nötig. Nach 14 Tagen wechselst du automatisch in den Free-Plan – oder buchst Pro weiter.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">Kann ich jederzeit kündigen? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">Ja, monatlich kündbar ohne Fristen. Deine Daten kannst du vorher exportieren.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">Funktioniert es auch für mehrere Standorte? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">Ja, ab dem Business-Plan kannst du bis zu 5 Restaurants unter einem Account verwalten und direkt miteinander vergleichen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container" style="position:relative;z-index:1">
+    <h2 class="section-title serif">Schluss mit Umsatz-<em>Illusion</em>.<br>Fang an Gewinn zu machen.</h2>
+    <p class="section-sub">Starte kostenlos. Break-even-Rechner sofort verfügbar. Setup in 5 Minuten.</p>
+    <a href="/gastroiq-auth" class="cta-btn">Jetzt kostenlos starten →</a>
+    <div class="cta-note">14 Tage Pro kostenlos · Danach ab 0 €/Monat · Jederzeit kündbar</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Gastro<span>IQ</span></div>
+  <div class="footer-links">
+    <a href="#">Impressum</a>
+    <a href="#">Datenschutz</a>
+    <a href="#">AGB</a>
+    <a href="/gastroiq-auth">Login</a>
+  </div>
+  <p>© 2025 GastroIQ · Intelligentes Restaurant-Controlling · Made in Germany 🇩🇪</p>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// ══════════════════════════════════════════════
-// SUPABASE KONFIGURATION
-// ══════════════════════════════════════════════
-// ⚠️ HIER deine Supabase-Daten eintragen:
-const SUPABASE_URL = 'https://bmqlbnfigsrhdfwhxnia.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcWxibmZpZ3NyaGRmd2h4bmlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMjEyNzYsImV4cCI6MjA4Nzc5NzI3Nn0.8f81QqGLCe-baIcNKaxKNGUiUrT5n5dGMc_LCzM2-v4';
-
-// Supabase Client initialisieren
-let supabaseClient = null;
-try {
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-} catch(e) {
-  console.log('Supabase Demo-Modus (kein Key konfiguriert)');
-}
-
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-let selectedRestoType = 'restaurant';
-let selectedPlan = 'free';
-
-// ══════════════════════════════════════════════
-// TAB SWITCHING
-// ══════════════════════════════════════════════
-function switchTab(tab) {
-  ['login','register','reset'].forEach(t => {
-    const form = document.getElementById('form-'+t);
-    const tabEl = document.getElementById('tab-'+t);
-    if(form) form.style.display = t===tab ? 'block' : 'none';
-    if(tabEl) tabEl.classList.toggle('active', t===tab);
-  });
-  clearMessage();
-}
-
-// ══════════════════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════════════════
-function showMessage(msg, type='error') {
-  const el = document.getElementById('auth-message');
-  el.textContent = msg;
-  el.className = 'auth-message '+type;
-  el.style.display = 'block';
-}
-function clearMessage() {
-  const el = document.getElementById('auth-message');
-  el.style.display = 'none';
-}
-function setLoading(btnId, loading) {
-  const btn = document.getElementById(btnId);
-  if(!btn) return;
-  btn.classList.toggle('loading', loading);
-  btn.disabled = loading;
-}
-
-function selectResto(el, type) {
-  document.querySelectorAll('.resto-option').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedRestoType = type;
-}
-function selectPlan(el, plan) {
-  document.querySelectorAll('.plan-card').forEach(p=>p.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedPlan = plan;
-}
-
-function checkPasswordStrength(pw) {
-  const bar = document.getElementById('pw-strength');
-  bar.style.display = 'block';
-  let score = 0;
-  if(pw.length >= 8) score++;
-  if(/[A-Z]/.test(pw)) score++;
-  if(/[0-9]/.test(pw)) score++;
-  if(/[^A-Za-z0-9]/.test(pw)) score++;
-  const bars = [1,2,3,4].map(i=>document.getElementById('pw-b'+i));
-  const label = document.getElementById('pw-label');
-  const cls = score<=1?'active-weak':score<=2?'active-medium':'active-strong';
-  const labels = ['','Schwach','Mittel','Stark','Sehr stark'];
-  bars.forEach((b,i)=>{ b.className='pw-bar'; if(i<score) b.classList.add(cls); });
-  label.textContent = labels[score]||'';
-}
-
-// ══════════════════════════════════════════════
-// AUTH HANDLERS
-// ══════════════════════════════════════════════
-async function handleLogin() {
-  clearMessage();
-  const email = document.getElementById('login-email').value.trim();
-  const pw = document.getElementById('login-pw').value;
-
-  if(!email || !pw) { showMessage('Bitte E-Mail und Passwort eingeben.'); return; }
-
-  if(!supabaseClient) {
-    // DEMO MODE
-    showMessage('Demo-Modus: Supabase-Key nicht konfiguriert. Weiterleitung simuliert...','success');
-    setTimeout(()=>{ window.location.href='gastroiq.html'; },1500);
-    return;
-  }
-
-  setLoading('login-btn', true);
-  try {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
-    if(error) throw error;
-    window.location.href = 'gastroiq.html';
-  } catch(e) {
-    showMessage(translateError(e.message));
-  } finally {
-    setLoading('login-btn', false);
-  }
-}
-
-async function handleRegister() {
-  clearMessage();
-  const restaurant = document.getElementById('reg-restaurant').value.trim();
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const pw = document.getElementById('reg-pw').value;
-
-  if(!restaurant || !name || !email || !pw) { showMessage('Bitte alle Felder ausfüllen.'); return; }
-  if(pw.length < 8) { showMessage('Passwort muss mindestens 8 Zeichen haben.'); return; }
-
-  if(!supabaseClient) {
-    // DEMO MODE
-    document.getElementById('form-register').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'block';
-    return;
-  }
-
-  setLoading('register-btn', true);
-  try {
-    const { data, error } = await supabaseClient.auth.signUp({
-      email,
-      password: pw,
-      options: {
-        data: {
-          full_name: name,
-          restaurant_name: restaurant,
-          restaurant_type: selectedRestoType,
-          plan: selectedPlan
-        }
-      }
-    });
-    if(error) throw error;
-
-    // Erstelle Restaurant-Eintrag in DB
-    if(data.user) {
-      await supabaseClient.from('restaurants').insert({
-        user_id: data.user.id,
-        name: restaurant,
-        type: selectedRestoType,
-        plan: selectedPlan,
-        owner_name: name
-      });
-    }
-
-    document.getElementById('form-register').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'block';
-  } catch(e) {
-    showMessage(translateError(e.message));
-  } finally {
-    setLoading('register-btn', false);
-  }
-}
-
-async function handleReset() {
-  clearMessage();
-  const email = document.getElementById('reset-email').value.trim();
-  if(!email) { showMessage('Bitte E-Mail eingeben.'); return; }
-
-  if(!supabaseClient) {
-    showMessage('Demo: Reset-E-Mail würde gesendet an '+email,'success');
-    return;
-  }
-
-  try {
-    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin+'/reset-confirm.html'
-    });
-    if(error) throw error;
-    showMessage('Reset-Link gesendet! Prüfe deine E-Mails.','success');
-  } catch(e) {
-    showMessage(translateError(e.message));
-  }
-}
-
-async function handleGoogleLogin() {
-  if(!supabaseClient) { showMessage('Demo: Google-Login benötigt Supabase-Konfiguration.'); return; }
-  try {
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin+'/gastroiq.html' }
-    });
-    if(error) throw error;
-  } catch(e) {
-    showMessage(translateError(e.message));
-  }
-}
-
-// Session check – wenn schon eingeloggt → redirect
-async function checkSession() {
-  if(!supabaseClient) return;
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if(session) window.location.href = 'gastroiq.html';
-}
-
-function translateError(msg) {
-  const map = {
-    'Invalid login credentials': 'E-Mail oder Passwort falsch.',
-    'Email not confirmed': 'Bitte bestätige zuerst deine E-Mail.',
-    'User already registered': 'Diese E-Mail ist bereits registriert.',
-    'Password should be at least 6 characters': 'Passwort zu kurz (min. 6 Zeichen).',
-    'Unable to validate email address: invalid format': 'Ungültige E-Mail-Adresse.',
-  };
-  return map[msg] || 'Fehler: '+msg;
-}
-
-// Enter key
-document.addEventListener('keydown', e => {
-  if(e.key !== 'Enter') return;
-  const activeTab = document.querySelector('.auth-tab.active')?.id;
-  if(activeTab==='tab-login') handleLogin();
-  else if(activeTab==='tab-register') handleRegister();
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
 });
 
-checkSession();
-</script>
-</body>
-</html>
+// Reveal on scroll
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// FAQ
+function toggleFaq(el){
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen) el.classList.add('open');
+}
+
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+});
+
+// ── BREAK-EVEN DEMO ──
+let demoChart = null;
+
+function fmt2(v, prefix='') {
+  if(v >= 1000) return prefix + (v/1000).toFixed(1).replace('.',',') + ' T€';
+  return prefix + v.toFixed(0).replace('.',',') + ' €';
+}
+
+function updateDemoBreakeven() {
+  const fixM   = parseFloat(document.getElementById('demo-fixkosten').value) || 4500;
+  const varK   = parseFloat(document.getElementById('demo-varkosten').value) || 9.5;
+  const bon    = parseFloat(document.getElementById('demo-bon').value) || 22;
+  const tageM  = parseFloat(document.getElementById('demo-tage').value) || 25;
+
+  document.getElementById('demo-fixkosten-val').textContent = fixM.toLocaleString('de-DE') + ' €';
+  document.getElementById('demo-varkosten-val').textContent = varK.toFixed(2).replace('.',',') + ' €';
+  document.getElementById('demo-bon-val').textContent = bon.toFixed(2).replace('.',',') + ' €';
+  document.getElementById('demo-tage-val').textContent = tageM + ' Tage';
+
+  const db = bon - varK;
+  if(db <= 0) {
+    document.getElementById('demo-be-val').textContent = '!';
+    document.getElementById('demo-be-sub').textContent = 'Variable Kosten > Bon – unmöglich!';
+    return;
+  }
+
+  const beMonat = Math.ceil(fixM / db);
+  const beTag   = Math.ceil(beMonat / tageM);
+  const beUmsatz = beMonat * bon;
+
+  document.getElementById('demo-be-val').textContent = beMonat.toLocaleString('de-DE');
+  document.getElementById('demo-be-sub').textContent = 'Gäste/Monat = ' + beTag + ' pro Tag = ' + beUmsatz.toLocaleString('de-DE') + ' € Umsatz';
+  document.getElementById('demo-be-tag').textContent = 'Deckungsbeitrag: ' + db.toFixed(2).replace('.',',') + ' € pro Gast (' + Math.round(db/bon*100) + '% Marge)';
+
+  // Chart
+  const maxG = Math.max(beMonat * 2.1, 100);
+  const pts = 40;
+  const xs = Array.from({length: pts+1}, (_,i) => Math.round(i * maxG / pts));
+  const costs = xs.map(g => fixM + g * varK);
+  const rev   = xs.map(g => g * bon);
+
+  const profitData = xs.map((g,i) => ({x: g, y: rev[i] - costs[i]}));
+
+  const ctx = document.getElementById('demo-chart-breakeven');
+  if(!ctx) return;
+
+  if(demoChart) { demoChart.destroy(); demoChart = null; }
+
+  demoChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: xs,
+      datasets: [
+        {
+          label: 'Gesamtkosten',
+          data: costs,
+          borderColor: '#dc2626',
+          borderWidth: 2.5,
+          pointRadius: 0,
+          fill: false,
+          tension: 0
+        },
+        {
+          label: 'Umsatz',
+          data: rev,
+          borderColor: '#16a34a',
+          borderWidth: 2.5,
+          pointRadius: 0,
+          fill: false,
+          tension: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => items[0].label.toLocaleString('de-DE') + ' Gäste',
+            afterBody: items => {
+              const g = xs[items[0].dataIndex];
+              const profit = g * bon - fixM - g * varK;
+              return profit >= 0
+                ? ['✅ Gewinn: ' + profit.toFixed(0) + ' €']
+                : ['🔴 Verlust: ' + Math.abs(profit).toFixed(0) + ' €'];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Gäste / Monat', font: {size:10} },
+          ticks: { maxTicksLimit: 6, callback: (_,i) => xs[i]?.toLocaleString('de-DE') }
+        },
+        y: {
+          ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'T€' : v + '€', maxTicksLimit: 6 }
+        }
+      }
+    }
+  });
+
+  // Status badge
+  const badge = document.getElementById('demo-status-badge');
+  // No current data in demo, just show the BE info
+  badge.textContent = 'BE bei ' + beMonat.toLocaleString('de-DE') + ' Gästen';
+  badge.style.background = 'rgba(200,68,10,.1)';
+  badge.style.color = 'var(--primary)';
+}
+
+// Initialize on load
+window.addE
