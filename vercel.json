@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    { "source": "/auth/callback", "destination": "/gastroiq-auth.html" }
+  ],
+  "headers": [
+    {
+      "source": "/gastroiq.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/gastroiq-auth.html", 
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
+  ]
+}
