@@ -181,9 +181,11 @@ footer a:hover{color:white}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s;animation:revealFallback .8s ease 1.5s forwards}
-.reveal.visible{opacity:1;transform:translateY(0);animation:none}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+/* Fallback: show content after 2s even if JS fails */
 @keyframes revealFallback{to{opacity:1;transform:translateY(0)}}
+.reveal{animation:revealFallback .6s ease 2s forwards}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
