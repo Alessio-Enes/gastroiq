@@ -181,8 +181,9 @@ footer a:hover{color:white}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
-.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s;animation:revealFallback .8s ease 1.5s forwards}
+.reveal.visible{opacity:1;transform:translateY(0);animation:none}
+@keyframes revealFallback{to{opacity:1;transform:translateY(0)}}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
@@ -209,7 +210,7 @@ footer a:hover{color:white}
     <a href="#preise">Preise</a>
     <a href="#services">Services</a>
     <a href="#faq">FAQ</a>
-    <a href="/gastroiq-auth" class="nav-cta">Kostenlos testen →</a>
+    <a href="/gastroiq-auth.html" class="nav-cta">Kostenlos testen →</a>
   </div>
 </nav>
 
@@ -229,7 +230,7 @@ footer a:hover{color:white}
     </h1>
     <p class="hero-sub">Kein Excel. Kein Rätselraten. GastroIQ berechnet deinen Break-even, zeigt Nettogewinn pro Gericht und warnt dich bevor Verluste entstehen.</p>
     <div class="hero-actions">
-      <a href="/gastroiq-auth" class="btn-primary">Jetzt kostenlos starten →</a>
+      <a href="/gastroiq-auth.html" class="btn-primary">Jetzt kostenlos starten →</a>
       <a href="#features" class="btn-secondary">Features ansehen</a>
     </div>
     <div class="hero-stats">
@@ -444,7 +445,7 @@ footer a:hover{color:white}
           <div id="demo-be-sub" style="font-size:.82rem;color:var(--ink3);margin-top:.2rem">Gäste pro Monat</div>
           <div id="demo-be-tag" style="font-size:.78rem;font-weight:600;color:var(--ink2);margin-top:.4rem"></div>
         </div>
-        <a href="/gastroiq-auth" style="display:block;text-align:center;margin-top:1rem;padding:.7rem;background:var(--primary);color:white;border-radius:100px;font-weight:700;font-size:.875rem;text-decoration:none;transition:transform .15s">
+        <a href="/gastroiq-auth.html" style="display:block;text-align:center;margin-top:1rem;padding:.7rem;background:var(--primary);color:white;border-radius:100px;font-weight:700;font-size:.875rem;text-decoration:none;transition:transform .15s">
           Im Dashboard mit echten Daten öffnen →
         </a>
       </div>
@@ -490,7 +491,7 @@ footer a:hover{color:white}
           <li>1 Standort</li>
           <li>E-Mail Support</li>
         </ul>
-        <a href="/gastroiq-auth" class="price-btn">14 Tage kostenlos testen</a>
+        <a href="/gastroiq-auth.html" class="price-btn">14 Tage kostenlos testen</a>
       </div>
       <!-- SILBER -->
       <div class="pricing-card featured">
@@ -511,7 +512,7 @@ footer a:hover{color:white}
           <li>Bis zu 3 Standorte</li>
           <li>Prioritäts-Support</li>
         </ul>
-        <a href="/gastroiq-auth" class="price-btn primary">14 Tage kostenlos testen</a>
+        <a href="/gastroiq-auth.html" class="price-btn primary">14 Tage kostenlos testen</a>
       </div>
       <!-- GOLD -->
       <div class="pricing-card">
@@ -531,7 +532,7 @@ footer a:hover{color:white}
           <li>Dedizierter Account Manager</li>
           <li>SLA-Garantie &amp; Premium-Support</li>
         </ul>
-        <a href="/gastroiq-auth" class="price-btn">Beratungsgespräch anfragen</a>
+        <a href="/gastroiq-auth.html" class="price-btn">Beratungsgespräch anfragen</a>
       </div>
     </div>
   </div>
@@ -585,7 +586,7 @@ footer a:hover{color:white}
         </div>
         <h3 style="color:#f4a261">Beratungsgespräch vereinbaren</h3>
         <p>Schildern Sie uns Ihre Anforderungen – wir melden uns innerhalb von 24 Stunden mit einem unverbindlichen Konzeptvorschlag.</p>
-        <a href="/cdn-cgi/l/email-protection#92f9fdfce6f3f9e6d2f5f3e1e6e0fdfbe3bcf6f7" style="display:inline-block;margin-top:1rem;background:var(--primary);color:white;padding:.6rem 1.4rem;border-radius:100px;font-size:.8rem;font-weight:700;text-decoration:none">Jetzt Kontakt aufnehmen →</a>
+        <a href="mailto:kontakt@gastroiq.de" style="display:inline-block;margin-top:1rem;background:var(--primary);color:white;padding:.6rem 1.4rem;border-radius:100px;font-size:.8rem;font-weight:700;text-decoration:none">Jetzt Kontakt aufnehmen →</a>
       </div>
     </div>
   </div>
@@ -669,7 +670,7 @@ footer a:hover{color:white}
   <div class="container" style="position:relative;z-index:1">
     <h2 class="section-title serif">Schluss mit Umsatz-<em>Illusion</em>.<br>Fang an Gewinn zu machen.</h2>
     <p class="section-sub">Starte kostenlos. Break-even-Rechner sofort verfügbar. Setup in 5 Minuten.</p>
-    <a href="/gastroiq-auth" class="cta-btn">Jetzt kostenlos starten →</a>
+    <a href="/gastroiq-auth.html" class="cta-btn">Jetzt kostenlos starten →</a>
     <div class="cta-note">14 Tage Pro kostenlos · Danach ab 0 €/Monat · Jederzeit kündbar</div>
   </div>
 </section>
@@ -681,12 +682,12 @@ footer a:hover{color:white}
     <a href="#">Impressum</a>
     <a href="#">Datenschutz</a>
     <a href="#">AGB</a>
-    <a href="/gastroiq-auth">Login</a>
+    <a href="/gastroiq-auth.html">Login</a>
   </div>
   <p>© 2025 GastroIQ · Intelligentes Restaurant-Controlling · Made in Germany 🇩🇪</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 // Navbar scroll
 window.addEventListener('scroll',()=>{
@@ -828,4 +829,11 @@ function updateDemoBreakeven() {
 }
 
 // Initialize on load
-window.addE
+window.addEventListener('DOMContentLoaded', () => {
+  if(document.getElementById('demo-chart-breakeven')) updateDemoBreakeven();
+});
+
+
+</script>
+</body>
+</html>
