@@ -1,18 +1,20 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "headers": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Content-Disposition", "value": "inline" }
-      ]
+      "src": "/(.*\\.html)",
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        "Content-Disposition": "inline",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
-  ],
-  "rewrites": [
-    { "source": "/gastroiq-auth", "destination": "/gastroiq-auth.html" },
-    { "source": "/gastroiq", "destination": "/gastroiq.html" },
-    { "source": "/login", "destination": "/gastroiq-auth.html" },
-    { "source": "/dashboard", "destination": "/gastroiq.html" }
   ]
 }
