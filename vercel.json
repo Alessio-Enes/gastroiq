@@ -1,4 +1,4 @@
--- test
+// test
 {
   "cleanUrls": true,
   "trailingSlash": false,
