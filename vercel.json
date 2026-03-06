@@ -1,18 +1,25 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*)\\.html",
+      "source": "/gastroiq-auth.html",
       "headers": [
-        { "key": "Content-Type", "value": "text/html; charset=utf-8" }
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" },
+        { "key": "Content-Disposition", "value": "inline" }
+      ]
+    },
+    {
+      "source": "/gastroiq.html",
+      "headers": [
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" },
+        { "key": "Content-Disposition", "value": "inline" }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" },
+        { "key": "Content-Disposition", "value": "inline" }
       ]
     }
-  ],
-  "rewrites": [
-    { "source": "/gastroiq-auth", "destination": "/gastroiq-auth.html" },
-    { "source": "/gastroiq", "destination": "/gastroiq.html" },
-    { "source": "/login", "destination": "/gastroiq-auth.html" },
-    { "source": "/dashboard", "destination": "/gastroiq.html" }
   ]
 }
