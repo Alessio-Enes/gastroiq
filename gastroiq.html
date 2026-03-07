@@ -2238,9 +2238,9 @@ table tr:hover td{background:var(--bg)}
 // ════════════════════════════════════════════════════
 // CONFIG & STATE
 // ════════════════════════════════════════════════════
-const DEMO_MODE = true;
-const SUPABASE_URL = 'https://bmqlbnfigsrhdfwhxnia.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcWxibmZpZ3NyaGRmd2h4bmlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMjEyNzYsImV4cCI6MjA4Nzc5NzI3Nn0.8f81QqGLCe-baIcNKaxKNGUiUrT5n5dGMc_LCzM2-v4';
+let DEMO_MODE = false; // Dynamisch: wird true wenn kein User eingeloggt
+const SUPABASE_URL = 'https://vrksgszggavczivojqvr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZya3Nnc3pnZ2F2Y3ppdm9qcXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTI1OTksImV4cCI6MjA4ODQ4ODU5OX0.IHEvAtDiUpMr_RgzSvaQSybNTgoY7YyQAP69cHvwKtI';
 
 let db = null;
 let currentUser = null;
@@ -3398,9 +3398,13 @@ window.onload = async function() {
       const { data: { session } } = await db.auth.getSession();
       if(!session) { window.location.href = '/gastroiq-auth.html'; return; }
       currentUser = session.user;
+      DEMO_MODE = false; // Eingeloggt → Supabase nutzen
     } catch(e) {
       console.warn('Session check failed:', e);
+      DEMO_MODE = true; // Fallback auf Demo
     }
+  } else {
+    DEMO_MODE = true; // Kein Supabase → Demo
   }
   await loadAllData();
   if(state.gerichte.length === 0) seedDemo();
