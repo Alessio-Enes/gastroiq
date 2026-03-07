@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>GastroIQ Test</title>
+</head>
+<body>
+<h1>GastroIQ - Test funktioniert!</h1>
+<p>Wenn du diesen Text siehst, funktioniert Vercel korrekt.</p>
+<a href="/gastroiq-auth.html">Klick: Auth-Seite testen</a>
+</body>
+</html>
