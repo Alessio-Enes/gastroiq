@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GastroIQ – Kassensystem-Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf7f2;
+  --surface:#ffffff;
+  --surface2:#f5f2ed;
+  --ink:#1a1208;
+  --ink2:#4a3f30;
+  --ink3:#8a7a68;
+  --ink4:#c8bca8;
+  --primary:#c8440a;
+  --primary-light:rgba(200,68,10,0.08);
+  --primary-mid:rgba(200,68,10,0.18);
+  --green:#1a7a4a;
+  --green-light:rgba(26,122,74,0.09);
+  --amber:#a06000;
+  --amber-light:rgba(160,96,0,0.09);
+  --red:#b91c1c;
+  --red-light:rgba(185,28,28,0.08);
+  --blue:#1a4fa0;
+  --blue-light:rgba(26,79,160,0.08);
+  --border:#e8e0d4;
+  --border2:#d4c8b8;
+  --shadow:0 1px 4px rgba(26,18,8,0.07),0 1px 2px rgba(26,18,8,0.04);
+  --shadow-md:0 4px 16px rgba(26,18,8,0.09),0 2px 6px rgba(26,18,8,0.05);
+  --shadow-lg:0 12px 40px rgba(26,18,8,0.12),0 4px 12px rgba(26,18,8,0.06);
+  --radius:14px;
+  --radius-sm:9px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── SIDEBAR ── */
+.sidebar{width:248px;min-height:100vh;background:#1a1208;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100}
+.sidebar-logo{padding:1.4rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-wordmark{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:900;color:#fff;letter-spacing:-.03em}
+.logo-wordmark em{color:#c8440a;font-style:italic}
+.logo-sub{font-size:.62rem;color:rgba(255,255,255,.3);margin-top:.25rem;letter-spacing:.08em;text-transform:uppercase}
+.sidebar-nav{padding:.5rem 0;flex:1;overflow-y:auto}
+.nav-section{margin-bottom:.15rem}
+.nav-section-label{padding:.6rem 1.2rem .25rem;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.1em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.55rem 1.2rem;cursor:pointer;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.5);transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{color:#fff;background:rgba(200,68,10,.25);border-left-color:#c8440a}
+.nav-item-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.nav-item.active .nav-item-icon{background:rgba(200,68,10,.35)}
+.sidebar-bottom{padding:.9rem 1.2rem;border-top:1px solid rgba(255,255,255,.07)}
+.sidebar-user{display:flex;align-items:center;gap:.75rem}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.8)}
+.user-plan{font-size:.65rem;color:rgba(255,255,255,.3);margin-top:.1rem}
+
+/* ── MAIN ── */
+.main{margin-left:248px;min-height:100vh}
+.topbar{background:rgba(250,247,242,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.topbar-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:900;color:var(--ink);letter-spacing:-.02em}
+.topbar-sub{font-size:.75rem;color:var(--ink3);margin-top:.1rem}
+.topbar-right{display:flex;gap:.75rem;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:600;padding:.3rem .75rem;border-radius:100px;background:var(--green-light);color:var(--green);border:1px solid rgba(26,122,74,.15)}
+.badge.amber{background:var(--amber-light);color:var(--amber);border-color:rgba(160,96,0,.15)}
+.badge.blue{background:var(--blue-light);color:var(--blue);border-color:rgba(26,79,160,.15)}
+
+/* ── PAGE ── */
+.page{padding:2rem 2.25rem;max-width:1300px}
+.section-title{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:900;color:var(--ink);letter-spacing:-.02em;margin-bottom:.3rem}
+.section-sub{font-size:.82rem;color:var(--ink3);line-height:1.5;margin-bottom:1.75rem}
+
+/* ── SECURITY BANNER ── */
+.security-banner{background:linear-gradient(135deg,#0a1f0a 0%,#0d2a1a 100%);border-radius:var(--radius);padding:1.5rem 1.75rem;display:flex;align-items:center;gap:2rem;margin-bottom:2rem;position:relative;overflow:hidden}
+.security-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(26,122,74,.3) 0%,transparent 70%);pointer-events:none}
+.sec-icon{font-size:2rem;flex-shrink:0}
+.sec-content{flex:1}
+.sec-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:.35rem;letter-spacing:-.01em}
+.sec-desc{font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.5}
+.sec-pillars{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.85rem}
+.sec-pillar{display:flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:600;color:#86efac;background:rgba(255,255,255,.07);padding:.28rem .7rem;border-radius:100px;border:1px solid rgba(134,239,172,.15)}
+.sec-pillar svg{width:11px;height:11px}
+.sec-certs{display:flex;flex-direction:column;gap:.4rem;align-items:flex-end;flex-shrink:0}
+.cert-badge{font-size:.65rem;font-weight:700;padding:.3rem .8rem;border-radius:6px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12);white-space:nowrap}
+
+/* ── PROVIDER GRID ── */
+.provider-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;margin-bottom:2rem}
+.provider-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.4rem;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.provider-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.provider-card.connected{border-color:rgba(26,122,74,.4);background:linear-gradient(135deg,#fff 0%,rgba(26,122,74,.02) 100%)}
+.provider-card.connected::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#1a7a4a,#22c55e)}
+.provider-card.available::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),#e8660a)}
+.provider-header{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem}
+.provider-logo{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;font-size:.85rem;letter-spacing:-.02em;border:1.5px solid var(--border);background:var(--surface2)}
+.provider-meta{flex:1}
+.provider-name{font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:.2rem}
+.provider-type{font-size:.7rem;color:var(--ink3);font-weight:500}
+.provider-status-pill{display:inline-flex;align-items:center;gap:.35rem;font-size:.68rem;font-weight:700;padding:.22rem .65rem;border-radius:100px;white-space:nowrap}
+.status-connected{background:var(--green-light);color:var(--green);border:1px solid rgba(26,122,74,.2)}
+.status-available{background:var(--primary-light);color:var(--primary);border:1px solid rgba(200,68,10,.18)}
+.status-soon{background:var(--amber-light);color:var(--amber);border:1px solid rgba(160,96,0,.18)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+.provider-desc{font-size:.78rem;color:var(--ink3);line-height:1.5;margin-bottom:1rem}
+.provider-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.data-tag{font-size:.65rem;font-weight:600;padding:.2rem .55rem;border-radius:5px;background:var(--surface2);color:var(--ink2);border:1px solid var(--border)}
+.provider-auth{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--ink3);margin-bottom:1.1rem;padding:.55rem .75rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border)}
+.provider-auth svg{width:13px;height:13px;flex-shrink:0;color:var(--green)}
+.auth-label{font-weight:600;color:var(--ink2)}
+
+/* Connected state */
+.sync-info{display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;background:var(--green-light);border-radius:8px;border:1px solid rgba(26,122,74,.18);margin-bottom:.8rem}
+.sync-text{font-size:.72rem;color:var(--green);font-weight:600}
+.sync-sub{font-size:.65rem;color:rgba(26,122,74,.7);margin-top:.05rem}
+.sync-indicator{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(26,122,74,.2);animation:pulse-dot 2s infinite}
+
+.provider-actions{display:flex;gap:.6rem}
+.btn{display:inline-flex;align-items:center;gap:.45rem;padding:.52rem 1rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid transparent;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:#a83608;border-color:#a83608}
+.btn-outline{background:transparent;color:var(--ink2);border-color:var(--border2)}
+.btn-outline:hover{background:var(--surface2);border-color:var(--border2)}
+.btn-ghost{background:transparent;color:var(--ink3);border-color:transparent}
+.btn-ghost:hover{background:var(--surface2);color:var(--ink)}
+.btn-danger{background:var(--red-light);color:var(--red);border-color:rgba(185,28,28,.2)}
+.btn-danger:hover{background:rgba(185,28,28,.14);border-color:rgba(185,28,28,.35)}
+.btn-sm{padding:.38rem .75rem;font-size:.73rem}
+.btn-icon{padding:.52rem;aspect-ratio:1}
+
+/* ── ACCORDION / DETAILS ── */
+.integration-section{margin-bottom:2.5rem}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:.88rem;font-weight:700;color:var(--ink)}
+.card-body{padding:1.2rem 1.4rem}
+
+/* ── AUDIT LOG ── */
+.log-entry{display:flex;align-items:flex-start;gap:.9rem;padding:.7rem 0;border-bottom:1px solid var(--border)}
+.log-entry:last-child{border-bottom:none}
+.log-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;margin-top:.05rem}
+.log-icon.success{background:var(--green-light)}
+.log-icon.warning{background:var(--amber-light)}
+.log-icon.info{background:var(--blue-light)}
+.log-icon.error{background:var(--red-light)}
+.log-content{flex:1}
+.log-title{font-size:.78rem;font-weight:600;color:var(--ink)}
+.log-desc{font-size:.7rem;color:var(--ink3);margin-top:.1rem;line-height:1.4}
+.log-time{font-size:.65rem;color:var(--ink4);white-space:nowrap}
+
+/* ── FIELD MAP TABLE ── */
+.map-table{width:100%;border-collapse:collapse}
+.map-table th{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);padding:.45rem .75rem;text-align:left;border-bottom:1px solid var(--border);background:var(--surface2)}
+.map-table td{font-size:.77rem;padding:.55rem .75rem;border-bottom:1px solid var(--border);color:var(--ink2)}
+.map-table tr:last-child td{border-bottom:none}
+.map-table tr:hover td{background:var(--surface2)}
+.map-arrow{color:var(--ink4);font-size:.8rem;text-align:center}
+.mapped{color:var(--green);font-weight:600}
+.not-mapped{color:var(--ink4);font-style:italic}
+.map-tag{display:inline-block;font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:4px;background:var(--primary-light);color:var(--primary);font-family:monospace}
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,18,8,.55);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:18px;width:580px;max-width:95vw;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);transform:translateY(16px);transition:transform .25s;border:1.5px solid var(--border)}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:1.4rem 1.6rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.modal-header-left{display:flex;align-items:center;gap:1rem}
+.modal-logo{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;border:1.5px solid var(--border)}
+.modal-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:900;color:var(--ink);letter-spacing:-.02em}
+.modal-sub{font-size:.75rem;color:var(--ink3);margin-top:.2rem}
+.modal-close{width:30px;height:30px;border-radius:7px;background:var(--surface2);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--ink3);line-height:1;transition:all .15s;flex-shrink:0}
+.modal-close:hover{background:var(--border);color:var(--ink)}
+.modal-body{padding:1.4rem 1.6rem;flex:1;overflow-y:auto}
+.modal-footer{padding:1rem 1.6rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:.75rem}
+
+/* ── WIZARD STEPS ── */
+.wizard-steps{display:flex;gap:0;margin-bottom:1.6rem;background:var(--surface2);border-radius:10px;padding:.25rem;border:1px solid var(--border)}
+.wizard-step{flex:1;text-align:center;padding:.4rem .5rem;border-radius:7px;font-size:.7rem;font-weight:600;color:var(--ink3);cursor:default;transition:all .2s;line-height:1.2}
+.wizard-step.active{background:#fff;color:var(--primary);box-shadow:var(--shadow)}
+.wizard-step.done{color:var(--green)}
+.wizard-step-num{display:block;font-size:.65rem;opacity:.6;margin-bottom:.1rem}
+
+/* ── STEP PANELS ── */
+.step-panel{display:none}
+.step-panel.active{display:block}
+
+/* ── FORM FIELDS ── */
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.72rem;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem}
+.field input,.field select,.field textarea{width:100%;padding:.6rem .85rem;border:1.5px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);background:var(--surface);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}
+.field input[type="password"]{letter-spacing:.15em}
+.field-hint{font-size:.7rem;color:var(--ink3);margin-top:.35rem;line-height:1.4}
+.field-hint a{color:var(--primary);text-decoration:none}
+.field-hint a:hover{text-decoration:underline}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+
+/* ── INFO BOXES ── */
+.info-box{padding:.85rem 1rem;border-radius:10px;font-size:.78rem;line-height:1.5;margin-bottom:1rem;display:flex;gap:.75rem}
+.info-box.security{background:linear-gradient(135deg,rgba(26,122,74,.06),rgba(26,122,74,.03));border:1px solid rgba(26,122,74,.2);color:var(--green)}
+.info-box.warning{background:var(--amber-light);border:1px solid rgba(160,96,0,.2);color:var(--amber)}
+.info-box.info{background:var(--blue-light);border:1px solid rgba(26,79,160,.2);color:var(--blue)}
+.info-box-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.info-box strong{display:block;font-weight:700;margin-bottom:.2rem;font-size:.76rem}
+
+/* ── OAUTH BUTTON ── */
+.oauth-btn{width:100%;padding:1rem 1.25rem;border-radius:12px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:.75rem;transition:all .2s;position:relative;overflow:hidden}
+.oauth-btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .15s}
+.oauth-btn:hover::after{background:rgba(255,255,255,.1)}
+.oauth-btn-lightspeed{background:linear-gradient(135deg,#1a1a2e,#3d3d7a);color:#fff;box-shadow:0 4px 16px rgba(61,61,122,.3)}
+.oauth-btn-orderbird{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;box-shadow:0 4px 16px rgba(231,76,60,.3)}
+.oauth-btn-sumup{background:linear-gradient(135deg,#0070f3,#2da0ff);color:#fff;box-shadow:0 4px 16px rgba(0,112,243,.3)}
+.oauth-lock{font-size:1.2rem}
+.oauth-text{text-align:left}
+.oauth-text-main{display:block;font-size:.88rem;font-weight:700}
+.oauth-text-sub{display:block;font-size:.68rem;opacity:.75;margin-top:.1rem;font-weight:400}
+
+/* ── PERMISSIONS LIST ── */
+.perm-list{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0 1rem}
+.perm-item{display:flex;align-items:center;gap:.65rem;font-size:.78rem;color:var(--ink2)}
+.perm-check{width:18px;height:18px;border-radius:5px;background:var(--green-light);border:1.5px solid rgba(26,122,74,.3);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--green);flex-shrink:0}
+.perm-deny{width:18px;height:18px;border-radius:5px;background:var(--red-light);border:1.5px solid rgba(185,28,28,.2);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--red);flex-shrink:0}
+
+/* ── TOGGLE ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:.8rem;color:var(--ink2)}
+.toggle-sublabel{font-size:.68rem;color:var(--ink3);margin-top:.1rem}
+.toggle{position:relative;width:38px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:100px;cursor:pointer;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--green)}
+.toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
+
+/* ── PROGRESS ── */
+.progress-bar{width:100%;height:5px;background:var(--border);border-radius:100px;overflow:hidden;margin-top:.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#e8660a);border-radius:100px;transition:width .4s ease}
+
+/* ── ARCH DIAGRAM ── */
+.arch-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.6rem;margin-bottom:2rem}
+.arch-title{font-family:'Fraunces',serif;font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:1.25rem;display:flex;align-items:center;gap:.6rem}
+.arch-flow{display:flex;align-items:center;gap:0;overflow-x:auto;padding:.5rem 0}
+.arch-node{display:flex;flex-direction:column;align-items:center;gap:.5rem;flex-shrink:0}
+.arch-node-box{width:90px;padding:.65rem .5rem;text-align:center;border-radius:10px;font-size:.7rem;font-weight:600;line-height:1.3}
+.arch-node-box.pos{background:linear-gradient(135deg,#1a2a3a,#2a3a4a);color:#fff}
+.arch-node-box.tunnel{background:linear-gradient(135deg,rgba(26,122,74,.15),rgba(26,122,74,.05));border:1.5px solid rgba(26,122,74,.3);color:var(--green)}
+.arch-node-box.transform{background:var(--blue-light);border:1.5px solid rgba(26,79,160,.2);color:var(--blue)}
+.arch-node-box.storage{background:var(--primary-light);border:1.5px solid rgba(200,68,10,.2);color:var(--primary)}
+.arch-node-box.app{background:linear-gradient(135deg,var(--ink),#3a2a1a);color:#fff}
+.arch-node-label{font-size:.63rem;color:var(--ink3);font-weight:500;text-align:center;max-width:90px;line-height:1.3}
+.arch-arrow{display:flex;flex-direction:column;align-items:center;padding:0 .5rem;flex-shrink:0}
+.arch-arrow-line{width:40px;height:2px;background:linear-gradient(90deg,var(--border2),var(--ink4));position:relative}
+.arch-arrow-line::after{content:'▶';position:absolute;right:-5px;top:-6px;font-size:.6rem;color:var(--ink4)}
+.arch-arrow-label{font-size:.6rem;color:var(--ink3);margin-top:.25rem;white-space:nowrap}
+.arch-arrow-label.secure{color:var(--green)}
+
+/* ── STAT PILLS ── */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-pill{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.1rem;text-align:center}
+.stat-pill-value{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+.stat-pill-label{font-size:.7rem;color:var(--ink3);margin-top:.2rem;font-weight:500}
+
+/* ── SUCCESS ANIMATION ── */
+@keyframes check-draw{to{stroke-dashoffset:0}}
+.success-circle{width:80px;height:80px;margin:0 auto 1rem}
+.success-circle svg{width:80px;height:80px}
+.check-circle{fill:none;stroke:var(--green);stroke-width:2;stroke-dasharray:220;stroke-dashoffset:220;animation:check-draw .5s ease forwards .2s}
+.check-mark{fill:none;stroke:var(--green);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:check-draw .3s ease forwards .6s}
+.success-text{text-align:center}
+.success-text h3{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:900;color:var(--ink);margin-bottom:.5rem}
+.success-text p{font-size:.8rem;color:var(--ink3);line-height:1.5}
+
+/* ── LOADING ── */
+.spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--ink);color:#fff;padding:.8rem 1.25rem;border-radius:10px;font-size:.82rem;font-weight:600;z-index:1000;transform:translateY(80px);transition:transform .3s;box-shadow:var(--shadow-lg)}
+.toast.show{transform:translateY(0)}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .provider-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-wordmark">Gastro<em>IQ</em></div>
+    <div class="logo-sub">Intelligentes Controlling</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Analyse</div>
+      <div class="nav-item" onclick="location.href='gastroiq.html'">
+        <div class="nav-item-icon">📊</div>
+        Mein Überblick
+      </div>
+      <div class="nav-item" onclick="location.href='gastroiq.html'">
+        <div class="nav-item-icon">💰</div>
+        Einnahmen
+      </div>
+      <div class="nav-item" onclick="location.href='gastroiq.html'">
+        <div class="nav-item-icon">👥</div>
+        Personal
+      </div>
+      <div class="nav-item" onclick="location.href='gastroiq.html'">
+        <div class="nav-item-icon">📈</div>
+        Finanzen
+      </div>
+      <div class="nav-item" onclick="location.href='gastroiq.html'">
+        <div class="nav-item-icon">🔍</div>
+        Auswertung
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">System</div>
+      <div class="nav-item active">
+        <div class="nav-item-icon">🔌</div>
+        Kassensysteme
+      </div>
+      <div class="nav-item" onclick="location.href='gastroiq.html'">
+        <div class="nav-item-icon">⚙️</div>
+        Einstellungen
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="sidebar-user">
+      <div class="user-avatar">AE</div>
+      <div>
+        <div class="user-name">Alessio & Enes</div>
+        <div class="user-plan">Gold Plan · 1 Standort</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">🔌 Kassensystem-Integration</div>
+      <div class="topbar-sub">Verbinde dein POS-System sicher mit GastroIQ</div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge"><span>🔒</span> DSGVO-konform</span>
+      <span class="badge blue"><span>🇪🇺</span> EU-Server Frankfurt</span>
+      <span class="badge amber"><span>⚡</span> 1 System verbunden</span>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- SECURITY BANNER -->
+    <div class="security-banner">
+      <div class="sec-icon">🛡️</div>
+      <div class="sec-content">
+        <div class="sec-title">Deine Daten — sicher, verschlüsselt, privat.</div>
+        <div class="sec-desc">GastroIQ speichert niemals deine POS-Zugangsdaten im Klartext. API-Keys werden mit AES-256 verschlüsselt, OAuth-Tokens laufen automatisch ab. Alle Verbindungen laufen ausschließlich über TLS 1.3 auf EU-Servern in Frankfurt — DSGVO Art. 28 konform.</div>
+        <div class="sec-pillars">
+          <div class="sec-pillar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AES-256 Verschlüsselung</div>
+          <div class="sec-pillar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>TLS 1.3 Transit</div>
+          <div class="sec-pillar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Zero-Knowledge Keys</div>
+          <div class="sec-pillar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>EU-Datenspeicherung</div>
+          <div class="sec-pillar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>90-Tage Audit-Log</div>
+          <div class="sec-pillar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Auto-Token-Rotation</div>
+        </div>
+      </div>
+      <div class="sec-certs">
+        <div class="cert-badge">DSGVO Art. 28</div>
+        <div class="cert-badge">ISO 27001 ready</div>
+        <div class="cert-badge">BSI Grundschutz</div>
+        <div class="cert-badge">PCI-DSS konform</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-row">
+      <div class="stat-pill">
+        <div class="stat-pill-value" style="color:var(--green)">1</div>
+        <div class="stat-pill-label">Verbunden</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-pill-value">4</div>
+        <div class="stat-pill-label">Verfügbar</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-pill-value" style="color:var(--primary)">12.847</div>
+        <div class="stat-pill-label">Importierte Datensätze</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-pill-value" style="color:var(--green)">100%</div>
+        <div class="stat-pill-label">Verfügbarkeit (30T)</div>
+      </div>
+    </div>
+
+    <!-- PROVIDER GRID -->
+    <div class="section-title">Kassensystem wählen</div>
+    <div class="section-sub">Wähle dein Kassensystem, um automatischen Datenaustausch einzurichten. Alle Verbindungen sind verschlüsselt und DSGVO-konform.</div>
+
+    <div class="provider-grid">
+
+      <!-- LIGHTSPEED -->
+      <div class="provider-card connected" onclick="openModal('ls')">
+        <div class="provider-header">
+          <div class="provider-logo" style="background:linear-gradient(135deg,#1a1a2e,#2a2a5e);color:#a5b4fc;font-size:.8rem;border-color:#3a3a6e">LS</div>
+          <div class="provider-meta">
+            <div class="provider-name">Lightspeed Restaurant</div>
+            <div class="provider-type">Cloud-POS · Marktführer DACH</div>
+          </div>
+          <span class="provider-status-pill status-connected"><span class="status-dot"></span>Verbunden</span>
+        </div>
+        <div class="sync-info">
+          <div>
+            <div class="sync-text">✓ Letzter Sync: Heute 06:30 Uhr</div>
+            <div class="sync-sub">247 Transaktionen · 3 Tische · 18 Artikel</div>
+          </div>
+          <div class="sync-indicator"></div>
+        </div>
+        <div class="provider-desc">Europas führendes Restaurant-Management-System mit Echtzeit-Umsatz, Produktmix, Tischbelegung und Gästeanzahl.</div>
+        <div class="provider-tags">
+          <span class="data-tag">💶 Umsatz</span>
+          <span class="data-tag">🍽️ Produktmix</span>
+          <span class="data-tag">👤 Gästeanzahl</span>
+          <span class="data-tag">🪑 Tische</span>
+          <span class="data-tag">⏰ Stundenumsatz</span>
+          <span class="data-tag">💳 Zahlungsarten</span>
+        </div>
+        <div class="provider-auth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="auth-label">OAuth 2.0 + PKCE</span>
+          <span style="color:var(--ink4)">·</span>
+          <span>Kein Passwort gespeichert · Token läuft ab: 29.03.2026</span>
+        </div>
+        <div class="provider-actions">
+          <button class="btn btn-outline btn-sm">⚙️ Einstellungen</button>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();triggerSync('Lightspeed')">↻ Jetzt synchronisieren</button>
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();disconnectPrompt('Lightspeed')">Trennen</button>
+        </div>
+      </div>
+
+      <!-- ORDERBIRD -->
+      <div class="provider-card available" onclick="openModal('ob')">
+        <div class="provider-header">
+          <div class="provider-logo" style="background:linear-gradient(135deg,#fef2f2,#fce7e7);color:#c0392b;font-size:.8rem;border-color:#fca5a5">OB</div>
+          <div class="provider-meta">
+            <div class="provider-name">Orderbird POS</div>
+            <div class="provider-type">iPad-POS · Made in Germany</div>
+          </div>
+          <span class="provider-status-pill status-available">Verfügbar</span>
+        </div>
+        <div class="provider-desc">Das iPad-Kassensystem aus Berlin – besonders beliebt in der Berliner und Hamburger Gastronomie. Schnelle Anbindung via OAuth.</div>
+        <div class="provider-tags">
+          <span class="data-tag">💶 Umsatz</span>
+          <span class="data-tag">🍽️ Produktrankings</span>
+          <span class="data-tag">👤 Gästeanzahl</span>
+          <span class="data-tag">🪑 Tischbelegung</span>
+          <span class="data-tag">💳 Zahlungsarten</span>
+        </div>
+        <div class="provider-auth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="auth-label">OAuth 2.0</span>
+          <span style="color:var(--ink4)">·</span>
+          <span>Login bei Orderbird · Kein Key nötig</span>
+        </div>
+        <div class="provider-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openWizard('ob')">🔌 Jetzt verbinden</button>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDocs('Orderbird')">Dokumentation</button>
+        </div>
+      </div>
+
+      <!-- VECTRON -->
+      <div class="provider-card available" onclick="openModal('vt')">
+        <div class="provider-header">
+          <div class="provider-logo" style="background:linear-gradient(135deg,#1a3a2a,#2a5a3a);color:#86efac;font-size:.75rem;border-color:#2a5a3a">VEC</div>
+          <div class="provider-meta">
+            <div class="provider-name">Vectron Systems</div>
+            <div class="provider-type">Stationäres POS · Marktführer DE</div>
+          </div>
+          <span class="provider-status-pill status-available">Verfügbar</span>
+        </div>
+        <div class="provider-desc">Deutschlands bekanntester Kassensystemhersteller – über 240.000 installierte Systeme. Anbindung über API-Key und SFTP-Export.</div>
+        <div class="provider-tags">
+          <span class="data-tag">💶 Tagesumsatz</span>
+          <span class="data-tag">🧾 Bon-Daten</span>
+          <span class="data-tag">📦 Artikelumsatz</span>
+          <span class="data-tag">💳 Zahlungsarten</span>
+          <span class="data-tag">🧑‍🍳 Kellner-Stats</span>
+        </div>
+        <div class="provider-auth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span class="auth-label">API-Key + SFTP</span>
+          <span style="color:var(--ink4)">·</span>
+          <span>Verschlüsselter Schlüssel · EU-Server</span>
+        </div>
+        <div class="provider-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openWizard('vt')">🔌 Jetzt verbinden</button>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDocs('Vectron')">Dokumentation</button>
+        </div>
+      </div>
+
+      <!-- SUMUP -->
+      <div class="provider-card available" onclick="openModal('su')">
+        <div class="provider-header">
+          <div class="provider-logo" style="background:linear-gradient(135deg,#ebf5fb,#d6eaf8);color:#0070f3;font-size:.75rem;border-color:#a9cce3">SUM</div>
+          <div class="provider-meta">
+            <div class="provider-name">SumUp POS Pro</div>
+            <div class="provider-type">Mobile POS · Wachstumsstark in DE</div>
+          </div>
+          <span class="provider-status-pill status-available">Verfügbar</span>
+        </div>
+        <div class="provider-desc">Besonders beliebt bei Cafés, Bars und kleinen Restaurants. Einfache Anbindung über das SumUp Merchant-Portal per OAuth.</div>
+        <div class="provider-tags">
+          <span class="data-tag">💶 Umsatz</span>
+          <span class="data-tag">💳 Transaktionen</span>
+          <span class="data-tag">📊 Kategorien</span>
+          <span class="data-tag">⏰ Stunden-Report</span>
+        </div>
+        <div class="provider-auth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="auth-label">OAuth 2.0</span>
+          <span style="color:var(--ink4)">·</span>
+          <span>Login bei SumUp Merchant Portal</span>
+        </div>
+        <div class="provider-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openWizard('su')">🔌 Jetzt verbinden</button>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDocs('SumUp')">Dokumentation</button>
+        </div>
+      </div>
+
+      <!-- TILLHUB -->
+      <div class="provider-card available" onclick="openModal('th')">
+        <div class="provider-header">
+          <div class="provider-logo" style="background:linear-gradient(135deg,#fdf6ee,#fde8cc);color:#b45309;font-size:.72rem;border-color:#fcd49a">TH</div>
+          <div class="provider-meta">
+            <div class="provider-name">Tillhub</div>
+            <div class="provider-type">Cloud-POS · Made in Germany</div>
+          </div>
+          <span class="provider-status-pill status-available">Verfügbar</span>
+        </div>
+        <div class="provider-desc">Berliner Cloud-Kassensystem mit starkem Fokus auf Retail und Gastronomie – DSGVO-nativ und mit offener REST-API.</div>
+        <div class="provider-tags">
+          <span class="data-tag">💶 Umsatz</span>
+          <span class="data-tag">🍽️ Produkte</span>
+          <span class="data-tag">👤 Mitarbeiter</span>
+          <span class="data-tag">📦 Lager</span>
+          <span class="data-tag">🧾 Belege</span>
+        </div>
+        <div class="provider-auth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span class="auth-label">API-Key (REST)</span>
+          <span style="color:var(--ink4)">·</span>
+          <span>AES-256 verschlüsselt · Keine Weitergabe</span>
+        </div>
+        <div class="provider-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openWizard('th')">🔌 Jetzt verbinden</button>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDocs('Tillhub')">Dokumentation</button>
+        </div>
+      </div>
+
+      <!-- CSV IMPORT -->
+      <div class="provider-card" onclick="location.href='gastroiq.html#csv'" style="border-style:dashed;cursor:pointer">
+        <div class="provider-header">
+          <div class="provider-logo" style="background:var(--surface2);color:var(--ink3);font-size:.75rem">CSV</div>
+          <div class="provider-meta">
+            <div class="provider-name">Manueller CSV-Import</div>
+            <div class="provider-type">Für alle anderen Systeme</div>
+          </div>
+          <span class="provider-status-pill status-available">Verfügbar</span>
+        </div>
+        <div class="provider-desc">Kein Kassensystem oben dabei? Exportiere deine Umsatzdaten als CSV und importiere sie in GastroIQ. Intelligente Spaltenerkennung für alle Formate.</div>
+        <div class="provider-tags">
+          <span class="data-tag">📂 Beliebiges Format</span>
+          <span class="data-tag">🔍 Auto-Mapping</span>
+          <span class="data-tag">🔄 Wiederholbar</span>
+        </div>
+        <div class="provider-auth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="auth-label">Datei-Upload</span>
+          <span style="color:var(--ink4)">·</span>
+          <span>Keine API nötig</span>
+        </div>
+        <div class="provider-actions">
+          <button class="btn btn-outline btn-sm">📂 CSV importieren</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DATA ARCHITECTURE -->
+    <div class="arch-box">
+      <div class="arch-title">
+        🏗️ Wie deine Daten fließen — transparent & sicher
+      </div>
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="arch-node-box pos">🖥️<br>POS-System<br>(z.B. Lightspeed)</div>
+          <div class="arch-node-label">Dein Kassensystem<br>vor Ort</div>
+        </div>
+        <div class="arch-arrow">
+          <div class="arch-arrow-line"></div>
+          <div class="arch-arrow-label secure">TLS 1.3 🔒</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-box tunnel">🔐<br>OAuth<br>Token-Server</div>
+          <div class="arch-node-label">Kein Passwort<br>gespeichert</div>
+        </div>
+        <div class="arch-arrow">
+          <div class="arch-arrow-line"></div>
+          <div class="arch-arrow-label secure">Signiert 🔏</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-box transform">⚙️<br>GastroIQ<br>Transformer</div>
+          <div class="arch-node-label">Normalisierung<br>& Validierung</div>
+        </div>
+        <div class="arch-arrow">
+          <div class="arch-arrow-line"></div>
+          <div class="arch-arrow-label secure">AES-256 🔐</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-box storage">🇩🇪<br>EU-Datenbank<br>Frankfurt</div>
+          <div class="arch-node-label">Nur deine Daten<br>DSGVO Art. 28</div>
+        </div>
+        <div class="arch-arrow">
+          <div class="arch-arrow-line"></div>
+          <div class="arch-arrow-label">Dashboard</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-box app">📊<br>GastroIQ<br>Dashboard</div>
+          <div class="arch-node-label">Nur für dich<br>sichtbar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TWO COL: FIELD MAPPING + AUDIT LOG -->
+    <div class="two-col">
+
+      <!-- FIELD MAPPING -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🗺️ Datenfeldmapping — Lightspeed</div>
+          <button class="btn btn-ghost btn-sm">Bearbeiten</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="map-table">
+            <thead>
+              <tr>
+                <th>POS-Feld</th>
+                <th class="map-arrow"></th>
+                <th>GastroIQ-Feld</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="map-tag">net_sales</span></td>
+                <td class="map-arrow">→</td>
+                <td>Tagesumsatz (netto)</td>
+                <td class="mapped">✓ aktiv</td>
+              </tr>
+              <tr>
+                <td><span class="map-tag">covers</span></td>
+                <td class="map-arrow">→</td>
+                <td>Gästeanzahl</td>
+                <td class="mapped">✓ aktiv</td>
+              </tr>
+              <tr>
+                <td><span class="map-tag">items_sold</span></td>
+                <td class="map-arrow">→</td>
+                <td>Produktmix</td>
+                <td class="mapped">✓ aktiv</td>
+              </tr>
+              <tr>
+                <td><span class="map-tag">payment_type</span></td>
+                <td class="map-arrow">→</td>
+                <td>Zahlungsart-Split</td>
+                <td class="mapped">✓ aktiv</td>
+              </tr>
+              <tr>
+                <td><span class="map-tag">hourly_sales</span></td>
+                <td class="map-arrow">→</td>
+                <td>Stundenumsatz</td>
+                <td class="mapped">✓ aktiv</td>
+              </tr>
+              <tr>
+                <td><span class="map-tag">table_turns</span></td>
+                <td class="map-arrow">→</td>
+                <td>Tischumschlag</td>
+                <td class="mapped">✓ aktiv</td>
+              </tr>
+              <tr>
+                <td><span class="map-tag">staff_id</span></td>
+                <td class="map-arrow">→</td>
+                <td>Kellner-Umsatz</td>
+                <td class="mapped">✓ aktiv</td>
+              </tr>
+              <tr>
+                <td><span class="map-tag">cogs</span></td>
+                <td class="map-arrow">→</td>
+                <td>Wareneinsatz</td>
+                <td class="not-mapped">⚠ nicht verfügbar</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AUDIT LOG -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Sicherheits-Audit-Log</div>
+          <button class="btn btn-ghost btn-sm">Alle anzeigen</button>
+        </div>
+        <div class="card-body" style="padding-top:.4rem;padding-bottom:.4rem">
+
+          <div class="log-entry">
+            <div class="log-icon success">✅</div>
+            <div class="log-content">
+              <div class="log-title">Sync erfolgreich — Lightspeed</div>
+              <div class="log-desc">247 Datensätze importiert · 0 Fehler · 3 Duplikate übersprungen</div>
+            </div>
+            <div class="log-time">Heute 06:30</div>
+          </div>
+
+          <div class="log-entry">
+            <div class="log-icon info">🔄</div>
+            <div class="log-content">
+              <div class="log-title">OAuth-Token automatisch erneuert</div>
+              <div class="log-desc">Lightspeed Access-Token rotiert · Läuft ab: 29.03.2026</div>
+            </div>
+            <div class="log-time">09.03. 00:00</div>
+          </div>
+
+          <div class="log-entry">
+            <div class="log-icon success">✅</div>
+            <div class="log-content">
+              <div class="log-title">Sync erfolgreich — Lightspeed</div>
+              <div class="log-desc">231 Datensätze · Komplettiert in 1.2s</div>
+            </div>
+            <div class="log-time">08.03. 06:30</div>
+          </div>
+
+          <div class="log-entry">
+            <div class="log-icon warning">⚠️</div>
+            <div class="log-content">
+              <div class="log-title">Verbindungsversuch fehlgeschlagen</div>
+              <div class="log-desc">Orderbird OAuth — Nutzer hat Verbindung abgebrochen</div>
+            </div>
+            <div class="log-time">07.03. 14:22</div>
+          </div>
+
+          <div class="log-entry">
+            <div class="log-icon success">🔌</div>
+            <div class="log-content">
+              <div class="log-title">Neue Verbindung hergestellt — Lightspeed</div>
+              <div class="log-desc">OAuth 2.0 PKCE · Berechtigungen: read:sales, read:items</div>
+            </div>
+            <div class="log-time">01.03. 11:05</div>
+          </div>
+
+          <div class="log-entry">
+            <div class="log-icon info">👤</div>
+            <div class="log-content">
+              <div class="log-title">Login durch Nutzer AE</div>
+              <div class="log-desc">Einstellungen aufgerufen · IP 185.x.x.x (DE)</div>
+            </div>
+            <div class="log-time">01.03. 10:58</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SYNC SETTINGS -->
+    <div class="card" style="margin-bottom:2rem">
+      <div class="card-header">
+        <div class="card-title">⚙️ Synchronisationseinstellungen — Lightspeed</div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+          <div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Täglicher automatischer Sync</div>
+                <div class="toggle-sublabel">Täglich um 06:30 Uhr (DE-Zeit)</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="toggleChange(this,'Täglicher Sync')"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Umsatz-Daten importieren</div>
+                <div class="toggle-sublabel">Tagesumsatz, Stundenumsatz</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="toggleChange(this,'Umsatz')"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Produktmix importieren</div>
+                <div class="toggle-sublabel">Meistverkaufte Gerichte, Artikelrang</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="toggleChange(this,'Produktmix')"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Gästeanzahl importieren</div>
+                <div class="toggle-sublabel">Tagesgäste und Tischbelegung</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="toggleChange(this,'Gästeanzahl')"><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+          <div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Zahlungsart-Split</div>
+                <div class="toggle-sublabel">Bar/Karte/Kontaktlos</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="toggleChange(this,'Zahlungsarten')"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Mitarbeiter-Stats</div>
+                <div class="toggle-sublabel">Kellner-Umsatz, Schichtdaten</div>
+              </div>
+              <label class="toggle"><input type="checkbox" onchange="toggleChange(this,'Mitarbeiter-Stats')"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Webhook-Empfang (Echtzeit)</div>
+                <div class="toggle-sublabel">Sofort-Updates bei Tagesabschluss</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="toggleChange(this,'Webhook')"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Fehler-Benachrichtigungen</div>
+                <div class="toggle-sublabel">E-Mail bei Sync-Fehler</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="toggleChange(this,'Fehler-Mail')"><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+</main>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL: LIGHTSPEED CONNECTED DETAIL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-ls">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-logo" style="background:linear-gradient(135deg,#1a1a2e,#2a2a5e);color:#a5b4fc">LS</div>
+        <div>
+          <div class="modal-title">Lightspeed Restaurant</div>
+          <div class="modal-sub">✓ Verbunden · OAuth 2.0 · Token aktiv bis 29.03.2026</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-ls')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-box security">
+        <div class="info-box-icon">🔐</div>
+        <div><strong>Verbindung ist sicher</strong>Kein Passwort gespeichert. Zugriff nur mit deiner expliziten Genehmigung über OAuth 2.0 PKCE. Widerrufbar jederzeit in deinem Lightspeed-Account.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem">
+        <div class="stat-pill"><div class="stat-pill-value" style="color:var(--green)">12.847</div><div class="stat-pill-label">Importierte Datensätze</div></div>
+        <div class="stat-pill"><div class="stat-pill-value" style="color:var(--primary)">100%</div><div class="stat-pill-label">Sync-Erfolgsrate</div></div>
+      </div>
+      <div class="field">
+        <label>Sync-Intervall</label>
+        <select>
+          <option selected>Täglich um 06:30 Uhr</option>
+          <option>Täglich um 02:00 Uhr</option>
+          <option>Alle 6 Stunden</option>
+          <option>Nur manuell</option>
+        </select>
+        <div class="field-hint">GastroIQ holt täglich automatisch den Vortages-Abschluss aus Lightspeed ab.</div>
+      </div>
+      <div class="field">
+        <label>Location / Filiale</label>
+        <select>
+          <option>📍 Hauptrestaurant (loc_928471)</option>
+          <option>📍 + Filiale hinzufügen</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="disconnectPrompt('Lightspeed');closeModal('modal-ls')">Verbindung trennen</button>
+      <div style="display:flex;gap:.6rem">
+        <button class="btn btn-outline" onclick="closeModal('modal-ls')">Schließen</button>
+        <button class="btn btn-primary" onclick="triggerSync('Lightspeed');closeModal('modal-ls')">↻ Jetzt synchronisieren</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- WIZARD MODAL: ORDERBIRD OAuth -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="wizard-ob">
+  <div class="modal" style="width:600px">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-logo" style="background:linear-gradient(135deg,#fef2f2,#fce7e7);color:#c0392b;border-color:#fca5a5">OB</div>
+        <div>
+          <div class="modal-title">Orderbird verbinden</div>
+          <div class="modal-sub" id="ob-step-label">Schritt 1 von 4 – Berechtigungen prüfen</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeWizard('ob')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="ob-wstep-1"><span class="wizard-step-num">01</span>Prüfen</div>
+        <div class="wizard-step" id="ob-wstep-2"><span class="wizard-step-num">02</span>Login</div>
+        <div class="wizard-step" id="ob-wstep-3"><span class="wizard-step-num">03</span>Einrichten</div>
+        <div class="wizard-step" id="ob-wstep-4"><span class="wizard-step-num">04</span>Fertig</div>
+      </div>
+
+      <!-- STEP 1: Permissions -->
+      <div class="step-panel active" id="ob-panel-1">
+        <div class="info-box security" style="margin-bottom:1.25rem">
+          <div class="info-box-icon">🔒</div>
+          <div><strong>Was GastroIQ darf — und was nicht</strong>Wir fordern nur lesenden Zugriff an. Niemals Schreibzugriff auf dein Kassensystem.</div>
+        </div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--ink2);margin-bottom:.5rem">GastroIQ erhält Zugriff auf:</div>
+        <div class="perm-list">
+          <div class="perm-item"><div class="perm-check">✓</div> Tagesumsatz & Stundenumsatz (read-only)</div>
+          <div class="perm-item"><div class="perm-check">✓</div> Produktverkäufe & Artikelgruppen (read-only)</div>
+          <div class="perm-item"><div class="perm-check">✓</div> Gästeanzahl & Tischbelegung (read-only)</div>
+          <div class="perm-item"><div class="perm-check">✓</div> Zahlungsarten-Aufteilung (read-only)</div>
+        </div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--ink2);margin-bottom:.5rem">GastroIQ kann NICHT:</div>
+        <div class="perm-list">
+          <div class="perm-item"><div class="perm-deny">✗</div> Bestellungen aufgeben oder ändern</div>
+          <div class="perm-item"><div class="perm-deny">✗</div> Produkte oder Preise bearbeiten</div>
+          <div class="perm-item"><div class="perm-deny">✗</div> Zahlungen auslösen oder stornieren</div>
+          <div class="perm-item"><div class="perm-deny">✗</div> Deine Daten an Dritte weitergeben</div>
+        </div>
+        <div class="info-box info" style="margin-top:1rem">
+          <div class="info-box-icon">ℹ️</div>
+          <div>Du kannst die Verbindung jederzeit in deinem Orderbird-Konto unter <strong>Einstellungen → API-Zugriff</strong> widerrufen.</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: OAuth Login -->
+      <div class="step-panel" id="ob-panel-2">
+        <div class="info-box security" style="margin-bottom:1.25rem">
+          <div class="info-box-icon">🔐</div>
+          <div><strong>Sicherer Login bei Orderbird</strong>Du wirst zu Orderbird weitergeleitet. GastroIQ sieht niemals dein Passwort. Der Prozess verwendet OAuth 2.0 mit PKCE-Sicherheitsschlüssel.</div>
+        </div>
+        <button class="oauth-btn oauth-btn-orderbird" onclick="simulateOAuth('ob')">
+          <span class="oauth-lock">🔐</span>
+          <span class="oauth-text">
+            <span class="oauth-text-main">Mit Orderbird-Konto anmelden</span>
+            <span class="oauth-text-sub">Du wirst zu orderbird.com weitergeleitet</span>
+          </span>
+          <span style="margin-left:auto;font-size:.8rem;opacity:.7">→</span>
+        </button>
+        <div style="margin-top:1rem;font-size:.72rem;color:var(--ink3);text-align:center;line-height:1.5">
+          Durch die Verbindung stimmst du unseren <a href="#" style="color:var(--primary)">Nutzungsbedingungen</a> und der <a href="#" style="color:var(--primary)">Datenschutzerklärung</a> zu.<br>
+          Deine Orderbird-Zugangsdaten werden niemals von GastroIQ gespeichert.
+        </div>
+        <div id="ob-oauth-loading" style="display:none;text-align:center;margin-top:1.5rem">
+          <div style="font-size:2rem;margin-bottom:.75rem">🔄</div>
+          <div class="progress-bar"><div class="progress-fill" id="ob-progress" style="width:0%"></div></div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-top:.6rem" id="ob-progress-text">Warte auf Orderbird-Login…</div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Configure -->
+      <div class="step-panel" id="ob-panel-3">
+        <div class="field">
+          <label>Standort / Location</label>
+          <select>
+            <option>📍 Hauptrestaurant – Berlin Mitte (loc_ob_9281)</option>
+            <option>📍 Filiale 2 – Prenzlauer Berg (loc_ob_9282)</option>
+          </select>
+          <div class="field-hint">Welcher Orderbird-Standort soll mit GastroIQ verbunden werden?</div>
+        </div>
+        <div class="field">
+          <label>Automatischer Sync</label>
+          <select>
+            <option>Täglich um 06:30 Uhr (empfohlen)</option>
+            <option>Täglich um 02:00 Uhr</option>
+            <option>Nur manuell</option>
+          </select>
+        </div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--ink2);margin-bottom:.75rem;margin-top:.25rem">Daten importieren:</div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Tagesumsatz</div></div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Produktrankings & Artikelmix</div></div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Gästeanzahl & Tischbelegung</div></div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Zahlungsarten-Split</div></div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- STEP 4: Success -->
+      <div class="step-panel" id="ob-panel-4">
+        <div class="success-circle">
+          <svg viewBox="0 0 80 80">
+            <circle class="check-circle" cx="40" cy="40" r="35"/>
+            <polyline class="check-mark" points="25,42 35,52 56,30"/>
+          </svg>
+        </div>
+        <div class="success-text">
+          <h3>Orderbird verbunden! 🎉</h3>
+          <p>Die Verbindung ist hergestellt. GastroIQ importiert ab morgen früh automatisch deine Kassendaten. Der erste Sync startet um 06:30 Uhr.</p>
+        </div>
+        <div class="info-box security" style="margin-top:1.25rem">
+          <div class="info-box-icon">🔐</div>
+          <div><strong>Gesichert & DSGVO-konform</strong>Dein OAuth-Token ist AES-256 verschlüsselt und läuft in 30 Tagen automatisch ab. Er wird dann ohne dein Zutun erneuert.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="ob-btn-back" onclick="wizardBack('ob')" style="display:none">← Zurück</button>
+      <div style="display:flex;gap:.6rem;margin-left:auto">
+        <button class="btn btn-outline" onclick="closeWizard('ob')">Abbrechen</button>
+        <button class="btn btn-primary" id="ob-btn-next" onclick="wizardNext('ob')">Weiter →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- WIZARD MODAL: VECTRON API Key -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="wizard-vt">
+  <div class="modal" style="width:600px">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-logo" style="background:linear-gradient(135deg,#1a3a2a,#2a5a3a);color:#86efac;border-color:#2a5a3a">VEC</div>
+        <div>
+          <div class="modal-title">Vectron verbinden</div>
+          <div class="modal-sub" id="vt-step-label">Schritt 1 von 4 – Voraussetzungen</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeWizard('vt')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="vt-wstep-1"><span class="wizard-step-num">01</span>Vorbereiten</div>
+        <div class="wizard-step" id="vt-wstep-2"><span class="wizard-step-num">02</span>API-Key</div>
+        <div class="wizard-step" id="vt-wstep-3"><span class="wizard-step-num">03</span>Testen</div>
+        <div class="wizard-step" id="vt-wstep-4"><span class="wizard-step-num">04</span>Fertig</div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="step-panel active" id="vt-panel-1">
+        <div class="info-box info" style="margin-bottom:1.25rem">
+          <div class="info-box-icon">📋</div>
+          <div><strong>Vectron POS Commander API aktivieren</strong>Um Vectron mit GastroIQ zu verbinden, musst du in deinem Vectron POS Commander die API-Schnittstelle aktivieren. Das dauert ca. 5 Minuten.</div>
+        </div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--ink2);margin-bottom:.75rem">Schritt-für-Schritt in Vectron:</div>
+        <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.8rem;color:var(--ink2)">
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">1</div>
+            <div>Öffne <strong>Vectron POS Commander</strong> auf deinem Windows-PC am Kassensystem</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">2</div>
+            <div>Gehe zu <strong>Stammdaten → Schnittstellen → bonVito API</strong></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">3</div>
+            <div>Aktiviere <strong>„Externe API aktivieren"</strong> und vergib einen API-Beschreibungstext</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">4</div>
+            <div>Klicke auf <strong>„API-Key generieren"</strong> und kopiere den angezeigten Schlüssel</div>
+          </div>
+        </div>
+        <div class="info-box warning" style="margin-top:1.25rem">
+          <div class="info-box-icon">⚠️</div>
+          <div><strong>Wichtig:</strong> Du brauchst Administratorzugang zu deinem Vectron-System. Bei älteren Versionen (vor 6.x) ist ggf. ein Update nötig. Ruf uns an: <strong>+49 30 XXXXXXX</strong></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: API Key -->
+      <div class="step-panel" id="vt-panel-2">
+        <div class="info-box security" style="margin-bottom:1.25rem">
+          <div class="info-box-icon">🔐</div>
+          <div><strong>Dein API-Key wird sicher gespeichert</strong>Er wird mit AES-256 verschlüsselt und niemals im Klartext gespeichert. Nur GastroIQ kann ihn zur Datenabfrage verwenden — kein Mensch kann ihn lesen.</div>
+        </div>
+        <div class="field">
+          <label>Vectron API-Key</label>
+          <input type="password" id="vt-api-key" placeholder="vec_live_xxxxxxxxxxxxxxxxxxxx" />
+          <div class="field-hint">Füge den API-Key aus deinem Vectron POS Commander ein. Er wird sofort verschlüsselt.</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Server-IP / Hostname</label>
+            <input type="text" id="vt-host" placeholder="192.168.1.10 oder mein-kasse.de" />
+            <div class="field-hint">IP-Adresse des Vectron-Servers</div>
+          </div>
+          <div class="field">
+            <label>Port (Standard: 9090)</label>
+            <input type="text" id="vt-port" placeholder="9090" value="9090" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Standortname (intern)</label>
+          <input type="text" id="vt-name" placeholder="z. B. Hauptrestaurant" />
+        </div>
+      </div>
+
+      <!-- STEP 3: Test -->
+      <div class="step-panel" id="vt-panel-3">
+        <div style="text-align:center;padding:1.5rem 0">
+          <div id="vt-test-loading" style="display:block">
+            <div style="font-size:2.5rem;margin-bottom:1rem">🔌</div>
+            <div style="font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:.5rem">Verbindung wird getestet…</div>
+            <div style="font-size:.78rem;color:var(--ink3);margin-bottom:1rem">GastroIQ stellt eine verschlüsselte Verbindung zu deinem Vectron-Server her</div>
+            <div class="progress-bar" style="max-width:300px;margin:0 auto">
+              <div class="progress-fill" id="vt-progress" style="width:0%"></div>
+            </div>
+            <div style="font-size:.72rem;color:var(--ink3);margin-top:.6rem" id="vt-progress-text">TLS-Handshake…</div>
+          </div>
+          <div id="vt-test-success" style="display:none">
+            <div style="font-size:3rem;margin-bottom:.75rem">✅</div>
+            <div style="font-weight:700;font-size:.95rem;color:var(--green);margin-bottom:.5rem">Verbindung erfolgreich!</div>
+            <div style="font-size:.78rem;color:var(--ink3)">Vectron antwortet korrekt · API-Key gültig · Berechtigungen vorhanden</div>
+            <div style="margin-top:1rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem">
+              <div style="background:var(--green-light);border:1px solid rgba(26,122,74,.2);border-radius:8px;padding:.6rem;font-size:.72rem;color:var(--green);font-weight:600">✓ TLS 1.3</div>
+              <div style="background:var(--green-light);border:1px solid rgba(26,122,74,.2);border-radius:8px;padding:.6rem;font-size:.72rem;color:var(--green);font-weight:600">✓ Key gültig</div>
+              <div style="background:var(--green-light);border:1px solid rgba(26,122,74,.2);border-radius:8px;padding:.6rem;font-size:.72rem;color:var(--green);font-weight:600">✓ Daten lesbar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Done -->
+      <div class="step-panel" id="vt-panel-4">
+        <div class="success-circle">
+          <svg viewBox="0 0 80 80">
+            <circle class="check-circle" cx="40" cy="40" r="35"/>
+            <polyline class="check-mark" points="25,42 35,52 56,30"/>
+          </svg>
+        </div>
+        <div class="success-text">
+          <h3>Vectron verbunden! 🎉</h3>
+          <p>Die verschlüsselte Verbindung ist aktiv. GastroIQ synchronisiert täglich deine Kassendaten von Vectron. Historische Daten der letzten 90 Tage werden einmalig importiert.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="vt-btn-back" onclick="wizardBack('vt')" style="display:none">← Zurück</button>
+      <div style="display:flex;gap:.6rem;margin-left:auto">
+        <button class="btn btn-outline" onclick="closeWizard('vt')">Abbrechen</button>
+        <button class="btn btn-primary" id="vt-btn-next" onclick="wizardNext('vt')">Weiter →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- WIZARD: SUMUP (simplified) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="wizard-su">
+  <div class="modal" style="width:560px">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-logo" style="background:linear-gradient(135deg,#ebf5fb,#d6eaf8);color:#0070f3;border-color:#a9cce3">SUM</div>
+        <div>
+          <div class="modal-title">SumUp POS Pro verbinden</div>
+          <div class="modal-sub">OAuth 2.0 – Sicherer Login über SumUp Merchant Portal</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeWizard('su')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="su-wstep-1"><span class="wizard-step-num">01</span>Prüfen</div>
+        <div class="wizard-step" id="su-wstep-2"><span class="wizard-step-num">02</span>Login</div>
+        <div class="wizard-step" id="su-wstep-3"><span class="wizard-step-num">03</span>Fertig</div>
+      </div>
+      <div class="step-panel active" id="su-panel-1">
+        <div class="info-box security"><div class="info-box-icon">🔒</div><div><strong>Read-only Zugriff</strong>GastroIQ fordert nur Lesezugriff auf deine SumUp-Umsatzdaten an. Keine Schreibrechte, keine Zahlungsauslösung.</div></div>
+        <div class="perm-list">
+          <div class="perm-item"><div class="perm-check">✓</div> Tagesumsatz & Transaktionsliste (read-only)</div>
+          <div class="perm-item"><div class="perm-check">✓</div> Produktkategorien (read-only)</div>
+          <div class="perm-item"><div class="perm-check">✓</div> Stundenumsatz-Report (read-only)</div>
+          <div class="perm-item"><div class="perm-deny">✗</div> Keine Zahlungsauslösung</div>
+          <div class="perm-item"><div class="perm-deny">✗</div> Kein Zugriff auf Bankdaten</div>
+        </div>
+      </div>
+      <div class="step-panel" id="su-panel-2">
+        <div class="info-box security" style="margin-bottom:1.25rem"><div class="info-box-icon">🔐</div><div><strong>SumUp Merchant Login</strong>Du wirst zu developer.sumup.com weitergeleitet. GastroIQ sieht dein Passwort nie.</div></div>
+        <button class="oauth-btn oauth-btn-sumup" onclick="simulateOAuth('su')">
+          <span class="oauth-lock">🔐</span>
+          <span class="oauth-text"><span class="oauth-text-main">Mit SumUp-Konto anmelden</span><span class="oauth-text-sub">Weiterleitung zu developer.sumup.com</span></span>
+          <span style="margin-left:auto;font-size:.8rem;opacity:.7">→</span>
+        </button>
+        <div id="su-oauth-loading" style="display:none;text-align:center;margin-top:1.5rem">
+          <div class="progress-bar"><div class="progress-fill" id="su-progress" style="width:0%"></div></div>
+          <div style="font-size:.75rem;color:var(--ink3);margin-top:.6rem" id="su-progress-text">Warte auf SumUp-Login…</div>
+        </div>
+      </div>
+      <div class="step-panel" id="su-panel-3">
+        <div class="success-circle"><svg viewBox="0 0 80 80"><circle class="check-circle" cx="40" cy="40" r="35"/><polyline class="check-mark" points="25,42 35,52 56,30"/></svg></div>
+        <div class="success-text"><h3>SumUp verbunden! 🎉</h3><p>Verbindung aktiv. Der erste Datenabruf startet morgen früh automatisch.</p></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="su-btn-back" onclick="wizardBack('su')" style="display:none">← Zurück</button>
+      <div style="display:flex;gap:.6rem;margin-left:auto">
+        <button class="btn btn-outline" onclick="closeWizard('su')">Abbrechen</button>
+        <button class="btn btn-primary" id="su-btn-next" onclick="wizardNext('su')">Weiter →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- WIZARD: TILLHUB API Key -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="wizard-th">
+  <div class="modal" style="width:580px">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-logo" style="background:linear-gradient(135deg,#fdf6ee,#fde8cc);color:#b45309;border-color:#fcd49a">TH</div>
+        <div>
+          <div class="modal-title">Tillhub verbinden</div>
+          <div class="modal-sub">API-Key Authentifizierung – AES-256 verschlüsselt</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeWizard('th')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="th-wstep-1"><span class="wizard-step-num">01</span>Anleitung</div>
+        <div class="wizard-step" id="th-wstep-2"><span class="wizard-step-num">02</span>API-Key</div>
+        <div class="wizard-step" id="th-wstep-3"><span class="wizard-step-num">03</span>Testen</div>
+        <div class="wizard-step" id="th-wstep-4"><span class="wizard-step-num">04</span>Fertig</div>
+      </div>
+      <div class="step-panel active" id="th-panel-1">
+        <div class="info-box info"><div class="info-box-icon">📋</div><div><strong>API-Key aus Tillhub Manager holen</strong>In deinem Tillhub-Dashboard unter <strong>Einstellungen → API → Neuen Key erstellen</strong>. Wähle „Read-only" als Berechtigung.</div></div>
+        <div style="font-size:.8rem;color:var(--ink2);line-height:1.7;margin-top:.75rem">
+          <div style="display:flex;gap:.75rem;margin-bottom:.5rem"><div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">1</div>Gehe zu <strong>dashboard.tillhub.de</strong> und logge dich ein</div>
+          <div style="display:flex;gap:.75rem;margin-bottom:.5rem"><div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">2</div>Navigiere zu <strong>Konto → API-Zugriff → API-Schlüssel</strong></div>
+          <div style="display:flex;gap:.75rem;margin-bottom:.5rem"><div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">3</div>Klicke <strong>„Neuen Schlüssel erstellen"</strong> → Typ: <strong>Read Only</strong></div>
+          <div style="display:flex;gap:.75rem"><div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">4</div>Kopiere den generierten Schlüssel — er wird nur einmal angezeigt!</div>
+        </div>
+      </div>
+      <div class="step-panel" id="th-panel-2">
+        <div class="info-box security" style="margin-bottom:1.25rem"><div class="info-box-icon">🔐</div><div><strong>AES-256 Verschlüsselung</strong>Dein API-Key wird sofort beim Speichern mit AES-256 verschlüsselt. Kein GastroIQ-Mitarbeiter kann ihn einsehen.</div></div>
+        <div class="field">
+          <label>Tillhub API-Key</label>
+          <input type="password" id="th-api-key" placeholder="th_live_xxxxxxxxxxxxxxxxxxxx" />
+          <div class="field-hint">⚠️ Stelle sicher, dass du einen <strong>Read-only</strong> Key verwendest, keinen Admin-Key.</div>
+        </div>
+        <div class="field">
+          <label>Tillhub Account-ID</label>
+          <input type="text" id="th-account" placeholder="acc_xxxxxxxx" />
+          <div class="field-hint">Zu finden unter Konto → Allgemein → Account-ID</div>
+        </div>
+      </div>
+      <div class="step-panel" id="th-panel-3">
+        <div style="text-align:center;padding:1.5rem 0">
+          <div id="th-test-loading"><div style="font-size:2.5rem;margin-bottom:1rem">🔌</div><div style="font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:.5rem">Verbindung wird getestet…</div><div class="progress-bar" style="max-width:300px;margin:0 auto"><div class="progress-fill" id="th-progress" style="width:0%"></div></div><div style="font-size:.72rem;color:var(--ink3);margin-top:.6rem" id="th-progress-text">Starte Verbindungstest…</div></div>
+          <div id="th-test-success" style="display:none"><div style="font-size:3rem;margin-bottom:.75rem">✅</div><div style="font-weight:700;font-size:.95rem;color:var(--green);margin-bottom:.5rem">Tillhub API antwortet!</div><div style="font-size:.78rem;color:var(--ink3)">API-Key gültig · Berechtigungen korrekt · Bereit zum Import</div></div>
+        </div>
+      </div>
+      <div class="step-panel" id="th-panel-4">
+        <div class="success-circle"><svg viewBox="0 0 80 80"><circle class="check-circle" cx="40" cy="40" r="35"/><polyline class="check-mark" points="25,42 35,52 56,30"/></svg></div>
+        <div class="success-text"><h3>Tillhub verbunden! 🎉</h3><p>Die API-Verbindung ist aktiv und verschlüsselt. Deine Tillhub-Kassendaten fließen ab sofort täglich in GastroIQ.</p></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="th-btn-back" onclick="wizardBack('th')" style="display:none">← Zurück</button>
+      <div style="display:flex;gap:.6rem;margin-left:auto">
+        <button class="btn btn-outline" onclick="closeWizard('th')">Abbrechen</button>
+        <button class="btn btn-primary" id="th-btn-next" onclick="wizardNext('th')">Weiter →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISCONNECT CONFIRM -->
+<div class="modal-overlay" id="modal-disconnect">
+  <div class="modal" style="width:440px">
+    <div class="modal-header">
+      <div><div class="modal-title" style="color:var(--red)">⚠️ Verbindung trennen</div><div class="modal-sub" id="disconnect-system-name"></div></div>
+      <button class="modal-close" onclick="closeModal('modal-disconnect')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-box warning"><div class="info-box-icon">⚠️</div><div><strong>Was passiert beim Trennen?</strong><br>• Der OAuth-Token / API-Key wird bei GastroIQ gelöscht<br>• Keine weiteren Daten werden importiert<br>• Bereits importierte Daten bleiben erhalten<br>• Du kannst die Verbindung jederzeit neu herstellen</div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-disconnect')">Abbrechen</button>
+      <button class="btn btn-danger" onclick="confirmDisconnect()">Verbindung trennen</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── MODAL HELPERS ──
+function openModal(id){document.getElementById('modal-'+id).classList.add('open')}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')})
+})
+
+function openWizard(id){
+  wizardStates[id]=1;
+  updateWizard(id);
+  document.getElementById('wizard-'+id).classList.add('open');
+}
+function closeWizard(id){
+  document.getElementById('wizard-'+id).classList.remove('open');
+  setTimeout(()=>{wizardStates[id]=1;updateWizard(id)},300);
+}
+
+// ── TOAST ──
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type||'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ── DISCONNECT ──
+let disconnectTarget='';
+function disconnectPrompt(sys){
+  disconnectTarget=sys;
+  document.getElementById('disconnect-system-name').textContent=sys+' – Kassensystem';
+  openModal('modal-disconnect');
+}
+function confirmDisconnect(){
+  closeModal('modal-disconnect');
+  showToast('Verbindung zu '+disconnectTarget+' getrennt.','');
+}
+
+// ── SYNC TRIGGER ──
+function triggerSync(sys){
+  showToast('⏳ Starte Sync mit '+sys+'…');
+  setTimeout(()=>showToast('✅ Sync erfolgreich! 247 Datensätze importiert.','success'),2200);
+}
+
+// ── TOGGLE CHANGE ──
+function toggleChange(el,label){
+  showToast((el.checked?'✅ ':'🔕 ')+label+(el.checked?' aktiviert':' deaktiviert'));
+}
+
+// ── DOCS ──
+function showDocs(sys){
+  showToast('📄 Dokumentation für '+sys+' wird geladen…');
+}
+
+// ── WIZARD STATE MACHINE ──
+const wizardConfigs={
+  ob:{panels:4,steps:4,labels:['Berechtigungen prüfen','Login bei Orderbird','Einstellungen','Abgeschlossen']},
+  vt:{panels:4,steps:4,labels:['Voraussetzungen','API-Key eingeben','Verbindungstest','Abgeschlossen']},
+  su:{panels:3,steps:3,labels:['Berechtigungen prüfen','Login bei SumUp','Abgeschlossen']},
+  th:{panels:4,steps:4,labels:['Anleitung','API-Key eingeben','Verbindungstest','Abgeschlossen']}
+};
+const wizardStates={ob:1,vt:1,su:1,th:1};
+
+function updateWizard(id){
+  const cfg=wizardConfigs[id];
+  const cur=wizardStates[id];
+  // panels
+  for(let i=1;i<=cfg.panels;i++){
+    const p=document.getElementById(id+'-panel-'+i);
+    if(p) p.className='step-panel'+(i===cur?' active':'');
+  }
+  // step indicators
+  for(let i=1;i<=cfg.steps;i++){
+    const s=document.getElementById(id+'-wstep-'+i);
+    if(s){s.className='wizard-step'+(i===cur?' active':i<cur?' done':'');}
+  }
+  // buttons
+  const btnBack=document.getElementById(id+'-btn-back');
+  const btnNext=document.getElementById(id+'-btn-next');
+  if(btnBack) btnBack.style.display=cur>1?'block':'none';
+  if(btnNext){
+    if(cur===cfg.panels){
+      btnNext.textContent='Dashboard öffnen';
+      btnNext.onclick=()=>{closeWizard(id);showToast('✅ '+id.toUpperCase()+' erfolgreich verbunden!','success');}
+    } else {
+      btnNext.textContent='Weiter →';
+      btnNext.onclick=()=>wizardNext(id);
+    }
+  }
+  // step label
+  const lbl=document.getElementById(id+'-step-label');
+  if(lbl) lbl.textContent='Schritt '+cur+' von '+cfg.panels+' – '+cfg.labels[cur-1];
+  // run side effects
+  if(id==='vt'&&cur===3) runVectronTest();
+  if(id==='th'&&cur===3) runTillhubTest();
+}
+
+function wizardNext(id){
+  const cfg=wizardConfigs[id];
+  if(wizardStates[id]<cfg.panels){wizardStates[id]++;updateWizard(id);}
+}
+function wizardBack(id){
+  if(wizardStates[id]>1){wizardStates[id]--;updateWizard(id);}
+}
+
+// ── OAUTH SIMULATION ──
+function simulateOAuth(id){
+  const loadingEl=document.getElementById(id+'-oauth-loading');
+  const progressEl=document.getElementById(id+'-progress');
+  const textEl=document.getElementById(id+'-progress-text');
+  if(loadingEl) loadingEl.style.display='block';
+  const steps=[
+    [0,'Weiterleitung zu '+{ob:'Orderbird',su:'SumUp'}[id]+'…'],
+    [30,'Warte auf Login-Bestätigung…'],
+    [60,'OAuth-Token wird erstellt…'],
+    [80,'Token wird verschlüsselt (AES-256)…'],
+    [95,'Verbindung wird gespeichert…'],
+    [100,'Abgeschlossen!']
+  ];
+  let si=0;
+  const intv=setInterval(()=>{
+    if(si>=steps.length){clearInterval(intv);setTimeout(()=>wizardNext(id),400);return;}
+    if(progressEl) progressEl.style.width=steps[si][0]+'%';
+    if(textEl) textEl.textContent=steps[si][1];
+    si++;
+  },600);
+}
+
+// ── VECTRON TEST SIMULATION ──
+function runVectronTest(){
+  const loading=document.getElementById('vt-test-loading');
+  const success=document.getElementById('vt-test-success');
+  const progress=document.getElementById('vt-progress');
+  const text=document.getElementById('vt-progress-text');
+  if(success) success.style.display='none';
+  if(loading) loading.style.display='block';
+  const steps=[[20,'TLS 1.3 Handshake…'],[50,'API-Key wird verifiziert…'],[75,'Leseberechtigungen prüfen…'],[90,'Testabfrage ausführen…'],[100,'Fertig!']];
+  let si=0;
+  const intv=setInterval(()=>{
+    if(si>=steps.length){
+      clearInterval(intv);
+      setTimeout(()=>{
+        if(loading) loading.style.display='none';
+        if(success) success.style.display='block';
+        // Auto-advance
+        setTimeout(()=>wizardNext('vt'),1200);
+      },400);
+      return;
+    }
+    if(progress) progress.style.width=steps[si][0]+'%';
+    if(text) text.textContent=steps[si][1];
+    si++;
+  },700);
+}
+
+// ── TILLHUB TEST SIMULATION ──
+function runTillhubTest(){
+  const loading=document.getElementById('th-test-loading');
+  const success=document.getElementById('th-test-success');
+  const progress=document.getElementById('th-progress');
+  const text=document.getElementById('th-progress-text');
+  if(success) success.style.display='none';
+  if(loading) loading.style.display='block';
+  const steps=[[25,'TLS-Verbindung aufbauen…'],[55,'API-Key prüfen…'],[80,'Account-ID verifizieren…'],[95,'Datenzugriff testen…'],[100,'Verbunden!']];
+  let si=0;
+  const intv=setInterval(()=>{
+    if(si>=steps.length){
+      clearInterval(intv);
+      setTimeout(()=>{
+        if(loading) loading.style.display='none';
+        if(success) success.style.display='block';
+        setTimeout(()=>wizardNext('th'),1200);
+      },400);
+      return;
+    }
+    if(progress) progress.style.width=steps[si][0]+'%';
+    if(text) text.textContent=steps[si][1];
+    si++;
+  },700);
+}
+</script>
+</body>
+</html>
