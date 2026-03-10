@@ -4,101 +4,101 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GastroIQ – Starte jetzt</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --cream:#faf7f2;--cream2:#f3ede3;--cream3:#ebe1d2;
-  --ink:#1a1208;--ink2:#4a3f2f;--ink3:#8a7a65;--ink4:#b8a898;
-  --primary:#c8440a;--primary-light:#fff0eb;--primary-glow:rgba(200,68,10,.12);
-  --green:#2d6a4f;--green-light:#eaf4ef;
-  --gold:#b8860b;--gold-light:#fef8e7;
-  --red:#b91c1c;
-  --surface:#ffffff;--border:#e8ddd0;--border2:#d5c9b8;
-  --radius:14px;
-  --shadow:0 1px 3px rgba(26,18,8,.06),0 1px 2px rgba(26,18,8,.04);
-  --shadow-lg:0 20px 50px rgba(26,18,8,.1),0 8px 20px rgba(26,18,8,.06);
+  --cream:#f4f5f9;--cream2:#eef0f8;--cream3:#e5e7f0;
+  --ink:#1a1d3a;--ink2:#4b5280;--ink3:#8b92b8;--ink4:#c2c7e0;
+  --primary:#6366f1;--primary-light:rgba(99,102,241,0.08);--primary-glow:rgba(99,102,241,0.15);
+  --green:#10b981;--green-light:#f0fdf4;
+  --gold:#f59e0b;--gold-light:#fffbeb;
+  --red:#ef4444;
+  --surface:#ffffff;--border:#e5e7f0;--border2:#d0d3e8;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(99,102,241,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg:0 20px 50px rgba(99,102,241,0.12),0 8px 20px rgba(0,0,0,0.06);
 }
 html{scroll-behavior:smooth}
-body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
-.serif{font-family:'Fraunces',serif}
-.bg-dots{position:fixed;inset:0;z-index:0;background-image:radial-gradient(circle,var(--border) .8px,transparent .8px);background-size:28px 28px;opacity:.5}
-.bg-glow1{position:fixed;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(200,68,10,.08),transparent 70%);z-index:0;pointer-events:none}
-.bg-glow2{position:fixed;bottom:-200px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(45,106,79,.06),transparent 70%);z-index:0;pointer-events:none}
+body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+.serif{font-family:'Inter',sans-serif}
+.bg-dots{position:fixed;inset:0;z-index:0;background-image:radial-gradient(circle,rgba(99,102,241,.12) .8px,transparent .8px);background-size:28px 28px;opacity:.6}
+.bg-glow1{position:fixed;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.07),transparent 70%);z-index:0;pointer-events:none}
+.bg-glow2{position:fixed;bottom:-200px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(139,92,246,.05),transparent 70%);z-index:0;pointer-events:none}
 .auth-wrapper{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
-.left-panel{padding:2.5rem 3rem;display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.left-panel{padding:2.5rem 3rem;display:flex;flex-direction:column;border-right:1px solid rgba(196,181,253,0.15);background:#2e1f6e}
 .nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
-.logo{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:900;color:var(--ink);text-decoration:none;letter-spacing:-.03em}
-.logo span{color:var(--primary)}
-.back-link{font-size:.8rem;font-weight:600;color:var(--ink3);text-decoration:none;transition:color .2s}
-.back-link:hover{color:var(--primary)}
+.logo{font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:900;color:#ffffff;text-decoration:none;letter-spacing:-.03em}
+.logo span{color:#6366f1}
+.back-link{font-size:.78rem;font-weight:500;color:var(--ink3);text-decoration:none;transition:color .2s}
+.back-link:hover{color:#6366f1}
 .left-content{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:480px}
-.badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--primary-light);color:var(--primary);border:1px solid #ffd0b8;border-radius:100px;padding:.3rem .9rem;font-size:.72rem;font-weight:700;margin-bottom:1.5rem;width:fit-content;animation:fadeUp .5s ease both}
-.left-headline{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:900;line-height:1.08;letter-spacing:-.04em;margin-bottom:1.2rem;animation:fadeUp .5s ease .1s both}
-.left-headline em{font-style:italic;font-weight:400;color:var(--primary)}
-.left-sub{color:var(--ink2);font-size:.92rem;line-height:1.7;margin-bottom:2.2rem;max-width:400px;animation:fadeUp .5s ease .2s both}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(99,102,241,0.08);color:#6366f1;border:1px solid rgba(99,102,241,0.2);border-radius:100px;padding:.3rem .9rem;font-size:.72rem;font-weight:600;margin-bottom:1.5rem;width:fit-content;animation:fadeUp .5s ease both}
+.left-headline{font-family:'Inter',sans-serif;font-size:2.6rem;font-weight:900;line-height:1.08;letter-spacing:-.04em;margin-bottom:1.2rem;animation:fadeUp .5s ease .1s both;color:#ffffff}
+.left-headline em{font-style:normal;font-weight:800;color:#6366f1}
+.left-sub{color:#ffffff;font-size:.88rem;line-height:1.75;margin-bottom:2.2rem;max-width:400px;animation:fadeUp .5s ease .2s both}
 .trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:2.5rem;animation:fadeUp .5s ease .3s both}
-.trust-item{display:flex;align-items:flex-start;gap:.65rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem .9rem;transition:box-shadow .2s}
-.trust-item:hover{box-shadow:var(--shadow)}
+.trust-item{display:flex;align-items:flex-start;gap:.65rem;background:#ffffff;border:1px solid var(--border);border-radius:10px;padding:.8rem .9rem;transition:box-shadow .2s}
+.trust-item:hover{box-shadow:0 4px 12px rgba(99,102,241,0.1)}
 .trust-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.ti-orange{background:var(--primary-light)}.ti-green{background:var(--green-light)}.ti-gold{background:var(--gold-light)}.ti-cream{background:var(--cream2)}
-.trust-text{font-size:.78rem;font-weight:600;color:var(--ink2);line-height:1.4}
-.trust-text strong{color:var(--ink);display:block;margin-bottom:.1rem}
+.ti-orange{background:rgba(99,102,241,.1)}.ti-green{background:#f0fdf4}.ti-gold{background:#fffbeb}.ti-cream{background:#f4f5f9}
+.trust-text{font-size:.75rem;font-weight:500;color:var(--ink2);line-height:1.4}
+.trust-text strong{color:#1a1d3a;display:block;margin-bottom:.1rem;font-weight:700}
 .pricing-section{animation:fadeUp .5s ease .4s both}
-.pricing-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.7rem}
+.pricing-label{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:#ffffff;margin-bottom:.7rem}
 .pricing-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
-.price-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:.9rem;cursor:pointer;transition:all .2s;position:relative;text-align:center}
-.price-card:hover{border-color:var(--ink4);box-shadow:var(--shadow)}
-.price-card.featured{border-color:var(--primary);background:var(--primary-light)}
-.price-card.selected{border-color:var(--primary);background:var(--primary-light);box-shadow:0 0 0 2px var(--primary)}
-.price-badge{position:absolute;top:-.55rem;left:50%;transform:translateX(-50%);background:var(--primary);color:white;font-size:.58rem;font-weight:700;padding:.2rem .65rem;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-.price-name{font-family:'Fraunces',serif;font-weight:900;font-size:.9rem;margin-bottom:.2rem}
-.price-amount{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
-.price-amount span{font-size:.7rem;font-weight:400;color:var(--ink3)}
+.price-card{background:#ffffff!important;border:1.5px solid rgba(196,181,253,0.3);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .2s;position:relative;text-align:center}
+.price-card:hover{border-color:#d0d3e8;box-shadow:0 4px 12px rgba(99,102,241,.1)}
+.price-card.featured{border-color:#6366f1;background:#ffffff!important}
+.price-card.selected{border-color:#a78bfa;background:rgba(235,228,255,0.95)!important;box-shadow:0 0 0 2px #a78bfa}
+.price-badge{position:absolute;top:-.55rem;left:50%;transform:translateX(-50%);background:#6366f1;color:white;font-size:.58rem;font-weight:700;padding:.2rem .65rem;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.price-name{font-family:'Inter',sans-serif;font-weight:900;font-size:.9rem;margin-bottom:.2rem}
+.price-amount{font-size:1.2rem;font-weight:800;letter-spacing:-.02em;color:#1a1d3a}
+.price-amount span{font-size:.68rem;font-weight:400;color:var(--ink3)}
 .price-feat{font-size:.68rem;color:var(--ink3);margin-top:.35rem;line-height:1.4}
-.left-footer{margin-top:auto;padding-top:1.5rem;display:flex;align-items:center;gap:1.5rem;color:var(--ink3);font-size:.72rem}
+.left-footer{margin-top:auto;padding-top:1.5rem;display:flex;align-items:center;gap:1.5rem;color:var(--ink3);font-size:.68rem;border-top:1px solid var(--border)}
 .footer-dot{width:4px;height:4px;border-radius:50%;background:var(--border2)}
-.right-panel{display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--cream2);position:relative}
-.right-panel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,var(--border2) .5px,transparent .5px);background-size:20px 20px;opacity:.4}
-.auth-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;width:100%;max-width:440px;box-shadow:var(--shadow-lg);animation:slideUp .6s ease both}
-.auth-tabs{display:flex;background:var(--cream);border-radius:10px;padding:.25rem;margin-bottom:1.8rem;border:1px solid var(--border)}
-.auth-tab{flex:1;padding:.6rem;text-align:center;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--ink3);transition:all .2s}
-.auth-tab.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(26,18,8,.08)}
+.right-panel{display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--cream);position:relative}
+.right-panel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(99,102,241,.1) .5px,transparent .5px);background-size:20px 20px;opacity:.5}
+.auth-card{position:relative;background:#ffffff;border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:440px;box-shadow:var(--shadow-lg);animation:slideUp .6s ease both}
+.auth-tabs{display:flex;background:var(--cream);border-radius:8px;padding:.25rem;margin-bottom:1.8rem;border:1px solid var(--border)}
+.auth-tab{flex:1;padding:.6rem;text-align:center;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--ink3);transition:all .2s}
+.auth-tab.active{background:#ffffff;color:#1a1d3a;box-shadow:0 1px 4px rgba(99,102,241,.1)}
 .auth-tab:hover:not(.active){color:var(--ink2)}
-.auth-title{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem}
-.auth-sub{font-size:.82rem;color:var(--ink3);margin-bottom:1.6rem;line-height:1.5}
+.auth-title{font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem}
+.auth-sub{font-size:.8rem;color:var(--ink3);margin-bottom:1.6rem;line-height:1.55}
 .field{margin-bottom:1rem}
-.field label{display:block;font-size:.7rem;font-weight:700;color:var(--ink3);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.06em}
+.field label{display:block;font-size:.65rem;font-weight:600;color:var(--ink3);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.07em}
 .input-wrap{position:relative}
 .input-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none}
-.field input{width:100%;padding:.72rem .9rem .72rem 2.4rem;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:.88rem;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
-.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
-.field input::placeholder{color:var(--ink4)}
-.field input.error{border-color:var(--red)}
+.field input{width:100%;padding:.72rem .9rem;background:#f8f9fc;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;color:#1a1d3a;outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.field input::placeholder{color:#c2c7e0}
+.field input.error{border-color:#ef4444}
 .pw-strength{margin-top:.45rem;display:none}
 .pw-bars{display:flex;gap:.25rem;margin-bottom:.25rem}
 .pw-bar{height:3px;flex:1;border-radius:100px;background:var(--border);transition:background .3s}
-.pw-bar.active-weak{background:var(--red)}.pw-bar.active-medium{background:var(--gold)}.pw-bar.active-strong{background:var(--green)}
+.pw-bar.active-weak{background:#ef4444}.pw-bar.active-medium{background:#f59e0b}.pw-bar.active-strong{background:#10b981}
 .pw-label{font-size:.68rem;color:var(--ink3)}
 .resto-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem}
-.resto-option{background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:.65rem;cursor:pointer;text-align:center;transition:all .2s}
-.resto-option:hover{border-color:var(--primary);background:var(--primary-light)}
-.resto-option.selected{border-color:var(--primary);background:var(--primary-light)}
+.resto-option{background:#f8f9fc;border:1.5px solid var(--border);border-radius:8px;padding:.65rem;cursor:pointer;text-align:center;transition:all .2s}
+.resto-option:hover{border-color:#6366f1;background:rgba(99,102,241,0.06)}
+.resto-option.selected{border-color:#6366f1;background:rgba(99,102,241,0.08)}
 .resto-option .ro-icon{font-size:1.2rem;margin-bottom:.2rem}
 .resto-option .ro-label{font-size:.72rem;font-weight:600;color:var(--ink3)}
-.resto-option.selected .ro-label{color:var(--primary)}
+.resto-option.selected .ro-label{color:#6366f1}
 .plan-select{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.45rem;margin-bottom:1rem}
-.plan-chip{background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .4rem;cursor:pointer;transition:all .2s;text-align:center;position:relative}
-.plan-chip:hover{border-color:var(--primary)}
-.plan-chip.selected{border-color:var(--primary);background:var(--primary-light)}
-.plan-chip .chip-badge{position:absolute;top:-.45rem;left:50%;transform:translateX(-50%);background:var(--primary);color:white;font-size:.55rem;font-weight:700;padding:.12rem .5rem;border-radius:100px;white-space:nowrap}
+.plan-chip{background:#f8f9fc;border:1.5px solid var(--border);border-radius:8px;padding:.6rem .4rem;cursor:pointer;transition:all .2s;text-align:center;position:relative}
+.plan-chip:hover{border-color:#6366f1}
+.plan-chip.selected{border-color:#6366f1;background:rgba(99,102,241,0.08)}
+.plan-chip .chip-badge{position:absolute;top:-.45rem;left:50%;transform:translateX(-50%);background:#6366f1;color:white;font-size:.55rem;font-weight:700;padding:.12rem .5rem;border-radius:100px;white-space:nowrap}
 .plan-chip .chip-name{font-weight:800;font-size:.75rem;color:var(--ink)}
 .plan-chip .chip-price{font-size:.9rem;font-weight:800;letter-spacing:-.02em;margin:.1rem 0}
 .plan-chip .chip-feat{font-size:.6rem;color:var(--ink3);line-height:1.3}
-.plan-chip.selected .chip-name{color:var(--primary)}
-.submit-btn{width:100%;padding:.8rem;background:var(--primary);color:white;border:none;border-radius:100px;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:.4rem;transition:transform .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:.6rem;box-shadow:0 4px 14px rgba(200,68,10,.25)}
-.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,68,10,.35)}
+.plan-chip.selected .chip-name{color:#6366f1}
+.submit-btn{width:100%;padding:.8rem;background:#6366f1;color:white;border:none;border-radius:8px;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:.4rem;transition:transform .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:.6rem;box-shadow:0 4px 14px rgba(99,102,241,.3)}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.4)}
 .submit-btn:active{transform:translateY(0)}
 .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .submit-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
@@ -106,27 +106,27 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;m
 .submit-btn.loading .spinner{display:block}
 .auth-divider{display:flex;align-items:center;gap:.8rem;margin:1rem 0;color:var(--ink4);font-size:.72rem}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.google-btn{width:100%;padding:.7rem;background:var(--surface);color:var(--ink);border:1.5px solid var(--border);border-radius:100px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.7rem;transition:border-color .2s,box-shadow .2s}
-.google-btn:hover{border-color:var(--ink4);box-shadow:var(--shadow)}
+.google-btn{width:100%;padding:.7rem;background:#ffffff;color:#1a1d3a;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.7rem;transition:border-color .2s,box-shadow .2s}
+.google-btn:hover{border-color:#d0d3e8;box-shadow:0 2px 8px rgba(99,102,241,.1)}
 .auth-message{border-radius:10px;padding:.7rem 1rem;font-size:.8rem;font-weight:500;margin-bottom:1rem;display:none}
-.auth-message.error{background:#fef2f2;color:var(--red);border:1px solid #fecaca}
-.auth-message.success{background:var(--green-light);color:var(--green);border:1px solid #a7f3d0}
-.forgot-link{font-size:.75rem;color:var(--primary);text-decoration:none;float:right;margin-top:.3rem;font-weight:600}
+.auth-message.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.auth-message.success{background:#f0fdf4;color:#059669;border:1px solid #a7f3d0}
+.forgot-link{font-size:.72rem;color:#6366f1;text-decoration:none;float:right;margin-top:.3rem;font-weight:600}
 .forgot-link:hover{text-decoration:underline}
 .terms-note{font-size:.72rem;color:var(--ink3);text-align:center;margin-top:1rem;line-height:1.6}
-.terms-note a{color:var(--primary);text-decoration:none;font-weight:600}
+.terms-note a{color:#6366f1;text-decoration:none;font-weight:600}
 .dsgvo-check{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1rem;font-size:.75rem;color:var(--ink3);line-height:1.5}
-.dsgvo-check input{margin-top:.2rem;accent-color:var(--primary)}
-.dsgvo-check a{color:var(--primary);text-decoration:none}
+.dsgvo-check input{margin-top:.2rem;accent-color:#6366f1}
+.dsgvo-check a{color:#6366f1;text-decoration:none}
 .success-screen{text-align:center;padding:.5rem 0;display:none}
-.success-icon{width:64px;height:64px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.2rem}
-.success-screen h3{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:900;margin-bottom:.5rem}
+.success-icon{width:64px;height:64px;background:#f0fdf4;border:2px solid #a7f3d0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;color:#059669;margin:0 auto 1.2rem}
+.success-screen h3{font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:900;margin-bottom:.5rem}
 .success-screen p{color:var(--ink3);font-size:.85rem;line-height:1.6;margin-bottom:1.5rem}
-.check-steps{text-align:left;background:var(--cream);border-radius:12px;padding:1.1rem;border:1px solid var(--border)}
+.check-steps{text-align:left;background:#f8f9fc;border-radius:10px;padding:1.1rem;border:1px solid var(--border)}
 .check-step{display:flex;align-items:center;gap:.7rem;font-size:.82rem;padding:.4rem 0;color:var(--ink2)}
 .cs-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0}
-.cs-done{background:var(--green-light);color:var(--green)}
-.cs-wait{background:var(--cream2);color:var(--ink4)}
+.cs-done{background:#dcfce7;color:#059669}
+.cs-wait{background:#f0f1f8;color:#8b92b8}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -142,17 +142,17 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;m
   <div class="left-panel">
     <div class="nav-top">
       <a href="/index.html" class="logo">Gastro<span>IQ</span></a>
-      <a href="/index.html" class="back-link">← Zurück zur Startseite</a>
+      <a href="/index.html" class="back-link">Zurück zur Startseite</a>
     </div>
     <div class="left-content">
-      <div class="badge">✨ 14 Tage kostenlos · keine Kreditkarte</div>
+      <div class="badge">14 Tage kostenlos · keine Kreditkarte</div>
       <h1 class="left-headline">Der Moment, in dem du<br><em>wirklich verstehst,</em><br>was dein Restaurant verdient.</h1>
       <p class="left-sub">Schluss mit Bauchgefühl. Ab heute triffst du jede Entscheidung auf Basis echter Zahlen – und gewinnst die Kontrolle zurück, die du verdienst.</p>
       <div class="trust-grid">
-        <div class="trust-item"><div class="trust-icon ti-orange">📊</div><div class="trust-text"><strong>Break-even in Echtzeit</strong>Wie viele Gäste brauchst du heute noch?</div></div>
-        <div class="trust-item"><div class="trust-icon ti-green">🍽️</div><div class="trust-text"><strong>Gewinn pro Gericht</strong>Welches Gericht verdient wirklich Geld?</div></div>
-        <div class="trust-item"><div class="trust-icon ti-gold">🤖</div><div class="trust-text"><strong>KI-Morgenbriefing</strong>Jeden Morgen wissen, worauf es ankommt.</div></div>
-        <div class="trust-item"><div class="trust-icon ti-cream">🔒</div><div class="trust-text"><strong>DSGVO-konform</strong>Deine Daten. Dein Restaurant. Dein Eigentum.</div></div>
+        <div class="trust-item"><div class="trust-text"><strong>Break-even in Echtzeit</strong>Wie viele Gäste brauchst du heute noch?</div></div>
+        <div class="trust-item"><div class="trust-text"><strong>Gewinn pro Gericht</strong>Welches Gericht verdient wirklich Geld?</div></div>
+        <div class="trust-item"><div class="trust-text"><strong>KI-Morgenbriefing</strong>Jeden Morgen wissen, worauf es ankommt.</div></div>
+        <div class="trust-item"><div class="trust-text"><strong>DSGVO-konform</strong>Deine Daten. Dein Restaurant. Dein Eigentum.</div></div>
       </div>
       <div class="pricing-section">
         <div class="pricing-label">Unsere Pakete – nach dem Test flexibel wählen</div>
@@ -163,7 +163,7 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;m
         </div>
       </div>
     </div>
-    <div class="left-footer"><span>© 2025 GastroIQ</span><div class="footer-dot"></div><span>Made in Germany 🇩🇪</span><div class="footer-dot"></div><span>Daten auf EU-Servern (Frankfurt)</span></div>
+    <div class="left-footer"><span>© 2025 GastroIQ</span><div class="footer-dot"></div><span>Made in Germany</span><div class="footer-dot"></div><span>Daten auf EU-Servern (Frankfurt)</span></div>
   </div>
   <div class="right-panel">
     <div class="auth-card">
@@ -175,9 +175,9 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;m
       <div id="form-login">
         <div class="auth-title">Willkommen zurück</div>
         <div class="auth-sub">Schön, dass du da bist. Dein Dashboard wartet auf dich.</div>
-        <div class="field"><label>E-Mail</label><div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="login-email" placeholder="chef@meinrestaurant.de" autocomplete="email" /></div></div>
-        <div class="field"><label>Passwort <a href="#" class="forgot-link" onclick="switchTab('reset')">Vergessen?</a></label><div class="input-wrap"><span class="input-icon">🔑</span><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" /></div></div>
-        <button class="submit-btn" id="login-btn" onclick="handleLogin()"><span class="btn-text">Anmelden →</span><div class="spinner"></div></button>
+        <div class="field"><label>E-Mail</label><div class="input-wrap"><input type="email" id="login-email" placeholder="chef@meinrestaurant.de" autocomplete="email" /></div></div>
+        <div class="field"><label>Passwort <a href="#" class="forgot-link" onclick="switchTab('reset')">Vergessen?</a></label><div class="input-wrap"><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" /></div></div>
+        <button class="submit-btn" id="login-btn" onclick="handleLogin()"><span class="btn-text">Anmelden</span><div class="spinner"></div></button>
         <div class="auth-divider">oder</div>
         <button class="google-btn" onclick="handleGoogleLogin()"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 6.294C4.672 4.169 6.656 3.58 9 3.58z"/></svg>Mit Google anmelden</button>
         <p class="terms-note">Noch kein Account? <a href="#" onclick="switchTab('register')">Jetzt kostenlos starten</a></p>
@@ -185,28 +185,28 @@ body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;m
       <div id="form-register" style="display:none">
         <div class="auth-title">Dein neuer Überblick beginnt hier</div>
         <div class="auth-sub">In 2 Minuten registriert. 14 Tage alles testen. Kein Risiko.</div>
-        <div class="field"><label>Restaurantname</label><div class="input-wrap"><span class="input-icon">🏠</span><input type="text" id="reg-restaurant" placeholder="Zur goldenen Gabel" /></div></div>
-        <div class="field"><label>Dein Name</label><div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="reg-name" placeholder="Max Mustermann" /></div></div>
-        <div class="field"><label>E-Mail</label><div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="reg-email" placeholder="chef@meinrestaurant.de" autocomplete="email" /></div></div>
-        <div class="field"><label>Passwort</label><div class="input-wrap"><span class="input-icon">🔑</span><input type="password" id="reg-pw" placeholder="Min. 8 Zeichen" oninput="checkPasswordStrength(this.value)" /></div><div class="pw-strength" id="pw-strength"><div class="pw-bars"><div class="pw-bar" id="pw-b1"></div><div class="pw-bar" id="pw-b2"></div><div class="pw-bar" id="pw-b3"></div><div class="pw-bar" id="pw-b4"></div></div><div class="pw-label" id="pw-label">Schwach</div></div></div>
-        <div style="margin-bottom:.7rem"><label style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Restauranttyp</label><div class="resto-grid"><div class="resto-option selected" onclick="selectResto(this,'restaurant')"><div class="ro-icon">🍽️</div><div class="ro-label">Restaurant</div></div><div class="resto-option" onclick="selectResto(this,'bistro')"><div class="ro-icon">☕</div><div class="ro-label">Bistro / Café</div></div><div class="resto-option" onclick="selectResto(this,'fastfood')"><div class="ro-icon">🍔</div><div class="ro-label">Fast Food</div></div><div class="resto-option" onclick="selectResto(this,'fine')"><div class="ro-icon">🥂</div><div class="ro-label">Fine Dining</div></div></div></div>
+        <div class="field"><label>Restaurantname</label><div class="input-wrap"><input type="text" id="reg-restaurant" placeholder="Zur goldenen Gabel" /></div></div>
+        <div class="field"><label>Dein Name</label><div class="input-wrap"><input type="text" id="reg-name" placeholder="Max Mustermann" /></div></div>
+        <div class="field"><label>E-Mail</label><div class="input-wrap"><input type="email" id="reg-email" placeholder="chef@meinrestaurant.de" autocomplete="email" /></div></div>
+        <div class="field"><label>Passwort</label><div class="input-wrap"><input type="password" id="reg-pw" placeholder="Min. 8 Zeichen" oninput="checkPasswordStrength(this.value)" /></div><div class="pw-strength" id="pw-strength"><div class="pw-bars"><div class="pw-bar" id="pw-b1"></div><div class="pw-bar" id="pw-b2"></div><div class="pw-bar" id="pw-b3"></div><div class="pw-bar" id="pw-b4"></div></div><div class="pw-label" id="pw-label">Schwach</div></div></div>
+        <div style="margin-bottom:.7rem"><label style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Restauranttyp</label><div class="resto-grid"><div class="resto-option selected" onclick="selectResto(this,'restaurant')"><div class="ro-label">Restaurant</div></div><div class="resto-option" onclick="selectResto(this,'bistro')"><div class="ro-label">Bistro / Café</div></div><div class="resto-option" onclick="selectResto(this,'fastfood')"><div class="ro-label">Fast Food</div></div><div class="resto-option" onclick="selectResto(this,'fine')"><div class="ro-label">Fine Dining</div></div></div></div>
         <div style="margin-bottom:.7rem"><label style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Paket wählen <span style="font-weight:400;text-transform:none;letter-spacing:0">(14 Tage kostenlos)</span></label><div class="plan-select"><div class="plan-chip selected" onclick="selectPlan(this,'bronze')"><div class="chip-name">Bronze</div><div class="chip-price">49 €</div><div class="chip-feat">1 Standort</div></div><div class="plan-chip" onclick="selectPlan(this,'silber')"><div class="chip-badge">Beliebt</div><div class="chip-name">Silber</div><div class="chip-price">79 €</div><div class="chip-feat">+ KI & API</div></div><div class="plan-chip" onclick="selectPlan(this,'gold')"><div class="chip-name">Gold</div><div class="chip-price">199 €</div><div class="chip-feat">Unbegrenzt</div></div></div></div>
         <div class="dsgvo-check"><input type="checkbox" id="reg-dsgvo" /><label for="reg-dsgvo">Ich stimme den <a href="#">AGB</a> und der <a href="#">Datenschutzerklärung</a> zu. Meine Daten werden DSGVO-konform auf EU-Servern gespeichert.</label></div>
-        <button class="submit-btn" id="register-btn" onclick="handleRegister()"><span class="btn-text">Kostenlos starten →</span><div class="spinner"></div></button>
+        <button class="submit-btn" id="register-btn" onclick="handleRegister()"><span class="btn-text">Kostenlos starten</span><div class="spinner"></div></button>
         <p class="terms-note">Bereits registriert? <a href="#" onclick="switchTab('login')">Hier anmelden</a></p>
       </div>
       <div id="form-reset" style="display:none">
         <div class="auth-title">Passwort zurücksetzen</div>
         <div class="auth-sub">Kein Problem – wir schicken dir einen Link zum Zurücksetzen.</div>
-        <div class="field"><label>E-Mail</label><div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="reset-email" placeholder="chef@meinrestaurant.de" /></div></div>
-        <button class="submit-btn" onclick="handleReset()"><span class="btn-text">Reset-Link senden →</span><div class="spinner"></div></button>
-        <p class="terms-note" style="margin-top:1rem"><a href="#" onclick="switchTab('login')">← Zurück zum Login</a></p>
+        <div class="field"><label>E-Mail</label><div class="input-wrap"><input type="email" id="reset-email" placeholder="chef@meinrestaurant.de" /></div></div>
+        <button class="submit-btn" onclick="handleReset()"><span class="btn-text">Reset-Link senden</span><div class="spinner"></div></button>
+        <p class="terms-note" style="margin-top:1rem"><a href="#" onclick="switchTab('login')">Zurück zum Login</a></p>
       </div>
       <div class="success-screen" id="success-screen">
-        <div class="success-icon">🎉</div>
-        <h3 class="serif">Willkommen bei GastroIQ!</h3>
+        <div class="success-icon"><svg width="28" height="28" fill="none" stroke="#059669" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3>Willkommen bei GastroIQ!</h3>
         <p>Dein Account wurde erstellt. Bitte bestätige deine E-Mail – danach kann es sofort losgehen.</p>
-        <div class="check-steps"><div class="check-step"><div class="cs-icon cs-done">✓</div>Account erstellt</div><div class="check-step"><div class="cs-icon cs-done">✓</div>Datenbank vorbereitet</div><div class="check-step"><div class="cs-icon cs-done">✓</div>14-Tage-Test aktiviert</div><div class="check-step"><div class="cs-icon cs-wait">⏳</div>E-Mail bestätigen – dann geht's los!</div></div>
+        <div class="check-steps"><div class="check-step"><div class="cs-icon cs-done"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>Account erstellt</div><div class="check-step"><div class="cs-icon cs-done"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>Datenbank vorbereitet</div><div class="check-step"><div class="cs-icon cs-done"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>14-Tage-Test aktiviert</div><div class="check-step"><div class="cs-icon cs-wait"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>E-Mail bestätigen – dann geht's los!</div></div>
       </div>
     </div>
   </div>
