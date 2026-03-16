@@ -3425,10 +3425,10 @@ window.onload = async function() {
   renderDashboard();
 };
 
-async function handleLogout() {
+function handleLogout() {
   localStorage.removeItem('gastroiq');
   sessionStorage.clear();
-  try { if(db) await db.auth.signOut(); } catch(e){}
+  try { if(db && db.auth) db.auth.signOut(); } catch(e){}
   window.location.replace('gastroiq-auth.html');
 }
 
