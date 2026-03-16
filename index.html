@@ -40,26 +40,27 @@ nav.scrolled{background:rgba(255,255,255,.97);backdrop-filter:blur(12px);box-sha
 .nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(99,102,241,.35)}
 
 /* ── HERO ── */
-.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2rem 5rem;position:relative;overflow:hidden;background:#6366f1}
 .hero-bg{position:absolute;inset:0;z-index:0}
 .hero-bg-circle{position:absolute;border-radius:50%;filter:blur(80px);opacity:.35}
 .hero-bg-circle.c1{width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.12),transparent);top:-100px;right:-100px}
 .hero-bg-circle.c2{width:400px;height:400px;background:radial-gradient(circle,rgba(139,92,246,.08),transparent);bottom:-50px;left:-50px}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.3}
-.hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--primary-light);color:var(--primary);border:1px solid rgba(99,102,241,0.2);border-radius:100px;padding:.35rem 1rem;font-size:.78rem;font-weight:600;margin-bottom:1.8rem;animation:fadeUp .6s ease both}
-.hero-title{font-family:'Inter',sans-serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:900;line-height:1.0;letter-spacing:-.03em;margin-bottom:1.5rem;animation:fadeUp .6s .1s ease both}
-.hero-title em{font-style:normal;font-weight:800;color:#6366f1}
-.hero-title .line2{display:block;color:var(--ink2);font-weight:400}
-.hero-sub{font-size:1.1rem;color:var(--ink2);line-height:1.7;max-width:520px;margin-bottom:2.5rem;font-weight:400;animation:fadeUp .6s .2s ease both}
-.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp .6s .3s ease both}
-.btn-primary{background:#6366f1;color:white;padding:.9rem 2rem;border-radius:8px;font-size:.95rem;font-weight:600;text-decoration:none;transition:transform .2s,box-shadow .2s;display:inline-flex;align-items:center;gap:.5rem}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,.35)}
-.btn-secondary{background:transparent;color:var(--ink);padding:.9rem 2rem;border-radius:8px;font-size:.95rem;font-weight:600;text-decoration:none;border:1.5px solid var(--border);transition:border-color .2s,background .2s}
-.btn-secondary:hover{border-color:#d0d3e8;background:white}
+.hero-grid{display:none}
+.hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%;will-change:transform,opacity}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);border-radius:100px;padding:.35rem 1rem;font-size:.78rem;font-weight:600;margin-bottom:1.8rem;animation:fadeUp .6s ease both}
+.hero-title{font-family:'Inter',sans-serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:900;line-height:1.0;letter-spacing:-.03em;margin-bottom:1.5rem;animation:fadeUp .6s .1s ease both;color:white}
+.hero-title em{font-style:normal;font-weight:800;color:rgba(255,255,255,.75)}
+.hero-title .line2{display:block;color:rgba(255,255,255,.7);font-weight:400}
+.hero-sub{font-size:1.1rem;color:rgba(255,255,255,.8);line-height:1.7;max-width:520px;margin-bottom:2.5rem;font-weight:400;animation:fadeUp .6s .2s ease both}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;animation:fadeUp .6s .3s ease both}
+.btn-primary{background:#6366f1;color:white;padding:.9rem 2rem;border-radius:8px;font-size:.95rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary:hover{box-shadow:0 8px 24px rgba(99,102,241,.35)}
+.magnet-wrapper{padding:20px;margin:-20px;cursor:pointer}
+.btn-secondary{background:rgba(255,255,255,.1);color:white;padding:.9rem 2rem;border-radius:8px;font-size:.95rem;font-weight:600;text-decoration:none;border:1.5px solid rgba(255,255,255,.3);transition:border-color .2s,background .2s}
+.btn-secondary:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.15)}
 .hero-stats{display:flex;gap:3rem;margin-top:3.5rem;animation:fadeUp .6s .4s ease both}
-.hero-stat-num{font-family:'Inter',sans-serif;font-size:2rem;font-weight:900;color:var(--ink)}
-.hero-stat-label{font-size:.78rem;color:var(--ink3);margin-top:.1rem}
+.hero-stat-num{font-family:'Inter',sans-serif;font-size:2rem;font-weight:900;color:white}
+.hero-stat-label{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.1rem}
 
 /* ── SECTION ── */
 section{padding:6rem 2rem}
@@ -70,16 +71,16 @@ section{padding:6rem 2rem}
 .section-sub{font-size:1rem;color:var(--ink2);line-height:1.7;max-width:520px}
 
 /* ── PROBLEM ── */
-.problem{background:#1a1d3a}
-.problem .section-label{color:#818cf8}
-.problem .section-title{color:white}
-.problem .section-title em{color:#818cf8}
-.problem .section-sub{color:rgba(255,255,255,.6)}
+.problem{background:transparent}
+.problem .section-label{color:var(--primary)}
+.problem .section-title{color:var(--ink)}
+.problem .section-title em{color:var(--primary)}
+.problem .section-sub{color:var(--ink2)}
 .problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
-.problem-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1.8rem}
-.problem-icon{width:48px;height:48px;background:rgba(129,140,248,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
-.problem-card h3{font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;color:white;margin-bottom:.6rem}
-.problem-card p{font-size:.875rem;color:rgba(255,255,255,.5);line-height:1.6}
+.problem-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem}
+.problem-icon{width:48px;height:48px;background:rgba(99,102,241,.08);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+.problem-card h3{font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:.6rem}
+.problem-card p{font-size:.875rem;color:var(--ink2);line-height:1.6}
 
 /* ── FEATURES ── */
 .features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:3rem}
@@ -88,17 +89,17 @@ section{padding:6rem 2rem}
 .feature-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(99,102,241,.1)}
 .feature-card:hover::before{transform:scaleX(1)}
 .feature-emoji{width:44px;height:44px;background:rgba(99,102,241,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
-.feature-card.highlight .feature-emoji{background:rgba(129,140,248,.15)}
+.feature-card.highlight .feature-emoji{background:rgba(99,102,241,.08)}
 .feature-card h3{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.6rem}
 .feature-card p{font-size:.875rem;color:var(--ink2);line-height:1.6}
 .feature-tag{display:inline-block;background:rgba(99,102,241,0.1);color:#6366f1;font-size:.65rem;font-weight:600;padding:.2rem .6rem;border-radius:6px;margin-top:.8rem;text-transform:uppercase;letter-spacing:.04em}
-.feature-card.highlight{background:linear-gradient(135deg,#1a1d3a,#2d3166);border-color:transparent}
-.feature-card.highlight h3{color:white}
-.feature-card.highlight p{color:rgba(255,255,255,.6)}
-.feature-card.highlight .feature-tag{background:rgba(129,140,248,.2);color:#818cf8}
+.feature-card.highlight{background:var(--surface);border-color:var(--border)}
+.feature-card.highlight h3{color:var(--ink)}
+.feature-card.highlight p{color:var(--ink2)}
+.feature-card.highlight .feature-tag{background:rgba(99,102,241,.1);color:var(--primary)}
 
 /* ── HOW IT WORKS ── */
-.howitworks{background:#eef0f8}
+.howitworks{background:transparent}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem;position:relative}
 .steps::before{content:'';position:absolute;top:28px;left:12%;right:12%;height:1px;background:var(--border);z-index:0}
 .step{text-align:center;position:relative;z-index:1}
@@ -108,15 +109,15 @@ section{padding:6rem 2rem}
 .step p{font-size:.8rem;color:var(--ink3);line-height:1.5}
 
 /* ── KPI SHOWCASE ── */
-.kpi-showcase{background:#1a1d3a;padding:5rem 2rem}
-.kpi-showcase .section-title{color:white}
-.kpi-showcase .section-label{color:#818cf8}
+.kpi-showcase{padding:5rem 2rem}
+.kpi-showcase .section-title{color:var(--ink)}
+.kpi-showcase .section-label{color:var(--primary)}
 .kpi-grid-show{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:3rem}
-.kpi-show-card{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:1.5rem;text-align:center;transition:background .2s}
-.kpi-show-card:hover{background:rgba(99,102,241,.14)}
-.kpi-show-icon{width:44px;height:44px;background:rgba(129,140,248,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem}
-.kpi-show-val{font-family:'Inter',sans-serif;font-size:1.8rem;font-weight:900;color:white;margin-bottom:.3rem}
-.kpi-show-label{font-size:.72rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+.kpi-show-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;text-align:center;transition:background .2s}
+.kpi-show-card:hover{background:var(--surface);box-shadow:0 8px 24px rgba(99,102,241,.1);transform:translateY(-3px)}
+.kpi-show-icon{width:44px;height:44px;background:rgba(99,102,241,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem}
+.kpi-show-val{font-family:'Inter',sans-serif;font-size:1.8rem;font-weight:900;color:var(--ink);margin-bottom:.3rem}
+.kpi-show-label{font-size:.72rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
 .kpi-show-delta{font-size:.72rem;font-weight:600;margin-top:.3rem}
 .delta-green{color:#34d399}
 .delta-red{color:#f87171}
@@ -142,9 +143,9 @@ section{padding:6rem 2rem}
 .price-btn.primary:hover{box-shadow:0 4px 16px rgba(99,102,241,.35)}
 
 /* ── TESTIMONIAL ── */
-.testimonial-section{background:#eef0f8}
+.testimonial-section{background:transparent}
 .testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
-.testimonial-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem}
+.testimonial-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;min-width:300px;max-width:340px;flex-shrink:0;cursor:default}
 .testimonial-stars{color:#f59e0b;font-size:1rem;margin-bottom:1rem;letter-spacing:.1em}
 .testimonial-text{font-family:'Inter',sans-serif;font-size:1rem;font-style:italic;color:var(--ink);line-height:1.6;margin-bottom:1.2rem}
 .testimonial-author{display:flex;align-items:center;gap:.8rem}
@@ -153,21 +154,21 @@ section{padding:6rem 2rem}
 .testimonial-role{font-size:.75rem;color:var(--ink3)}
 
 /* ── CTA ── */
-.cta-section{background:#6366f1;padding:6rem 2rem;text-align:center;position:relative;overflow:hidden}
-.cta-section::before{content:'';position:absolute;top:-50%;left:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,.08),transparent);border-radius:50%}
-.cta-section .section-title{color:white;margin-bottom:1rem}
-.cta-section .section-sub{color:rgba(255,255,255,.75);max-width:480px;margin:0 auto 2.5rem}
-.cta-btn{background:white;color:#6366f1;padding:1rem 2.5rem;border-radius:8px;font-size:1rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:transform .2s,box-shadow .2s}
+.cta-section{background:transparent;padding:6rem 2rem;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{display:none}
+.cta-section .section-title{color:var(--ink);margin-bottom:1rem}
+.cta-section .section-sub{color:var(--ink2);max-width:480px;margin:0 auto 2.5rem}
+.cta-btn{background:#6366f1;color:white;padding:1rem 2.5rem;border-radius:8px;font-size:1rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:transform .2s,box-shadow .2s}
 .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.2)}
-.cta-note{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:1rem}
+.cta-note{font-size:.78rem;color:var(--ink3);margin-top:1rem}
 
 /* ── FOOTER ── */
-footer{background:#1a1d3a;color:rgba(255,255,255,.5);padding:3rem 2rem;text-align:center}
-footer .footer-logo{font-family:'Inter',sans-serif;font-size:1.5rem;font-weight:900;color:white;margin-bottom:.5rem}
-footer .footer-logo span{color:#818cf8}
+footer{background:var(--surface);border-top:1px solid var(--border);color:var(--ink3);padding:3rem 2rem;text-align:center}
+footer .footer-logo{font-family:'Inter',sans-serif;font-size:1.5rem;font-weight:900;color:var(--ink);margin-bottom:.5rem}
+footer .footer-logo span{color:var(--primary)}
 footer p{font-size:.82rem;line-height:1.6}
-footer a{color:rgba(255,255,255,.4);text-decoration:none}
-footer a:hover{color:white}
+footer a{color:var(--ink3);text-decoration:none}
+footer a:hover{color:var(--ink)}
 .footer-links{display:flex;justify-content:center;gap:2rem;margin:1rem 0;font-size:.82rem}
 
 /* ── FAQ ── */
@@ -181,10 +182,49 @@ footer a:hover{color:white}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
-.reveal.visible{opacity:1;transform:translateY(0)}
-@keyframes revealFallback{to{opacity:1;transform:translateY(0)}}
-.reveal{animation:revealFallback .6s ease 2s forwards}
+
+/* Base reveal — used directly on single elements */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .75s cubic-bezier(.22,1,.36,1),
+              transform .75s cubic-bezier(.22,1,.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Fallback if JS doesn't fire */
+@keyframes revealFallback { to { opacity:1; transform:translateY(0); } }
+.reveal { animation: revealFallback .6s ease 2.5s forwards; }
+
+/* Stagger grid system — parent triggers children sequentially */
+.stagger-grid > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(.22,1,.36,1),
+              transform .7s cubic-bezier(.22,1,.36,1);
+}
+.stagger-grid > *.visible { opacity: 1; transform: translateY(0); }
+
+/* Stagger delays */
+.stagger-grid > *:nth-child(1) { transition-delay: .04s }
+.stagger-grid > *:nth-child(2) { transition-delay: .12s }
+.stagger-grid > *:nth-child(3) { transition-delay: .20s }
+.stagger-grid > *:nth-child(4) { transition-delay: .28s }
+.stagger-grid > *:nth-child(5) { transition-delay: .36s }
+.stagger-grid > *:nth-child(6) { transition-delay: .44s }
+
+/* Cursor glow */
+.cursor-glow {
+  pointer-events: none;
+  position: fixed;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,.055), transparent 65%);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  transition: opacity .4s;
+}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
@@ -198,10 +238,138 @@ footer a:hover{color:white}
   .pricing-card.featured{transform:none}
   section{padding:4rem 1.2rem}
 }
+
+/* ── FOLDER COMPONENT ── */
+.folder-section-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.folder-graphic {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  width: 200px;
+  height: 160px;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+.folder-graphic:not(.open):hover { transform: translateY(-4px) scale(1.04); }
+
+.folder-graphic .folder-back {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 138px;
+  background: #3d18b0;
+  border-radius: 4px 14px 14px 14px;
+}
+.folder-graphic .folder-tab {
+  position: absolute;
+  top: 0; left: 0;
+  width: 80px; height: 26px;
+  background: #4e22d4;
+  border-radius: 8px 8px 0 0;
+}
+.folder-graphic .folder-front {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 124px;
+  background: #6366f1;
+  border-radius: 4px 4px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transform-origin: bottom center;
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+}
+.folder-graphic.open .folder-front {
+  transform: perspective(500px) rotateX(40deg);
+}
+.folder-graphic .folder-icon { font-size: 2rem; line-height: 1; }
+.folder-graphic .folder-label {
+  color: rgba(255,255,255,0.9);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.folder-hint {
+  margin-top: 0.85rem;
+  font-size: 0.8rem;
+  color: var(--ink3);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.folder-hint svg { transition: transform 0.4s ease; }
+.folder-hint.open svg { transform: rotate(180deg); }
+
+/* ── Cards: hidden by default, grid collapses ── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 0;
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s ease, margin-top 0.4s ease;
+}
+
+.features-grid.is-open {
+  max-height: 2000px;
+  margin-top: 2rem;
+}
+
+.features-grid .feature-card {
+  opacity: 0;
+  transform: translateY(-40px) scale(0.92);
+  pointer-events: none;
+  transition: none;
+}
+
+/* Fly-in: starts at folder position (--tx/--ty), lands at grid spot */
+@keyframes cardFlyIn {
+  0%   { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.08); }
+  70%  { opacity: 1; transform: translate(0, 0) scale(1.03); }
+  100% { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+/* Fly-out: animates TO the folder using per-card --tx / --ty set by JS */
+@keyframes cardFlyOut {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.08); }
+}
+
+.features-grid .feature-card.fly-in {
+  animation: cardFlyIn 0.45s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+  pointer-events: auto;
+}
+
+.features-grid .feature-card.fly-out {
+  animation: cardFlyOut 0.38s ease-in forwards;
+  pointer-events: none;
+}
+/* ── TESTIMONIAL MARQUEE ── */
+.testimonial-marquee-track{overflow:hidden;position:relative;padding:2rem 0;margin-top:2.5rem}
+.testimonial-marquee-track::before,.testimonial-marquee-track::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
+.testimonial-marquee-track::before{left:0;background:linear-gradient(to right,#eef0f8,transparent)}
+.testimonial-marquee-track::after{right:0;background:linear-gradient(to left,#eef0f8,transparent)}
+.testimonial-marquee-inner{display:flex;gap:1.5rem;width:max-content;animation:tmq 32s linear infinite}
+.testimonial-marquee-inner.paused{animation-play-state:paused}
+@keyframes tmq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tmq-pause-hint{text-align:center;margin-top:.75rem;font-size:.75rem;color:var(--ink3)}
+.tmq-pause-hint span{display:inline-block;transition:opacity .2s}
 </style>
 </head>
 <body>
 
+<div class="cursor-glow" id="cursorGlow" style="opacity:0"></div>
 <!-- NAV -->
 <nav id="navbar">
   <a href="#" class="nav-logo">Gastro<span>IQ</span></a>
@@ -218,9 +386,7 @@ footer a:hover{color:white}
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg">
-    <div class="hero-bg-circle c1"></div>
-    <div class="hero-bg-circle c2"></div>
-    <div class="hero-grid"></div>
+    <canvas id="lightRaysCanvas" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:1.0;mix-blend-mode:screen"></canvas>
   </div>
   <div class="hero-inner">
     <div class="hero-badge">Neu: Break-even Simulator &amp; Gewinnhistorie</div>
@@ -231,8 +397,16 @@ footer a:hover{color:white}
     </h1>
     <p class="hero-sub">Kein Excel. Kein Rätselraten. GastroIQ berechnet deinen Break-even, zeigt Nettogewinn pro Gericht und warnt dich bevor Verluste entstehen.</p>
     <div class="hero-actions">
-      <a href="/gastroiq-auth.html" class="btn-primary">Jetzt kostenlos starten</a>
-      <a href="#features" class="btn-secondary">Features ansehen</a>
+      <div class="magnet-wrapper" id="magnet-btn-1" style="position:relative;display:inline-block">
+        <div class="magnet-inner" style="will-change:transform">
+          <a href="/gastroiq-auth.html" class="btn-primary">Jetzt kostenlos starten</a>
+        </div>
+      </div>
+      <div class="magnet-wrapper" id="magnet-btn-2" style="position:relative;display:inline-block">
+        <div class="magnet-inner" style="will-change:transform">
+          <a href="#features" class="btn-secondary">Features ansehen</a>
+        </div>
+      </div>
     </div>
     <div class="hero-stats">
       <div>
@@ -251,30 +425,31 @@ footer a:hover{color:white}
   </div>
 </section>
 
+<div style="height:80px;background:linear-gradient(to bottom,#6366f1,var(--cream));margin-top:-80px;position:relative;z-index:1;pointer-events:none"></div>
 <!-- PROBLEM -->
 <section class="problem">
   <div class="container">
     <div class="section-label">Das Problem</div>
     <h2 class="section-title serif">Restaurants scheitern <em>nicht</em><br>am Kochen.</h2>
     <p class="section-sub">Sie scheitern daran, dass niemand die Zahlen im Griff hat – bis es zu spät ist.</p>
-    <div class="problem-grid reveal">
+    <div class="problem-grid stagger-grid">
       <div class="problem-card">
         <div class="problem-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         </div>
         <h3>Keine Transparenz</h3>
         <p>Food Cost und Personalquote werden erst am Monatsende bekannt – wenn man ohnehin nichts mehr ändern kann.</p>
       </div>
       <div class="problem-card">
         <div class="problem-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
         </div>
         <h3>Fehlende Struktur</h3>
         <p>Viele verschiedene Tabellen, keine einheitliche Sicht. Fehler bleiben unentdeckt, Entscheidungen basieren auf Bauchgefühl.</p>
       </div>
       <div class="problem-card">
         <div class="problem-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M15 5.5A7 7 0 1 0 15 18.5M4 10h9M4 14h9"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M15 5.5A7 7 0 1 0 15 18.5M4 10h9M4 14h9"/></svg>
         </div>
         <h3>Stille Kostenfresser</h3>
         <p>Schwund, hohe Wareneinsätze, ineffiziente Schichtplanung – jeder dieser Faktoren kostet täglich hunderte Euro.</p>
@@ -288,9 +463,30 @@ footer a:hover{color:white}
   <div class="container">
     <div class="section-label reveal">Die Lösung</div>
     <h2 class="section-title serif reveal">Alles was du brauchst.<br><em>Nichts</em> was du nicht brauchst.</h2>
-    <div class="features-grid reveal">
+    <!-- Folder graphic — click to reveal cards -->
+    <div class="folder-section-wrapper reveal">
+      <div class="folder-graphic" id="featureFolder"
+           style="--folder-color:#6366f1; --folder-back-color:#4a20c8"
+           onclick="toggleFeatureFolder()"
+           role="button" aria-expanded="false" aria-label="Features öffnen">
+        <div class="folder-tab"></div>
+        <div class="folder-back"></div>
+        <div class="folder-front">
+          <span class="folder-label">Portfolio</span>
+        </div>
+      </div>
+      <div class="folder-hint" id="folderHint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+        Klicken zum Öffnen
+      </div>
+    </div>
+
+    <div class="features-grid" id="featuresGrid">
       <div class="feature-card highlight">
-        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="feature-emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
         <h3>Break-even Simulator</h3>
         <p>Wie viele Gäste brauchen Sie täglich um Gewinn zu machen? GastroIQ berechnet es live – mit interaktivem Diagramm das Gewinn- und Verlustzone sofort zeigt.</p>
         <span class="feature-tag">Exklusiv</span>
@@ -334,7 +530,7 @@ footer a:hover{color:white}
   <div class="container">
     <div class="section-label reveal">So einfach</div>
     <h2 class="section-title serif reveal">In <em>4 Schritten</em> zum vollständigen Überblick.</h2>
-    <div class="steps reveal">
+    <div class="steps stagger-grid">
       <div class="step">
         <div class="step-num serif">1</div>
         <h3>Account erstellen</h3>
@@ -364,32 +560,32 @@ footer a:hover{color:white}
   <div class="container">
     <div class="section-label">Live Dashboard</div>
     <h2 class="section-title serif reveal">Nicht Umsatz. <em>Gewinn.</em></h2>
-    <p style="color:rgba(255,255,255,.6);max-width:500px;margin:0 auto 3rem;font-size:.95rem;line-height:1.6;text-align:center">
+    <p style="color:var(--ink2);max-width:500px;margin:0 auto 3rem;font-size:.95rem;line-height:1.6;text-align:center">
       GastroIQ zeigt dir nicht nur was reinkommt – sondern was wirklich übrig bleibt.
     </p>
-    <div class="kpi-grid-show reveal">
+    <div class="kpi-grid-show stagger-grid">
       <div class="kpi-show-card">
-        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-        <div class="kpi-show-val serif">487</div>
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="kpi-show-val serif" data-counter="487">487</div>
         <div class="kpi-show-label">Break-even Gäste/Monat</div>
         <div class="kpi-show-delta delta-green">Aktuell 612 Gäste – im Plus</div>
       </div>
       <div class="kpi-show-card">
-        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><path d="M15 5.5A7 7 0 1 0 15 18.5M4 10h9M4 14h9"/></svg></div>
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M15 5.5A7 7 0 1 0 15 18.5M4 10h9M4 14h9"/></svg></div>
         <div class="kpi-show-val serif">+1.840 €</div>
         <div class="kpi-show-label">Nettogewinn (Monat)</div>
         <div class="kpi-show-delta delta-green">+340 € gegenüber Vormonat</div>
       </div>
       <div class="kpi-show-card" style="position:relative;overflow:hidden">
         <div style="position:absolute;top:.5rem;right:.5rem;font-size:.65rem;background:rgba(129,140,248,.2);color:#a5b4fc;padding:.2rem .5rem;border-radius:100px;font-weight:700">AUSREISSER</div>
-        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
         <div class="kpi-show-val serif">Jun +18%</div>
         <div class="kpi-show-label">Bester Monat</div>
         <div class="kpi-show-delta delta-green">Automatisch markiert in Verlaufsansicht</div>
       </div>
       <div class="kpi-show-card">
-        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-        <div class="kpi-show-val serif">7,20 €</div>
+        <div class="kpi-show-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <div class="kpi-show-val serif" data-counter="7,20 €">7,20 €</div>
         <div class="kpi-show-label">Gewinn Schnitzel / Portion</div>
         <div class="kpi-show-delta delta-green">Profitabelstes Gericht</div>
       </div>
@@ -399,7 +595,7 @@ footer a:hover{color:white}
 
 
 <!-- BREAK-EVEN DEMO -->
-<section id="breakeven" style="background:var(--cream2);padding:6rem 2rem">
+<section id="breakeven" style="padding:6rem 2rem">
   <div class="container">
     <div class="section-label reveal">Interaktive Demo</div>
     <h2 class="section-title serif reveal">Ab wann verdienst du <em>wirklich</em> Geld?</h2>
@@ -474,7 +670,7 @@ footer a:hover{color:white}
     <div class="section-label reveal">Abonnements</div>
     <h2 class="section-title serif reveal">Transparent. <em>Fair.</em> Kein Kleingedrucktes.</h2>
     <p class="section-sub reveal" style="margin-bottom:3rem">Alle Pakete beinhalten 14 Tage kostenlose Testphase. Monatlich kündbar, keine Vertragsbindung.</p>
-    <div class="pricing-grid reveal">
+    <div class="pricing-grid stagger-grid">
       <!-- BRONZE -->
       <div class="pricing-card">
         <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
@@ -540,54 +736,54 @@ footer a:hover{color:white}
 </section>
 
 <!-- INDIVIDUELLE DIENSTLEISTUNGEN -->
-<section style="background:#1a1d3a;padding:6rem 2rem" id="services">
+<section style="padding:6rem 2rem" id="services">
   <div class="container">
-    <div class="section-label reveal" style="color:#818cf8">Individuelle Dienstleistungen</div>
-    <h2 class="section-title serif reveal" style="color:white">Mehr als Software –<br><em>Ihr digitaler Partner.</em></h2>
-    <p class="section-sub reveal" style="color:rgba(255,255,255,.6);margin-bottom:3rem">Neben dem Abonnement bieten wir maßgeschneiderte Leistungen für Unternehmen mit spezifischen Anforderungen. Jedes Projekt wird individuell konzipiert und realisiert.</p>
-    <div class="problem-grid reveal">
+    <div class="section-label reveal" style="color:var(--primary)">Individuelle Dienstleistungen</div>
+    <h2 class="section-title serif reveal" style="color:var(--ink)">Mehr als Software –<br><em>Ihr digitaler Partner.</em></h2>
+    <p class="section-sub reveal" style="color:var(--ink2);margin-bottom:3rem">Neben dem Abonnement bieten wir maßgeschneiderte Leistungen für Unternehmen mit spezifischen Anforderungen. Jedes Projekt wird individuell konzipiert und realisiert.</p>
+    <div class="problem-grid stagger-grid">
       <div class="problem-card" style="border-color:rgba(99,102,241,.2)">
         <div style="width:40px;height:40px;background:rgba(99,102,241,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
         </div>
         <h3>Unternehmens-Websites</h3>
         <p>Professionelle, individuelle Webpräsenzen – entwickelt nach Ihren CI-Vorgaben, optimiert für Konversion und Suchmaschinen.</p>
       </div>
       <div class="problem-card" style="border-color:rgba(99,102,241,.2)">
         <div style="width:40px;height:40px;background:rgba(99,102,241,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         </div>
         <h3>Business-Dashboards</h3>
         <p>Maßgeschneiderte Controlling-Lösungen und Reporting-Systeme – präzise auf Ihre Kennzahlen und Prozesse ausgerichtet.</p>
       </div>
       <div class="problem-card" style="border-color:rgba(99,102,241,.2)">
         <div style="width:40px;height:40px;background:rgba(99,102,241,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
         <h3>Systemanbindungen</h3>
         <p>Integration Ihrer bestehenden ERP-, CRM- und POS-Systeme. Wir schaffen nahtlose Datenflüsse und vermeiden Medienbrüche.</p>
       </div>
       <div class="problem-card" style="border-color:rgba(99,102,241,.2)">
         <div style="width:40px;height:40px;background:rgba(99,102,241,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         </div>
         <h3>Individuelle Datenanalysen</h3>
         <p>Tiefgehende Analysen Ihrer Betriebsdaten – von der Datenaggregation über die Visualisierung bis zur strategischen Handlungsempfehlung.</p>
       </div>
       <div class="problem-card" style="border-color:rgba(99,102,241,.2)">
         <div style="width:40px;height:40px;background:rgba(99,102,241,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
         <h3>Persönliche Beratung</h3>
         <p>Strategiegespräche und operative Begleitung – wir analysieren Ihre Zahlen gemeinsam mit Ihnen und erarbeiten konkrete Maßnahmen.</p>
       </div>
       <div class="problem-card" style="border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.06)">
         <div style="width:40px;height:40px;background:rgba(99,102,241,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.36 13 19.79 19.79 0 0 1 1.27 4.4a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.66 2.81a2 2 0 0 1-.45 2.11L7.09 9.91A16 16 0 0 0 13 15.91l1.27-1.27a2 2 0 0 1 2.11-.45c.91.31 1.85.53 2.81.66a2 2 0 0 1 1.72 2.02z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.36 13 19.79 19.79 0 0 1 1.27 4.4a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.66 2.81a2 2 0 0 1-.45 2.11L7.09 9.91A16 16 0 0 0 13 15.91l1.27-1.27a2 2 0 0 1 2.11-.45c.91.31 1.85.53 2.81.66a2 2 0 0 1 1.72 2.02z"/></svg>
         </div>
-        <h3 style="color:#818cf8">Beratungsgespräch vereinbaren</h3>
+        <h3 style="color:var(--primary)">Beratungsgespräch vereinbaren</h3>
         <p>Schildern Sie uns Ihre Anforderungen – wir melden uns innerhalb von 24 Stunden mit einem unverbindlichen Konzeptvorschlag.</p>
-        <a href="/cdn-cgi/l/email-protection#b8d3d7d6ccd9d3ccf8dfd9cbcccad7d1c996dcdd" style="display:inline-block;margin-top:1rem;background:#6366f1;color:white;padding:.6rem 1.4rem;border-radius:8px;font-size:.8rem;font-weight:700;text-decoration:none">Jetzt Kontakt aufnehmen</a>
+        <a href="/cdn-cgi/l/email-protection#b8d3d7d6ccd9d3ccf8dfd9cbcccad7d1c996dcdd" style="display:inline-block;margin-top:1rem;background:#6366f1;color:var(--ink);padding:.6rem 1.4rem;border-radius:8px;font-size:.8rem;font-weight:700;text-decoration:none">Jetzt Kontakt aufnehmen</a>
       </div>
     </div>
   </div>
@@ -598,41 +794,57 @@ footer a:hover{color:white}
   <div class="container">
     <div class="section-label reveal">Stimmen</div>
     <h2 class="section-title serif reveal">Was Gastronomen <em>sagen</em>.</h2>
-    <div class="testimonial-grid reveal">
-      <div class="testimonial-card">
-        <div class="testimonial-stars"></div>
-        <p class="testimonial-text serif">"Endlich sehe ich auf einen Blick was meine Schnitzel wirklich kosten und was der Lachs mir bringt. Das hat mein Denken verändert."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">MR</div>
-          <div>
-            <div class="testimonial-name">Marco R.</div>
-            <div class="testimonial-role">Inhaber, Trattoria Roma · München</div>
+    <div class="testimonial-marquee-track reveal" id="tmqTrack">
+      <div class="testimonial-marquee-inner" id="tmqInner">
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text serif">&bdquo;Endlich sehe ich auf einen Blick was meine Schnitzel wirklich kosten und was der Lachs mir bringt. Das hat mein Denken verändert.&ldquo;</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">MR</div>
+            <div><div class="testimonial-name">Marco R.</div><div class="testimonial-role">Inhaber, Trattoria Roma · München</div></div>
           </div>
         </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-stars"></div>
-        <p class="testimonial-text serif">"Die KI hat mir in der ersten Woche gezeigt dass meine Personalkosten freitags explodieren. Das war Gold wert."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">SK</div>
-          <div>
-            <div class="testimonial-name">Sandra K.</div>
-            <div class="testimonial-role">Geschäftsführerin, Bistro Klara · Hamburg</div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text serif">&bdquo;Die KI hat mir in der ersten Woche gezeigt dass meine Personalkosten freitags explodieren. Das war Gold wert.&ldquo;</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SK</div>
+            <div><div class="testimonial-name">Sandra K.</div><div class="testimonial-role">Geschäftsführerin, Bistro Klara · Hamburg</div></div>
           </div>
         </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-stars"></div>
-        <p class="testimonial-text serif">"Ich dachte ich kenne meine Zahlen. GastroIQ hat mir in 10 Minuten drei Kostenfresser gezeigt die ich jahrelang übersehen hatte."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">TM</div>
-          <div>
-            <div class="testimonial-name">Tobias M.</div>
-            <div class="testimonial-role">Küchenchef & Inhaber · Frankfurt</div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text serif">&bdquo;Ich dachte ich kenne meine Zahlen. GastroIQ hat mir in 10 Minuten drei Kostenfresser gezeigt die ich jahrelang übersehen hatte.&ldquo;</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">TM</div>
+            <div><div class="testimonial-name">Tobias M.</div><div class="testimonial-role">Küchenchef &amp; Inhaber · Frankfurt</div></div>
           </div>
         </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text serif">&bdquo;Früher hatte ich am Ende des Monats immer ein ungutes Gefühl. Jetzt sehe ich täglich ob wir auf Kurs sind.&ldquo;</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">AL</div>
+            <div><div class="testimonial-name">Anna L.</div><div class="testimonial-role">Inhaberin, Café Central · Wien</div></div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text serif">&bdquo;Der Break-even Simulator war ein Augenöffner. Ich wusste nicht dass ich 180 Gäste pro Tag brauche um wirklich profitabel zu sein.&ldquo;</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">PK</div>
+            <div><div class="testimonial-name">Peter K.</div><div class="testimonial-role">Inhaber, Steakhouse Grill 44 · Berlin</div></div>
+          </div>
+        </div>
+
       </div>
     </div>
+    <p class="tmq-pause-hint"><span id="tmqHint">⏸ Hover oder Klick zum Pausieren</span></p>
   </div>
 </section>
 
@@ -669,7 +881,7 @@ footer a:hover{color:white}
 <!-- CTA -->
 <section class="cta-section">
   <div class="container" style="position:relative;z-index:1">
-    <h2 class="section-title serif">Schluss mit Umsatz-<em style="color:rgba(255,255,255,0.7)">Illusion</em>.<br>Fang an Gewinn zu machen.</h2>
+    <h2 class="section-title serif">Schluss mit Umsatz-<em style="color:#6366f1">Illusion</em>.<br>Fang an Gewinn zu machen.</h2>
     <p class="section-sub">Starte kostenlos. Break-even-Rechner sofort verfügbar. Setup in 5 Minuten.</p>
     <a href="/gastroiq-auth.html" class="cta-btn">Jetzt kostenlos starten</a>
     <div class="cta-note">14 Tage Pro kostenlos · Danach ab 0 €/Monat · Jederzeit kündbar</div>
@@ -690,16 +902,191 @@ footer a:hover{color:white}
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
+// ── Feature Folder Toggle ─────────────────────────────────────────────────
+(function() {
+  var isOpen = false;
+
+  window.toggleFeatureFolder = function() {
+    var folder = document.getElementById('featureFolder');
+    var hint   = document.getElementById('folderHint');
+    var cards  = Array.from(document.querySelectorAll('#featuresGrid .feature-card'));
+
+    var grid   = document.getElementById('featuresGrid');
+
+    isOpen = !isOpen;
+    folder.classList.toggle('open', isOpen);
+    hint.classList.toggle('open', isOpen);
+    grid.classList.toggle('is-open', isOpen);
+    hint.lastChild.textContent = isOpen ? ' Klicken zum Schließen' : ' Klicken zum Öffnen';
+
+    if (isOpen) {
+      // ── OPEN: grid expands first, then cards fly from folder ──
+      // Give the grid one frame to expand so card positions are measurable
+      requestAnimationFrame(function() {
+
+      // Get folder center ONCE
+      var fRect = folder.getBoundingClientRect();
+      var fCx   = fRect.left + fRect.width  / 2;
+      var fCy   = fRect.top  + fRect.height / 2;
+
+      cards.forEach(function(card, i) {
+        card.classList.remove('fly-out');
+
+        // Measure card's grid position before animation
+        var cRect = card.getBoundingClientRect();
+        var cCx   = cRect.left + cRect.width  / 2;
+        var cCy   = cRect.top  + cRect.height / 2;
+
+        // Vector from card → folder (reversed: folder → card = negative)
+        var tx = fCx - cCx;
+        var ty = fCy - cCy;
+
+        card.style.setProperty('--tx', tx + 'px');
+        card.style.setProperty('--ty', ty + 'px');
+
+        setTimeout(function() {
+          card.classList.add('fly-in');
+        }, i * 120);
+      });
+
+      }); // end requestAnimationFrame
+
+    } else {
+      // ── CLOSE: each card flies to the folder's exact position ──
+
+      // Get folder center ONCE before any animation changes layout
+      var fRect = folder.getBoundingClientRect();
+      var fCx   = fRect.left + fRect.width  / 2;
+      var fCy   = fRect.top  + fRect.height / 2;
+
+      // Reverse order: last card closes first
+      var reversed = cards.slice().reverse();
+
+      reversed.forEach(function(card, i) {
+        // Measure card center BEFORE animation starts
+        var cRect = card.getBoundingClientRect();
+        var cCx   = cRect.left + cRect.width  / 2;
+        var cCy   = cRect.top  + cRect.height / 2;
+
+        // Vector from card center → folder center
+        var tx = fCx - cCx;
+        var ty = fCy - cCy;
+
+        // Set as CSS vars so the keyframe can use them
+        card.style.setProperty('--tx', tx + 'px');
+        card.style.setProperty('--ty', ty + 'px');
+
+        setTimeout(function() {
+          card.classList.remove('fly-in');
+          card.classList.add('fly-out');
+        }, i * 80);
+      });
+
+      // After all animations done: reset classes
+      setTimeout(function() {
+        cards.forEach(function(card) {
+          card.classList.remove('fly-out');
+          card.style.removeProperty('--tx');
+          card.style.removeProperty('--ty');
+        });
+      }, reversed.length * 80 + 420);
+    }
+  };
+})();
+
 // Navbar scroll
 window.addEventListener('scroll',()=>{
-  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
-});
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>30);
+}, {passive:true});
 
-// Reveal on scroll
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
-},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+// ── Persistent Scroll Animation Engine ──────────────────────────────────────
+// Elements animate IN on enter, reset on leave → re-animate every scroll
+
+// 1. Single-element reveals (.reveal class)
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    } else {
+      e.target.classList.remove('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// 2. Stagger grids — children animate in sequentially, reset on leave
+const staggerObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      Array.from(e.target.children).forEach((child, i) => {
+        setTimeout(() => child.classList.add('visible'), i * 85);
+      });
+    } else {
+      Array.from(e.target.children).forEach(child => {
+        child.classList.remove('visible');
+      });
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.stagger-grid').forEach(el => staggerObs.observe(el));
+
+// 3. Animated number counters on KPI values
+function animateCounter(el) {
+  const raw    = el.getAttribute('data-counter') || '';
+  const suffix = raw.includes('%') ? '%' : raw.includes('€') ? ' €' : '';
+  const num    = parseFloat(raw.replace(/[^\d.]/g, ''));
+  if (isNaN(num)) return;
+  const dur = 1100;
+  let start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    const p    = Math.min((ts - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const cur  = num * ease;
+    el.textContent = (Number.isInteger(num) ? Math.round(cur) : cur.toFixed(1)) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) animateCounter(e.target); });
+}, { threshold: 0.6 });
+document.querySelectorAll('[data-counter]').forEach(el => counterObs.observe(el));
+
+// 4. Hero parallax — inner content drifts up, fades as you scroll away
+(function() {
+  const inner = document.querySelector('.hero-inner');
+  if (!inner) return;
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const sy = window.scrollY;
+      inner.style.transform = `translateY(${sy * 0.22}px)`;
+      inner.style.opacity   = Math.max(0, 1 - sy / 420).toString();
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+
+
+// 6. Cursor glow
+(function() {
+  const glow = document.getElementById('cursorGlow');
+  if (!glow) return;
+  let visible = false;
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top  = e.clientY + 'px';
+    if (!visible) { glow.style.opacity = '1'; visible = true; }
+  });
+  document.addEventListener('mouseleave', () => {
+    glow.style.opacity = '0'; visible = false;
+  });
+})();
 
 // FAQ
 function toggleFaq(el){
@@ -830,4 +1217,302 @@ function updateDemoBreakeven() {
 }
 
 // Initialize on load
-window.addE
+window.addEventListener('DOMContentLoaded', updateDemoBreakeven);
+
+// ── Magnet Effect ─────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function initMagnet() {
+  const PADDING  = 100;   // px around button that activates the magnet
+  const STRENGTH = 2;     // divisor — higher = less movement
+
+  document.querySelectorAll('.magnet-wrapper').forEach(function(wrapper) {
+    const inner = wrapper.querySelector('.magnet-inner');
+    if (!inner) return;
+
+    // Snap back when mouse leaves the activation zone
+    function release() {
+      inner.style.transition = 'transform 0.5s ease-in-out';
+      inner.style.transform  = 'translate3d(0,0,0)';
+    }
+
+    wrapper.addEventListener('mousemove', function(e) {
+      var rect    = wrapper.getBoundingClientRect();
+      var centerX = rect.left + rect.width  / 2;
+      var centerY = rect.top  + rect.height / 2;
+      var offsetX = (e.clientX - centerX) / STRENGTH;
+      var offsetY = (e.clientY - centerY) / STRENGTH;
+      inner.style.transition = 'transform 0.3s ease-out';
+      inner.style.transform  = 'translate3d(' + offsetX + 'px,' + offsetY + 'px,0)';
+    });
+
+    wrapper.addEventListener('mouseleave', release);
+
+    // Also catch global mouse so button snaps back if cursor leaves fast
+    window.addEventListener('mousemove', function(e) {
+      var rect  = wrapper.getBoundingClientRect();
+      var distX = Math.abs(e.clientX - (rect.left + rect.width  / 2));
+      var distY = Math.abs(e.clientY - (rect.top  + rect.height / 2));
+      if (distX > rect.width / 2 + PADDING || distY > rect.height / 2 + PADDING) {
+        release();
+      }
+    });
+  });
+});
+
+// ── Testimonial Marquee ───────────────────────────────────────────────────
+(function() {
+  window.addEventListener('DOMContentLoaded', function() {
+    var inner = document.getElementById('tmqInner');
+    var hint  = document.getElementById('tmqHint');
+    if (!inner) return;
+
+    // Duplicate cards so the loop is seamless
+    inner.innerHTML += inner.innerHTML;
+
+    var clickPaused = false;
+
+    inner.addEventListener('mouseenter', function() {
+      inner.classList.add('paused');
+      hint.textContent = '▶ Klick zum Weiterlaufen';
+    });
+    inner.addEventListener('mouseleave', function() {
+      if (!clickPaused) {
+        inner.classList.remove('paused');
+        hint.textContent = '⏸ Hover oder Klick zum Pausieren';
+      }
+    });
+    inner.addEventListener('click', function() {
+      clickPaused = !clickPaused;
+      if (clickPaused) {
+        inner.classList.add('paused');
+        hint.textContent = '▶ Klick zum Weiterlaufen';
+      } else {
+        inner.classList.remove('paused');
+        hint.textContent = '⏸ Hover oder Klick zum Pausieren';
+      }
+    });
+  });
+})();
+
+
+
+// ── LightRays – vanilla WebGL port of the React component ────────────────────
+(function() {
+  const canvas = document.getElementById('lightRaysCanvas');
+  if (!canvas) return;
+
+  // Config — mirror the React component's default props
+  const CONFIG = {
+    raysOrigin:     'top-center',
+    raysColor:      '#ffffff',   // brand primary, matches design
+    raysSpeed:      0.5,
+    lightSpread:    0.8,
+    rayLength:      2.0,
+    pulsating:      false,
+    fadeDistance:   1.0,
+    saturation:     0.0,
+    followMouse:    true,
+    mouseInfluence: 0.1,
+    noiseAmount:    0.0,
+    distortion:     0.0,
+  };
+
+  // hexToRgb — identical to component
+  function hexToRgb(hex) {
+    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return m
+      ? [parseInt(m[1],16)/255, parseInt(m[2],16)/255, parseInt(m[3],16)/255]
+      : [1,1,1];
+  }
+
+  // getAnchorAndDir — identical to component
+  function getAnchorAndDir(origin, w, h) {
+    const out = 0.2;
+    switch(origin) {
+      case 'top-left':      return { anchor:[0,       -out*h],     dir:[0,1]  };
+      case 'top-right':     return { anchor:[w,       -out*h],     dir:[0,1]  };
+      case 'left':          return { anchor:[-out*w,  0.5*h],      dir:[1,0]  };
+      case 'right':         return { anchor:[(1+out)*w,0.5*h],     dir:[-1,0] };
+      case 'bottom-left':   return { anchor:[0,       (1+out)*h],  dir:[0,-1] };
+      case 'bottom-center': return { anchor:[0.5*w,   (1+out)*h],  dir:[0,-1] };
+      case 'bottom-right':  return { anchor:[w,       (1+out)*h],  dir:[0,-1] };
+      default:              return { anchor:[0.5*w,   -out*h],     dir:[0,1]  };
+    }
+  }
+
+  // ── WebGL setup ─────────────────────────────────────────────────────────────
+  const gl = canvas.getContext('webgl', { alpha:true, premultipliedAlpha:false });
+  if (!gl) return;
+
+  const VERT = `
+attribute vec2 position;
+varying vec2 vUv;
+void main() {
+  vUv = position * 0.5 + 0.5;
+  gl_Position = vec4(position, 0.0, 1.0);
+}`;
+
+  // Exact fragment shader from the React component
+  const FRAG = `
+precision highp float;
+
+uniform float iTime;
+uniform vec2  iResolution;
+uniform vec2  rayPos;
+uniform vec2  rayDir;
+uniform vec3  raysColor;
+uniform float raysSpeed;
+uniform float lightSpread;
+uniform float rayLength;
+uniform float pulsating;
+uniform float fadeDistance;
+uniform float saturation;
+uniform vec2  mousePos;
+uniform float mouseInfluence;
+uniform float noiseAmount;
+uniform float distortion;
+
+varying vec2 vUv;
+
+float noise(vec2 st) {
+  return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+float rayStrength(vec2 raySource, vec2 rayRefDirection, vec2 coord,
+                  float seedA, float seedB, float speed) {
+  vec2 sourceToCoord = coord - raySource;
+  vec2 dirNorm = normalize(sourceToCoord);
+  float cosAngle = dot(dirNorm, rayRefDirection);
+  float distortedAngle = cosAngle + distortion * sin(iTime * 2.0 + length(sourceToCoord) * 0.01) * 0.2;
+  float spreadFactor = pow(max(distortedAngle, 0.0), 1.0 / max(lightSpread, 0.001));
+  float distance = length(sourceToCoord);
+  float maxDistance = iResolution.x * rayLength;
+  float lengthFalloff = clamp((maxDistance - distance) / maxDistance, 0.0, 1.0);
+  float fadeFalloff = clamp((iResolution.x * fadeDistance - distance) / (iResolution.x * fadeDistance), 0.4, 1.0);
+  float pulse = pulsating > 0.5 ? (0.8 + 0.2 * sin(iTime * speed * 3.0)) : 1.0;
+  float baseStrength = clamp(
+    (0.45 + 0.15 * sin(distortedAngle * seedA + iTime * speed)) +
+    (0.3  + 0.2  * cos(-distortedAngle * seedB + iTime * speed)),
+    0.0, 1.0
+  );
+  return baseStrength * lengthFalloff * fadeFalloff * spreadFactor * pulse;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+  vec2 coord = vec2(fragCoord.x, iResolution.y - fragCoord.y);
+  vec2 finalRayDir = rayDir;
+  if (mouseInfluence > 0.0) {
+    vec2 mouseScreenPos = mousePos * iResolution.xy;
+    vec2 mouseDirection = normalize(mouseScreenPos - rayPos);
+    finalRayDir = normalize(mix(rayDir, mouseDirection, mouseInfluence));
+  }
+  vec4 rays1 = vec4(1.0) * rayStrength(rayPos, finalRayDir, coord, 36.2214, 21.11349, 1.5 * raysSpeed);
+  vec4 rays2 = vec4(1.0) * rayStrength(rayPos, finalRayDir, coord, 22.3991, 18.0234,  1.1 * raysSpeed);
+  fragColor = rays1 * 0.55 + rays2 * 0.42;
+  if (noiseAmount > 0.0) {
+    float n = noise(coord * 0.01 + iTime * 0.1);
+    fragColor.rgb *= (1.0 - noiseAmount + noiseAmount * n);
+  }
+  float brightness = 1.0 - (coord.y / iResolution.y);
+  fragColor.x *= 0.1 + brightness * 0.8;
+  fragColor.y *= 0.3 + brightness * 0.6;
+  fragColor.z *= 0.5 + brightness * 0.5;
+  if (saturation != 1.0) {
+    float gray = dot(fragColor.rgb, vec3(0.299, 0.587, 0.114));
+    fragColor.rgb = mix(vec3(gray), fragColor.rgb, saturation);
+  }
+  fragColor.rgb *= raysColor;
+}
+
+void main() {
+  vec4 color;
+  mainImage(color, gl_FragCoord.xy);
+  gl_FragColor = color;
+}`;
+
+  function compileShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compileShader(gl.VERTEX_SHADER,   VERT));
+  gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  // Full-screen triangle (same as OGL's Triangle primitive)
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(prog, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  // Uniform locations
+  const U = {};
+  ['iTime','iResolution','rayPos','rayDir','raysColor','raysSpeed',
+   'lightSpread','rayLength','pulsating','fadeDistance','saturation',
+   'mousePos','mouseInfluence','noiseAmount','distortion']
+    .forEach(n => { U[n] = gl.getUniformLocation(prog, n); });
+
+  // Mouse state with smooth interpolation — identical to component
+  const mouse       = { x:0.5, y:0.5 };
+  const smoothMouse = { x:0.5, y:0.5 };
+  const SMOOTHING   = 0.92;
+
+  window.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouse.x = (e.clientX - r.left) / r.width;
+    mouse.y = (e.clientY - r.top)  / r.height;
+  }, { passive:true });
+
+  // Resize — mirrors updatePlacement()
+  const DPR = Math.min(window.devicePixelRatio, 2);
+  function resize() {
+    canvas.width  = canvas.clientWidth  * DPR;
+    canvas.height = canvas.clientHeight * DPR;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize, { passive:true });
+  resize();
+
+  // Render loop — mirrors loop()
+  function frame(t) {
+    const time = t * 0.001;
+    const w = canvas.width, h = canvas.height;
+
+    // Smooth mouse
+    smoothMouse.x = smoothMouse.x * SMOOTHING + mouse.x * (1 - SMOOTHING);
+    smoothMouse.y = smoothMouse.y * SMOOTHING + mouse.y * (1 - SMOOTHING);
+
+    const { anchor, dir } = getAnchorAndDir(CONFIG.raysOrigin, w, h);
+    const color = hexToRgb(CONFIG.raysColor);
+
+    gl.useProgram(prog);
+    gl.uniform1f(U.iTime,          time);
+    gl.uniform2f(U.iResolution,    w, h);
+    gl.uniform2f(U.rayPos,         anchor[0], anchor[1]);
+    gl.uniform2f(U.rayDir,         dir[0],    dir[1]);
+    gl.uniform3fv(U.raysColor,     color);
+    gl.uniform1f(U.raysSpeed,      CONFIG.raysSpeed);
+    gl.uniform1f(U.lightSpread,    CONFIG.lightSpread);
+    gl.uniform1f(U.rayLength,      CONFIG.rayLength);
+    gl.uniform1f(U.pulsating,      CONFIG.pulsating ? 1.0 : 0.0);
+    gl.uniform1f(U.fadeDistance,   CONFIG.fadeDistance);
+    gl.uniform1f(U.saturation,     CONFIG.saturation);
+    gl.uniform2f(U.mousePos,       smoothMouse.x, smoothMouse.y);
+    gl.uniform1f(U.mouseInfluence, CONFIG.mouseInfluence);
+    gl.uniform1f(U.noiseAmount,    CONFIG.noiseAmount);
+    gl.uniform1f(U.distortion,     CONFIG.distortion);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+</script>
+</body>
+</html>
