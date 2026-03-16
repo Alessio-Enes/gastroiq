@@ -87,8 +87,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;min-he
 .sidebar-bottom{padding:.8rem 1rem;border-top:1px solid rgba(255,255,255,.08)}
 .sidebar-bottom p{font-size:.65rem;color:rgba(255,255,255,.25);letter-spacing:.02em}
 .nav-util{padding:.15rem 0;border-top:1px solid rgba(255,255,255,.08);margin-top:.15rem}
-.nav-util-item{display:flex;align-items:center;gap:.65rem;padding:.5rem 1rem;cursor:pointer;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.4);transition:background .15s,color .15s}
-.nav-util-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.nav-util-item{display:flex;align-items:center;gap:.65rem;padding:.5rem 1rem;cursor:pointer;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.4) !important;transition:background .15s,color .15s}
+.nav-util-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85) !important}
+#nav-einstellungen.nav-util-item-active{color:rgba(255,255,255,.9) !important}
 
 /* MAIN */
 .main{margin-left:240px;flex:1;min-height:100vh;background:#f4f5f9}
@@ -2353,11 +2354,11 @@ function navigateSub(cat, page) {
   }
   // Activate the sub-item
   document.querySelectorAll('.nav-sub-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.nav-util-item').forEach(n => n.style.color = '');
+  document.querySelectorAll('.nav-util-item').forEach(n => { n.style.color = ''; n.classList.remove('nav-util-item-active'); });
   const navEl = document.getElementById('nav-'+page);
   if(navEl) {
     if(navEl.classList.contains('nav-sub-item')) navEl.classList.add('active');
-    else navEl.style.color = 'rgba(255,255,255,.9)';
+    else navEl.classList.add('nav-util-item-active');
   }
   // Show the page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3420,8 +3421,9 @@ window.onload = async function() {
 };
 
 async function handleLogout() {
-  if(db) { try { await db.auth.signOut(); } catch(e){} }
-  window.location.href = 'gastroiq-auth.html';
+  try { if(db) await db.auth.signOut(); } catch(e){}
+  localStorage.removeItem('gastroiq');
+  window.location.replace('gastroiq-auth.html');
 }
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{
