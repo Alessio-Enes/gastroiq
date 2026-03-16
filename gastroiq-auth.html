@@ -634,13 +634,23 @@ table tr:hover td{background:#f8f9fc}
 
     <!-- Utility -->
     <div class="nav-util">
-      <div class="nav-util-item" onclick="window.location.href='gastroiq-pos-integration.html'" id="nav-kassen" style="color:rgba(255,200,80,.7)">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0"><path d="M5 12H3l9-9 9 9h-2"/><path d="M9 21V9h6v12"/></svg>
-        🔌 Kassensysteme verbinden
+      <div class="nav-sub-item" onclick="window.location.href='gastroiq-pos-integration.html'" id="nav-kassen">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px"><rect x="1" y="4" width="14" height="9" rx="1.5"/><path d="M5 8h6M5 11h3"/><path d="M4 4V3a1 1 0 011-1h6a1 1 0 011 1v1"/></svg>
+        </span>
+        <span class="nav-item-text">
+          <span class="nav-item-label">Kassensysteme</span>
+          <span class="nav-item-desc">POS & Kasse verbinden</span>
+        </span>
       </div>
-      <div class="nav-util-item" onclick="handleLogout()" style="color:rgba(255,100,80,.55)">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Abmelden
+      <div class="nav-sub-item" id="nav-abmelden">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px"><path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
+        </span>
+        <span class="nav-item-text">
+          <span class="nav-item-label">Abmelden</span>
+          <span class="nav-item-desc">Sitzung beenden</span>
+        </span>
       </div>
       <div class="nav-util-item" onclick="navigateSub('','einstellungen')" id="nav-einstellungen">
         <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -2353,11 +2363,10 @@ function navigateSub(cat, page) {
   }
   // Activate the sub-item
   document.querySelectorAll('.nav-sub-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.nav-util-item').forEach(n => n.style.color = '');
+  document.querySelectorAll('.nav-util-item').forEach(n => { n.style.color = ''; n.classList.remove('nav-util-item-active'); });
   const navEl = document.getElementById('nav-'+page);
   if(navEl) {
-    if(navEl.classList.contains('nav-sub-item')) navEl.classList.add('active');
-    else navEl.style.color = 'rgba(255,255,255,.9)';
+    navEl.classList.add('active');
   }
   // Show the page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3419,14 +3428,20 @@ window.onload = async function() {
   renderDashboard();
 };
 
-async function handleLogout() {
-  if(db) { try { await db.auth.signOut(); } catch(e){} }
-  // window.location.href = '/gastroiq-auth.html'; // disabled for standalone use
+function handleLogout() {
+  localStorage.removeItem('gastroiq');
+  sessionStorage.clear();
+  try { if(db && db.auth) db.auth.signOut(); } catch(e){}
+  window.location.replace('gastroiq-auth.html');
 }
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
 });
+
+// Logout-Button Event Listener
+const _logoutBtn = document.getElementById('nav-abmelden');
+if(_logoutBtn) _logoutBtn.addEventListener('click', handleLogout);
 
 // ════════════════════════════════════════════════════
 // MORGENBRIEFING
