@@ -3,319 +3,719 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GastroIQ – Starte jetzt</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>GastroIQ – Anmelden</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --cream:#f4f5f9;--cream2:#eef0f8;--cream3:#e5e7f0;
-  --ink:#1a1d3a;--ink2:#4b5280;--ink3:#8b92b8;--ink4:#c2c7e0;
-  --primary:#6366f1;--primary-light:rgba(99,102,241,0.08);--primary-glow:rgba(99,102,241,0.15);
-  --green:#10b981;--green-light:#f0fdf4;
-  --gold:#f59e0b;--gold-light:#fffbeb;
-  --red:#ef4444;
-  --surface:#ffffff;--border:#e5e7f0;--border2:#d0d3e8;
-  --radius:12px;
-  --shadow:0 1px 3px rgba(99,102,241,0.08),0 1px 2px rgba(0,0,0,0.04);
-  --shadow-lg:0 20px 50px rgba(99,102,241,0.12),0 8px 20px rgba(0,0,0,0.06);
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --purple-dark: #2e1f5e;
+  --purple:      #6366f1;
+  --purple2:     #4f46e5;
+  --orange:      #c8440a;
+  --ink:         #1a1208;
+  --ink2:        #3d2e1e;
+  --ink3:        #7a6a58;
+  --ink4:        #c0b4a8;
+  --cream:       #faf7f2;
+  --cream2:      #f2ede5;
+  --cream3:      #e4dbd0;
+  --surface:     #ffffff;
+  --green:       #16a34a;
+  --red:         #dc2626;
+  --dur:         600ms;
+  --ease:        cubic-bezier(0.65, 0, 0.35, 1);
 }
-html{scroll-behavior:smooth}
-body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
-.serif{font-family:'Inter',sans-serif}
-.bg-dots{position:fixed;inset:0;z-index:0;background-image:radial-gradient(circle,rgba(99,102,241,.12) .8px,transparent .8px);background-size:28px 28px;opacity:.6}
-.bg-glow1{position:fixed;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.07),transparent 70%);z-index:0;pointer-events:none}
-.bg-glow2{position:fixed;bottom:-200px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(139,92,246,.05),transparent 70%);z-index:0;pointer-events:none}
-.auth-wrapper{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
-.left-panel{padding:2.5rem 3rem;display:flex;flex-direction:column;border-right:1px solid rgba(196,181,253,0.15);background:#2e1f6e}
-.nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
-.logo{font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:900;color:#ffffff;text-decoration:none;letter-spacing:-.03em}
-.logo span{color:#6366f1}
-.back-link{font-size:.78rem;font-weight:500;color:var(--ink3);text-decoration:none;transition:color .2s}
-.back-link:hover{color:#6366f1}
-.left-content{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:480px}
-.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(99,102,241,0.08);color:#6366f1;border:1px solid rgba(99,102,241,0.2);border-radius:100px;padding:.3rem .9rem;font-size:.72rem;font-weight:600;margin-bottom:1.5rem;width:fit-content;animation:fadeUp .5s ease both}
-.left-headline{font-family:'Inter',sans-serif;font-size:2.6rem;font-weight:900;line-height:1.08;letter-spacing:-.04em;margin-bottom:1.2rem;animation:fadeUp .5s ease .1s both;color:#ffffff}
-.left-headline em{font-style:normal;font-weight:800;color:#6366f1}
-.left-sub{color:#ffffff;font-size:.88rem;line-height:1.75;margin-bottom:2.2rem;max-width:400px;animation:fadeUp .5s ease .2s both}
-.trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:2.5rem;animation:fadeUp .5s ease .3s both}
-.trust-item{display:flex;align-items:flex-start;gap:.65rem;background:#ffffff;border:1px solid var(--border);border-radius:10px;padding:.8rem .9rem;transition:box-shadow .2s}
-.trust-item:hover{box-shadow:0 4px 12px rgba(99,102,241,0.1)}
-.trust-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.ti-orange{background:rgba(99,102,241,.1)}.ti-green{background:#f0fdf4}.ti-gold{background:#fffbeb}.ti-cream{background:#f4f5f9}
-.trust-text{font-size:.75rem;font-weight:500;color:var(--ink2);line-height:1.4}
-.trust-text strong{color:#1a1d3a;display:block;margin-bottom:.1rem;font-weight:700}
-.pricing-section{animation:fadeUp .5s ease .4s both}
-.pricing-label{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:#ffffff;margin-bottom:.7rem}
-.pricing-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
-.price-card{background:#ffffff!important;border:1.5px solid rgba(196,181,253,0.3);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .2s;position:relative;text-align:center}
-.price-card:hover{border-color:#d0d3e8;box-shadow:0 4px 12px rgba(99,102,241,.1)}
-.price-card.featured{border-color:#6366f1;background:#ffffff!important}
-.price-card.selected{border-color:#a78bfa;background:rgba(235,228,255,0.95)!important;box-shadow:0 0 0 2px #a78bfa}
-.price-badge{position:absolute;top:-.55rem;left:50%;transform:translateX(-50%);background:#6366f1;color:white;font-size:.58rem;font-weight:700;padding:.2rem .65rem;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-.price-name{font-family:'Inter',sans-serif;font-weight:900;font-size:.9rem;margin-bottom:.2rem}
-.price-amount{font-size:1.2rem;font-weight:800;letter-spacing:-.02em;color:#1a1d3a}
-.price-amount span{font-size:.68rem;font-weight:400;color:var(--ink3)}
-.price-feat{font-size:.68rem;color:var(--ink3);margin-top:.35rem;line-height:1.4}
-.left-footer{margin-top:auto;padding-top:1.5rem;display:flex;align-items:center;gap:1.5rem;color:var(--ink3);font-size:.68rem;border-top:1px solid var(--border)}
-.footer-dot{width:4px;height:4px;border-radius:50%;background:var(--border2)}
-.right-panel{display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--cream);position:relative}
-.right-panel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(99,102,241,.1) .5px,transparent .5px);background-size:20px 20px;opacity:.5}
-.auth-card{position:relative;background:#ffffff;border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:440px;box-shadow:var(--shadow-lg);animation:slideUp .6s ease both}
-.auth-tabs{display:flex;background:var(--cream);border-radius:8px;padding:.25rem;margin-bottom:1.8rem;border:1px solid var(--border)}
-.auth-tab{flex:1;padding:.6rem;text-align:center;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--ink3);transition:all .2s}
-.auth-tab.active{background:#ffffff;color:#1a1d3a;box-shadow:0 1px 4px rgba(99,102,241,.1)}
-.auth-tab:hover:not(.active){color:var(--ink2)}
-.auth-title{font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem}
-.auth-sub{font-size:.8rem;color:var(--ink3);margin-bottom:1.6rem;line-height:1.55}
-.field{margin-bottom:1rem}
-.field label{display:block;font-size:.65rem;font-weight:600;color:var(--ink3);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.07em}
-.input-wrap{position:relative}
-.input-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none}
-.field input{width:100%;padding:.72rem .9rem;background:#f8f9fc;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;color:#1a1d3a;outline:none;transition:border-color .2s,box-shadow .2s}
-.field input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
-.field input::placeholder{color:#c2c7e0}
-.field input.error{border-color:#ef4444}
-.pw-strength{margin-top:.45rem;display:none}
-.pw-bars{display:flex;gap:.25rem;margin-bottom:.25rem}
-.pw-bar{height:3px;flex:1;border-radius:100px;background:var(--border);transition:background .3s}
-.pw-bar.active-weak{background:#ef4444}.pw-bar.active-medium{background:#f59e0b}.pw-bar.active-strong{background:#10b981}
-.pw-label{font-size:.68rem;color:var(--ink3)}
-.resto-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem}
-.resto-option{background:#f8f9fc;border:1.5px solid var(--border);border-radius:8px;padding:.65rem;cursor:pointer;text-align:center;transition:all .2s}
-.resto-option:hover{border-color:#6366f1;background:rgba(99,102,241,0.06)}
-.resto-option.selected{border-color:#6366f1;background:rgba(99,102,241,0.08)}
-.resto-option .ro-icon{font-size:1.2rem;margin-bottom:.2rem}
-.resto-option .ro-label{font-size:.72rem;font-weight:600;color:var(--ink3)}
-.resto-option.selected .ro-label{color:#6366f1}
-.plan-select{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.45rem;margin-bottom:1rem}
-.plan-chip{background:#f8f9fc;border:1.5px solid var(--border);border-radius:8px;padding:.6rem .4rem;cursor:pointer;transition:all .2s;text-align:center;position:relative}
-.plan-chip:hover{border-color:#6366f1}
-.plan-chip.selected{border-color:#6366f1;background:rgba(99,102,241,0.08)}
-.plan-chip .chip-badge{position:absolute;top:-.45rem;left:50%;transform:translateX(-50%);background:#6366f1;color:white;font-size:.55rem;font-weight:700;padding:.12rem .5rem;border-radius:100px;white-space:nowrap}
-.plan-chip .chip-name{font-weight:800;font-size:.75rem;color:var(--ink)}
-.plan-chip .chip-price{font-size:.9rem;font-weight:800;letter-spacing:-.02em;margin:.1rem 0}
-.plan-chip .chip-feat{font-size:.6rem;color:var(--ink3);line-height:1.3}
-.plan-chip.selected .chip-name{color:#6366f1}
-.submit-btn{width:100%;padding:.8rem;background:#6366f1;color:white;border:none;border-radius:8px;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:.4rem;transition:transform .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:.6rem;box-shadow:0 4px 14px rgba(99,102,241,.3)}
-.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.4)}
-.submit-btn:active{transform:translateY(0)}
-.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.submit-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
-.submit-btn.loading .btn-text{display:none}
-.submit-btn.loading .spinner{display:block}
-.auth-divider{display:flex;align-items:center;gap:.8rem;margin:1rem 0;color:var(--ink4);font-size:.72rem}
-.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.google-btn{width:100%;padding:.7rem;background:#ffffff;color:#1a1d3a;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.7rem;transition:border-color .2s,box-shadow .2s}
-.google-btn:hover{border-color:#d0d3e8;box-shadow:0 2px 8px rgba(99,102,241,.1)}
-.auth-message{border-radius:10px;padding:.7rem 1rem;font-size:.8rem;font-weight:500;margin-bottom:1rem;display:none}
-.auth-message.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-.auth-message.success{background:#f0fdf4;color:#059669;border:1px solid #a7f3d0}
-.forgot-link{font-size:.72rem;color:#6366f1;text-decoration:none;float:right;margin-top:.3rem;font-weight:600}
-.forgot-link:hover{text-decoration:underline}
-.terms-note{font-size:.72rem;color:var(--ink3);text-align:center;margin-top:1rem;line-height:1.6}
-.terms-note a{color:#6366f1;text-decoration:none;font-weight:600}
-.dsgvo-check{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1rem;font-size:.75rem;color:var(--ink3);line-height:1.5}
-.dsgvo-check input{margin-top:.2rem;accent-color:#6366f1}
-.dsgvo-check a{color:#6366f1;text-decoration:none}
-.success-screen{text-align:center;padding:.5rem 0;display:none}
-.success-icon{width:64px;height:64px;background:#f0fdf4;border:2px solid #a7f3d0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;color:#059669;margin:0 auto 1.2rem}
-.success-screen h3{font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:900;margin-bottom:.5rem}
-.success-screen p{color:var(--ink3);font-size:.85rem;line-height:1.6;margin-bottom:1.5rem}
-.check-steps{text-align:left;background:#f8f9fc;border-radius:10px;padding:1.1rem;border:1px solid var(--border)}
-.check-step{display:flex;align-items:center;gap:.7rem;font-size:.82rem;padding:.4rem 0;color:var(--ink2)}
-.cs-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0}
-.cs-done{background:#dcfce7;color:#059669}
-.cs-wait{background:#f0f1f8;color:#8b92b8}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:900px){.auth-wrapper{grid-template-columns:1fr}.left-panel{display:none}.right-panel{padding:1.5rem;min-height:100vh;background:var(--cream)}.auth-card{padding:2rem 1.5rem;max-width:500px}}
-@media(max-width:480px){.plan-select{grid-template-columns:1fr}.resto-grid{grid-template-columns:1fr 1fr}}
+
+html, body {
+  height: 100%;
+  background: #1a1530;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* subtle background pattern */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 50%, rgba(99,102,241,.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 85% 30%, rgba(200,68,10,.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ════════════════════════════════
+   MAIN CONTAINER
+════════════════════════════════ */
+.auth-box {
+  position: relative;
+  width: 880px;
+  height: 580px;
+  background: var(--surface);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,.45),
+    0 8px 24px rgba(0,0,0,.25);
+  z-index: 1;
+}
+
+/* ════════════════════════════════
+   FORM PANELS  (left + right halves)
+════════════════════════════════ */
+.forms-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+/* ── LOGIN PANEL (left 50%) ── */
+.panel-login {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.8rem 3rem;
+  background: var(--surface);
+  transition: opacity var(--dur) var(--ease);
+}
+
+/* ── REGISTER PANEL (right 50%) ── */
+.panel-register {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2.4rem 2.4rem;
+  background: var(--surface);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.panel-register::-webkit-scrollbar { display: none; }
+
+/* when in register mode, login form fades slightly */
+.auth-box.register-mode .panel-login {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════
+   SLIDING OVERLAY PANEL
+   Starts on right → slides to left on register
+════════════════════════════════ */
+.overlay-panel {
+  position: absolute;
+  top: 0;
+  left: 50%;           /* starts covering right half */
+  width: 50%;
+  height: 100%;
+  background: var(--purple-dark);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2.8rem;
+  z-index: 10;
+  transition: left var(--dur) var(--ease), border-radius var(--dur) var(--ease);
+  overflow: hidden;
+}
+
+/* decorative orbs */
+.overlay-panel::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(99,102,241,.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.overlay-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -60px;
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, rgba(200,68,10,.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Register mode: overlay slides to left */
+.auth-box.register-mode .overlay-panel {
+  left: 0%;
+}
+
+/* Content inside overlay — two states */
+.overlay-content {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+/* ── Overlay: "Hey There!" state (default / login mode) ── */
+.overlay-hey { display: flex; flex-direction: column; align-items: center; }
+.overlay-welcome { display: none; flex-direction: column; align-items: center; }
+
+.auth-box.register-mode .overlay-hey     { display: none; }
+.auth-box.register-mode .overlay-welcome { display: flex; }
+
+.overlay-logo {
+  font-family: 'Fraunces', serif;
+  font-weight: 900; font-size: 1.3rem;
+  color: #fff; letter-spacing: -.03em;
+  margin-bottom: 2.2rem;
+}
+.overlay-logo span { color: #a78bfa; }
+
+.overlay-headline {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800; font-size: 1.8rem;
+  color: #fff; line-height: 1.15;
+  letter-spacing: -.03em;
+  margin-bottom: .8rem;
+}
+
+.overlay-sub {
+  font-size: .82rem; color: rgba(255,255,255,.6);
+  line-height: 1.65; margin-bottom: 2rem;
+  max-width: 260px;
+}
+
+.overlay-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .72rem 2rem;
+  border: 2px solid rgba(255,255,255,.8);
+  border-radius: 100px;
+  background: transparent;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem; font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+.overlay-btn:hover {
+  background: rgba(255,255,255,.12);
+  border-color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ════════════════════════════════
+   FORM ELEMENTS
+════════════════════════════════ */
+.panel-title {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800; font-size: 1.55rem;
+  color: var(--ink); letter-spacing: -.03em;
+  margin-bottom: .3rem;
+}
+.panel-sub {
+  font-size: .78rem; color: var(--ink3);
+  margin-bottom: 1.6rem; line-height: 1.5;
+}
+
+/* social icons row */
+.social-row {
+  display: flex; gap: .55rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.social-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cream3);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color .2s, box-shadow .2s;
+}
+.social-btn svg {
+  display: block;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.social-btn:hover {
+  border-color: var(--purple);
+  box-shadow: 0 2px 8px rgba(99,102,241,.15);
+}
+
+.divider {
+  display: flex; align-items: center; gap: .6rem;
+  margin: .8rem 0;
+  color: var(--ink4); font-size: .7rem; font-weight: 500;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--cream3);
+}
+
+.field { margin-bottom: .85rem; }
+.field label {
+  display: flex; justify-content: space-between;
+  font-size: .68rem; font-weight: 700;
+  color: var(--ink3); text-transform: uppercase;
+  letter-spacing: .07em; margin-bottom: .3rem;
+}
+.forgot-link {
+  font-size: .7rem; font-weight: 500; color: var(--purple);
+  text-decoration: none; text-transform: none; letter-spacing: 0;
+}
+.forgot-link:hover { text-decoration: underline; }
+
+.input-wrap input {
+  width: 100%; padding: .65rem .95rem;
+  border: 1.5px solid var(--cream3); border-radius: 9px;
+  font-family: 'DM Sans', sans-serif; font-size: .86rem;
+  color: var(--ink); background: var(--cream);
+  outline: none; transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.input-wrap input:focus {
+  border-color: var(--purple); background: #fff;
+  box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+}
+.input-wrap input::placeholder { color: var(--ink4); }
+
+.submit-btn {
+  width: 100%; padding: .78rem;
+  background: var(--purple); color: #fff;
+  border: none; border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .86rem; font-weight: 700;
+  cursor: pointer; margin-top: .5rem;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  box-shadow: 0 4px 14px rgba(99,102,241,.3);
+  transition: background .15s, transform .15s, box-shadow .15s;
+  letter-spacing: .01em;
+}
+.submit-btn:hover { background: #4f46e5; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,.4); }
+.submit-btn:active { transform: none; }
+.submit-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.submit-btn .spinner { width: 17px; height: 17px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+.submit-btn.loading .btn-text { display: none; }
+.submit-btn.loading .spinner { display: block; }
+
+.auth-message {
+  padding: .55rem .85rem; border-radius: 8px;
+  font-size: .78rem; font-weight: 500;
+  margin-bottom: .75rem; display: none;
+}
+.auth-message.error  { background: #fef2f2; color: var(--red);   border: 1px solid #fecaca; }
+.auth-message.success{ background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; }
+
+/* pw strength */
+.pw-strength { display: none; margin-top: .35rem; }
+.pw-bars { display: flex; gap: 3px; margin-bottom: .2rem; }
+.pw-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--cream3); transition: background .3s; }
+.pw-bar.active-weak   { background: var(--red); }
+.pw-bar.active-medium { background: var(--orange); }
+.pw-bar.active-strong { background: var(--green); }
+.pw-label { font-size: .66rem; color: var(--ink3); }
+
+/* resto grid */
+.resto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; margin-top: .35rem; }
+.resto-option {
+  padding: .45rem .5rem; border: 1.5px solid var(--cream3);
+  border-radius: 8px; cursor: pointer; text-align: center;
+  font-size: .73rem; font-weight: 600; color: var(--ink3);
+  background: var(--cream); transition: all .2s;
+}
+.resto-option.selected { border-color: var(--purple); color: var(--purple); background: rgba(99,102,241,.08); }
+
+/* plan chips */
+.plan-select { display: flex; gap: .35rem; margin-top: .35rem; }
+.plan-chip {
+  flex: 1; padding: .6rem .3rem;
+  border: 1.5px solid var(--cream3); border-radius: 9px;
+  cursor: pointer; text-align: center;
+  background: var(--cream); transition: all .2s; position: relative;
+}
+.plan-chip.selected { border-color: var(--purple); background: rgba(99,102,241,.08); }
+.plan-chip.selected .chip-name { color: var(--purple); }
+.chip-badge { position: absolute; top: -.4rem; left: 50%; transform: translateX(-50%); background: #a78bfa; color: #fff; font-size: .5rem; font-weight: 700; padding: .1rem .45rem; border-radius: 100px; white-space: nowrap; }
+.chip-name  { font-size: .71rem; font-weight: 700; color: var(--ink); margin-bottom: .08rem; }
+.chip-price { font-size: .78rem; font-weight: 800; color: var(--purple-dark); }
+.chip-feat  { font-size: .6rem; color: var(--ink3); }
+
+/* dsgvo */
+.dsgvo-check { display: flex; gap: .45rem; align-items: flex-start; margin: .65rem 0 .5rem; }
+.dsgvo-check input { margin-top: .18rem; flex-shrink: 0; accent-color: var(--purple); }
+.dsgvo-check label { font-size: .68rem; color: var(--ink3); line-height: 1.55; }
+.dsgvo-check a { color: var(--purple); text-decoration: none; }
+
+/* success */
+.success-screen { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; height: 100%; gap: 1rem; }
+.success-icon { width: 52px; height: 52px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* reset form */
+#form-reset { display: none; }
 </style>
 </head>
 <body>
-<div class="bg-dots"></div>
-<div class="bg-glow1"></div>
-<div class="bg-glow2"></div>
-<div class="auth-wrapper">
-  <div class="left-panel">
-    <div class="nav-top">
-      <a href="/index.html" class="logo">Gastro<span>IQ</span></a>
-      <a href="/index.html" class="back-link">Zurück zur Startseite</a>
-    </div>
-    <div class="left-content">
-      <div class="badge">14 Tage kostenlos · keine Kreditkarte</div>
-      <h1 class="left-headline">Der Moment, in dem du<br><em>wirklich verstehst,</em><br>was dein Restaurant verdient.</h1>
-      <p class="left-sub">Schluss mit Bauchgefühl. Ab heute triffst du jede Entscheidung auf Basis echter Zahlen – und gewinnst die Kontrolle zurück, die du verdienst.</p>
-      <div class="trust-grid">
-        <div class="trust-item"><div class="trust-text"><strong>Break-even in Echtzeit</strong>Wie viele Gäste brauchst du heute noch?</div></div>
-        <div class="trust-item"><div class="trust-text"><strong>Gewinn pro Gericht</strong>Welches Gericht verdient wirklich Geld?</div></div>
-        <div class="trust-item"><div class="trust-text"><strong>KI-Morgenbriefing</strong>Jeden Morgen wissen, worauf es ankommt.</div></div>
-        <div class="trust-item"><div class="trust-text"><strong>DSGVO-konform</strong>Deine Daten. Dein Restaurant. Dein Eigentum.</div></div>
+
+<div class="auth-box" id="authBox">
+
+  <!-- ══════════════════════════════
+       FORM PANELS (behind overlay)
+  ══════════════════════════════ -->
+  <div class="forms-wrap">
+
+    <!-- LEFT: Login -->
+    <div class="panel-login">
+      <div class="panel-title">Anmelden</div>
+      <div class="panel-sub">Melde dich in deinem GastroIQ-Konto an</div>
+
+      <div class="social-row">
+        <button class="social-btn" onclick="handleGoogleLogin()" title="Mit Google anmelden">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.6 10.23c0-.68-.06-1.36-.17-2H10v3.79h5.44a4.64 4.64 0 01-2.01 3.04v2.52h3.26c1.9-1.75 3-4.33 3-7.35z" fill="#4285F4"/>
+            <path d="M10 20c2.7 0 4.97-.9 6.63-2.42l-3.26-2.52c-.9.6-2.05.96-3.37.96-2.59 0-4.78-1.75-5.56-4.1H1.07v2.6A10 10 0 0010 20z" fill="#34A853"/>
+            <path d="M4.44 11.92A6.01 6.01 0 014.13 10c0-.67.12-1.32.31-1.92V5.48H1.07A10 10 0 000 10c0 1.61.38 3.14 1.07 4.52l3.37-2.6z" fill="#FBBC05"/>
+            <path d="M10 3.98c1.46 0 2.77.5 3.8 1.49l2.85-2.85C14.96.99 12.7 0 10 0A10 10 0 001.07 5.48l3.37 2.6C5.22 5.73 7.41 3.98 10 3.98z" fill="#EA4335"/>
+          </svg>
+        </button>
+        <button class="social-btn" onclick="handleAppleLogin()" title="Mit Apple anmelden">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.39-1.32 2.76-2.54 3.99zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+          </svg>
+        </button>
       </div>
-      <div class="pricing-section">
-        <div class="pricing-label">Unsere Pakete – nach dem Test flexibel wählen</div>
-        <div class="pricing-row">
-          <div class="price-card" onclick="selectPlanLeft(this,'bronze')"><div class="price-name">Bronze</div><div class="price-amount">49 € <span>/ Monat</span></div><div class="price-feat">Dashboard, Food Cost, Break-even, 1 Standort</div></div>
-          <div class="price-card featured" onclick="selectPlanLeft(this,'silber')"><div class="price-badge">Empfohlen</div><div class="price-name">Silber</div><div class="price-amount">79 € <span>/ Monat</span></div><div class="price-feat">+ KI-Analyse, Prognose, POS-API, 3 Standorte</div></div>
-          <div class="price-card" onclick="selectPlanLeft(this,'gold')"><div class="price-name">Gold</div><div class="price-amount">199 € <span>/ Monat</span></div><div class="price-feat">+ Unbegrenzt, White-Label, Premium-Support</div></div>
+
+      <div class="divider">oder mit E-Mail</div>
+      <div id="auth-message-login" class="auth-message"></div>
+
+      <div id="form-login">
+        <div class="field">
+          <label>E-Mail</label>
+          <div class="input-wrap"><input type="email" id="login-email" placeholder="chef@meinrestaurant.de" autocomplete="email"/></div>
+        </div>
+        <div class="field">
+          <label>Passwort <a href="#" class="forgot-link" onclick="showReset();return false">Vergessen?</a></label>
+          <div class="input-wrap"><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password"/></div>
+        </div>
+        <button class="submit-btn" id="login-btn" onclick="handleLogin()">
+          <span class="btn-text">Anmelden</span><div class="spinner"></div>
+        </button>
+      </div>
+
+      <div id="form-reset">
+        <p style="font-size:.8rem;color:var(--ink3);line-height:1.6;margin-bottom:1rem">Gib deine E-Mail ein — wir senden dir einen Reset-Link.</p>
+        <div class="field">
+          <label>E-Mail</label>
+          <div class="input-wrap"><input type="email" id="reset-email" placeholder="chef@meinrestaurant.de"/></div>
+        </div>
+        <button class="submit-btn" onclick="handleReset()"><span class="btn-text">Reset-Link senden</span><div class="spinner"></div></button>
+        <div style="text-align:center;margin-top:.9rem">
+          <a href="#" onclick="showLogin();return false" style="font-size:.73rem;color:var(--purple);text-decoration:none">← Zurück zum Login</a>
         </div>
       </div>
     </div>
-    <div class="left-footer"><span>© 2025 GastroIQ</span><div class="footer-dot"></div><span>Made in Germany</span><div class="footer-dot"></div><span>Daten auf EU-Servern (Frankfurt)</span></div>
-  </div>
-  <div class="right-panel">
-    <div class="auth-card">
-      <div class="auth-tabs" id="auth-tabs-bar">
-        <div class="auth-tab active" onclick="switchTab('login')" id="tab-login">Anmelden</div>
-        <div class="auth-tab" onclick="switchTab('register')" id="tab-register">Registrieren</div>
+
+    <!-- RIGHT: Register -->
+    <div class="panel-register">
+      <div id="success-screen" class="success-screen">
+        <div class="success-icon">
+          <svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div style="font-family:'Fraunces',serif;font-weight:900;font-size:1.3rem;color:var(--ink)">Willkommen!</div>
+        <div style="font-size:.8rem;color:var(--ink3);line-height:1.6">Bestätige deine E-Mail,<br>dann geht's los.</div>
       </div>
-      <div id="auth-message" class="auth-message"></div>
-      <div id="form-login">
-        <div class="auth-title">Willkommen zurück</div>
-        <div class="auth-sub">Schön, dass du da bist. Dein Dashboard wartet auf dich.</div>
-        <div class="field"><label>E-Mail</label><div class="input-wrap"><input type="email" id="login-email" placeholder="chef@meinrestaurant.de" autocomplete="email" /></div></div>
-        <div class="field"><label>Passwort <a href="#" class="forgot-link" onclick="switchTab('reset')">Vergessen?</a></label><div class="input-wrap"><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" /></div></div>
-        <button class="submit-btn" id="login-btn" onclick="handleLogin()"><span class="btn-text">Anmelden</span><div class="spinner"></div></button>
-        <div class="auth-divider">oder</div>
-        <button class="google-btn" onclick="handleGoogleLogin()"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 6.294C4.672 4.169 6.656 3.58 9 3.58z"/></svg>Mit Google anmelden</button>
-        <p class="terms-note">Noch kein Account? <a href="#" onclick="switchTab('register')">Jetzt kostenlos starten</a></p>
-      </div>
-      <div id="form-register" style="display:none">
-        <div class="auth-title">Dein neuer Überblick beginnt hier</div>
-        <div class="auth-sub">In 2 Minuten registriert. 14 Tage alles testen. Kein Risiko.</div>
-        <div class="field"><label>Restaurantname</label><div class="input-wrap"><input type="text" id="reg-restaurant" placeholder="Zur goldenen Gabel" /></div></div>
-        <div class="field"><label>Dein Name</label><div class="input-wrap"><input type="text" id="reg-name" placeholder="Max Mustermann" /></div></div>
-        <div class="field"><label>E-Mail</label><div class="input-wrap"><input type="email" id="reg-email" placeholder="chef@meinrestaurant.de" autocomplete="email" /></div></div>
-        <div class="field"><label>Passwort</label><div class="input-wrap"><input type="password" id="reg-pw" placeholder="Min. 8 Zeichen" oninput="checkPasswordStrength(this.value)" /></div><div class="pw-strength" id="pw-strength"><div class="pw-bars"><div class="pw-bar" id="pw-b1"></div><div class="pw-bar" id="pw-b2"></div><div class="pw-bar" id="pw-b3"></div><div class="pw-bar" id="pw-b4"></div></div><div class="pw-label" id="pw-label">Schwach</div></div></div>
-        <div style="margin-bottom:.7rem"><label style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Restauranttyp</label><div class="resto-grid"><div class="resto-option selected" onclick="selectResto(this,'restaurant')"><div class="ro-label">Restaurant</div></div><div class="resto-option" onclick="selectResto(this,'bistro')"><div class="ro-label">Bistro / Café</div></div><div class="resto-option" onclick="selectResto(this,'fastfood')"><div class="ro-label">Fast Food</div></div><div class="resto-option" onclick="selectResto(this,'fine')"><div class="ro-label">Fine Dining</div></div></div></div>
-        <div style="margin-bottom:.7rem"><label style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Paket wählen <span style="font-weight:400;text-transform:none;letter-spacing:0">(14 Tage kostenlos)</span></label><div class="plan-select"><div class="plan-chip selected" onclick="selectPlan(this,'bronze')"><div class="chip-name">Bronze</div><div class="chip-price">49 €</div><div class="chip-feat">1 Standort</div></div><div class="plan-chip" onclick="selectPlan(this,'silber')"><div class="chip-badge">Beliebt</div><div class="chip-name">Silber</div><div class="chip-price">79 €</div><div class="chip-feat">+ KI & API</div></div><div class="plan-chip" onclick="selectPlan(this,'gold')"><div class="chip-name">Gold</div><div class="chip-price">199 €</div><div class="chip-feat">Unbegrenzt</div></div></div></div>
-        <div class="dsgvo-check"><input type="checkbox" id="reg-dsgvo" /><label for="reg-dsgvo">Ich stimme den <a href="#">AGB</a> und der <a href="#">Datenschutzerklärung</a> zu. Meine Daten werden DSGVO-konform auf EU-Servern gespeichert.</label></div>
-        <button class="submit-btn" id="register-btn" onclick="handleRegister()"><span class="btn-text">Kostenlos starten</span><div class="spinner"></div></button>
-        <p class="terms-note">Bereits registriert? <a href="#" onclick="switchTab('login')">Hier anmelden</a></p>
-      </div>
-      <div id="form-reset" style="display:none">
-        <div class="auth-title">Passwort zurücksetzen</div>
-        <div class="auth-sub">Kein Problem – wir schicken dir einen Link zum Zurücksetzen.</div>
-        <div class="field"><label>E-Mail</label><div class="input-wrap"><input type="email" id="reset-email" placeholder="chef@meinrestaurant.de" /></div></div>
-        <button class="submit-btn" onclick="handleReset()"><span class="btn-text">Reset-Link senden</span><div class="spinner"></div></button>
-        <p class="terms-note" style="margin-top:1rem"><a href="#" onclick="switchTab('login')">Zurück zum Login</a></p>
-      </div>
-      <div class="success-screen" id="success-screen">
-        <div class="success-icon"><svg width="28" height="28" fill="none" stroke="#059669" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-        <h3>Willkommen bei GastroIQ!</h3>
-        <p>Dein Account wurde erstellt. Bitte bestätige deine E-Mail – danach kann es sofort losgehen.</p>
-        <div class="check-steps"><div class="check-step"><div class="cs-icon cs-done"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>Account erstellt</div><div class="check-step"><div class="cs-icon cs-done"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>Datenbank vorbereitet</div><div class="check-step"><div class="cs-icon cs-done"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>14-Tage-Test aktiviert</div><div class="check-step"><div class="cs-icon cs-wait"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>E-Mail bestätigen – dann geht's los!</div></div>
+
+      <div id="form-register">
+        <div class="panel-title" style="color:#6366f1">Konto erstellen</div>
+        
+
+        <div id="auth-message-reg" class="auth-message"></div>
+
+        <div class="field">
+          <label>Restaurantname</label>
+          <div class="input-wrap"><input type="text" id="reg-restaurant" placeholder="Trattoria Bella Vista" autocomplete="organization"/></div>
+        </div>
+        <div class="field">
+          <label>Dein Name</label>
+          <div class="input-wrap"><input type="text" id="reg-name" placeholder="Max Mustermann" autocomplete="name"/></div>
+        </div>
+        <div class="field">
+          <label>E-Mail</label>
+          <div class="input-wrap"><input type="email" id="reg-email" placeholder="chef@meinrestaurant.de" autocomplete="email"/></div>
+        </div>
+        <div class="field">
+          <label>Passwort</label>
+          <div class="input-wrap"><input type="password" id="reg-pw" placeholder="Min. 8 Zeichen" oninput="checkPasswordStrength(this.value)"/></div>
+          <div class="pw-strength" id="pw-strength">
+            <div class="pw-bars"><div class="pw-bar" id="pw-b1"></div><div class="pw-bar" id="pw-b2"></div><div class="pw-bar" id="pw-b3"></div><div class="pw-bar" id="pw-b4"></div></div>
+            <div class="pw-label" id="pw-label">Schwach</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label style="font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:.4rem">Restauranttyp</label>
+          <div class="resto-grid">
+            <div class="resto-option selected" onclick="selectResto(this,'restaurant')">Restaurant</div>
+            <div class="resto-option" onclick="selectResto(this,'bistro')">Bistro / Café</div>
+            <div class="resto-option" onclick="selectResto(this,'fastfood')">Fast Food</div>
+            <div class="resto-option" onclick="selectResto(this,'fine')">Fine Dining</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label style="font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:.4rem">
+            Packet
+          </label>
+          <div class="plan-select">
+            <div class="plan-chip selected" onclick="selectPlan(this,'bronze')">
+              <div class="chip-name">Bronze</div><div class="chip-price">49 €</div><div class="chip-feat">1 Standort</div>
+            </div>
+            <div class="plan-chip" onclick="selectPlan(this,'silber')">
+              <div class="chip-badge">Beliebt</div>
+              <div class="chip-name">Silber</div><div class="chip-price">79 €</div><div class="chip-feat">+ KI & API</div>
+            </div>
+            <div class="plan-chip" onclick="selectPlan(this,'gold')">
+              <div class="chip-name">Gold</div><div class="chip-price">199 €</div><div class="chip-feat">Unbegrenzt</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dsgvo-check">
+          <input type="checkbox" id="reg-dsgvo"/>
+          <label for="reg-dsgvo">Ich stimme den <a href="#">AGB</a> und der <a href="#">Datenschutzerklärung</a> zu und bestätige die DSGVO-konforme Verarbeitung auf EU-Servern.</label>
+        </div>
+
+        <button class="submit-btn" id="register-btn" onclick="handleRegister()">
+          <span class="btn-text">Jetzt Registrieren</span><div class="spinner"></div>
+        </button>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- ══════════════════════════════
+       SLIDING OVERLAY PANEL
+  ══════════════════════════════ -->
+  <div class="overlay-panel" id="overlayPanel">
+
+    <!-- State A: overlay on RIGHT → "Hey There! Sign Up" -->
+    <div class="overlay-content overlay-hey">
+      <div class="overlay-logo">Gastro<span>IQ</span></div>
+      <div class="overlay-headline">Noch kein Konto?</div>
+      <div class="overlay-sub">
+        Starte deine kostenlose Testphase und gewinne die Kontrolle über deinen Betrieb zurück.
+      </div>
+      <button class="overlay-btn" onclick="toRegister()">
+        Registrieren
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- State B: overlay on LEFT → "Welcome Back! Sign In" -->
+    <div class="overlay-content overlay-welcome">
+      <div class="overlay-logo">Gastro<span>IQ</span></div>
+      <div class="overlay-headline">Willkommen zurück!</div>
+      <div class="overlay-sub">
+        Melde dich an, um dein Restaurant-Controlling weiter zu nutzen.
+      </div>
+      <button class="overlay-btn" onclick="toLogin()">
+        Anmelden
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+  </div>
+
+</div><!-- /auth-box -->
+
 <script>
-const SUPABASE_URL='https://vrksgszggavczivojqvr.supabase.co';
-const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZya3Nnc3pnZ2F2Y3ppdm9qcXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTI1OTksImV4cCI6MjA4ODQ4ODU5OX0.IHEvAtDiUpMr_RgzSvaQSybNTgoY7YyQAP69cHvwKtI';
-let supabaseClient=null;
-try{supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(e){console.log('Supabase init failed')}
-let selectedRestoType='restaurant';
-let selectedPlan='bronze';
+/* ── Supabase ── */
+const SUPABASE_URL = 'https://vrksgszggavczivojqvr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZya3Nnc3pnZ2F2Y3ppdm9qcXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTI1OTksImV4cCI6MjA4ODQ4ODU5OX0.IHEvAtDiUpMr_RgzSvaQSybNTgoY7YyQAP69cHvwKtI';
+let supabaseClient = null;
+try { supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e) {}
 
-function switchTab(tab){
-  ['login','register','reset'].forEach(t=>{
-    const form=document.getElementById('form-'+t);
-    const tabEl=document.getElementById('tab-'+t);
-    if(form)form.style.display=t===tab?'block':'none';
-    if(tabEl)tabEl.classList.toggle('active',t===tab);
+let selectedRestoType = 'restaurant';
+let selectedPlan = 'bronze';
+let isAnimating = false;
+
+/* ══════════════════════
+   SLIDE ANIMATION
+══════════════════════ */
+function toRegister() {
+  if (isAnimating) return;
+  isAnimating = true;
+  document.getElementById('authBox').classList.add('register-mode');
+  setTimeout(() => { isAnimating = false; }, 650);
+}
+
+function toLogin() {
+  if (isAnimating) return;
+  isAnimating = true;
+  document.getElementById('authBox').classList.remove('register-mode');
+  setTimeout(() => { isAnimating = false; }, 650);
+}
+
+/* ══════════════════════
+   FORM SWITCHING (login/reset)
+══════════════════════ */
+function showReset() {
+  document.getElementById('form-login').style.display = 'none';
+  document.getElementById('form-reset').style.display = 'block';
+  clearMsg('login');
+}
+function showLogin() {
+  document.getElementById('form-reset').style.display = 'none';
+  document.getElementById('form-login').style.display = 'block';
+  clearMsg('login');
+}
+
+/* ══════════════════════
+   HELPERS
+══════════════════════ */
+function showMsg(scope, msg, type = 'error') {
+  const el = document.getElementById('auth-message-' + scope);
+  if (!el) return;
+  el.textContent = msg; el.className = 'auth-message ' + type; el.style.display = 'block';
+}
+function clearMsg(scope) {
+  const el = document.getElementById('auth-message-' + scope);
+  if (el) el.style.display = 'none';
+}
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.classList.toggle('loading', loading); btn.disabled = loading;
+}
+function selectResto(el, type) {
+  document.querySelectorAll('.resto-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected'); selectedRestoType = type;
+}
+function selectPlan(el, plan) {
+  document.querySelectorAll('.plan-chip').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected'); selectedPlan = plan;
+}
+function checkPasswordStrength(pw) {
+  const bar = document.getElementById('pw-strength');
+  bar.style.display = pw.length > 0 ? 'block' : 'none';
+  let score = 0;
+  if (pw.length >= 8) score++; if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++; if (/[^A-Za-z0-9]/.test(pw)) score++;
+  [1,2,3,4].forEach(i => {
+    const b = document.getElementById('pw-b' + i); b.className = 'pw-bar';
+    if (i <= score) b.classList.add(score<=1?'active-weak':score<=2?'active-medium':'active-strong');
   });
-  document.getElementById('success-screen').style.display='none';
-  document.getElementById('auth-tabs-bar').style.display='flex';
-  clearMessage();
+  document.getElementById('pw-label').textContent = ['','Schwach','Mittel','Stark','Sehr stark'][score]||'';
 }
-function showMessage(msg,type='error'){const el=document.getElementById('auth-message');el.textContent=msg;el.className='auth-message '+type;el.style.display='block'}
-function clearMessage(){document.getElementById('auth-message').style.display='none'}
-function setLoading(btnId,loading){const btn=document.getElementById(btnId);if(!btn)return;btn.classList.toggle('loading',loading);btn.disabled=loading}
-function selectResto(el,type){document.querySelectorAll('.resto-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selectedRestoType=type}
-function selectPlan(el,plan){document.querySelectorAll('.plan-chip').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');selectedPlan=plan}
-function selectPlanLeft(el,plan){document.querySelectorAll('.price-card').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');selectedPlan=plan}
-function checkPasswordStrength(pw){
-  const bar=document.getElementById('pw-strength');
-  bar.style.display=pw.length>0?'block':'none';
-  let score=0;
-  if(pw.length>=8)score++;if(/[A-Z]/.test(pw))score++;if(/[0-9]/.test(pw))score++;if(/[^A-Za-z0-9]/.test(pw))score++;
-  const bars=[1,2,3,4].map(i=>document.getElementById('pw-b'+i));
-  const label=document.getElementById('pw-label');
-  const cls=score<=1?'active-weak':score<=2?'active-medium':'active-strong';
-  const labels=['','Schwach','Mittel','Stark','Sehr stark'];
-  bars.forEach((b,i)=>{b.className='pw-bar';if(i<score)b.classList.add(cls)});
-  label.textContent=labels[score]||'';
+function translateError(msg) {
+  const map = {
+    'Invalid login credentials':'E-Mail oder Passwort falsch.',
+    'Email not confirmed':'Bitte bestätige zuerst deine E-Mail.',
+    'User already registered':'Diese E-Mail ist bereits registriert.',
+    'Password should be at least 6 characters':'Passwort zu kurz (min. 6 Zeichen).',
+    'Unable to validate email address: invalid format':'Ungültige E-Mail-Adresse.',
+    'Signup requires a valid password':'Bitte gültiges Passwort eingeben.'
+  };
+  return map[msg] || 'Fehler: ' + msg;
 }
 
-async function handleLogin(){
-  clearMessage();
-  const email=document.getElementById('login-email').value.trim();
-  const pw=document.getElementById('login-pw').value;
-  if(!email||!pw){showMessage('Bitte E-Mail und Passwort eingeben.');return}
-  if(!supabaseClient){showMessage('Verbindung zum Server fehlgeschlagen.');return}
-  setLoading('login-btn',true);
-  try{
-    const{data,error}=await supabaseClient.auth.signInWithPassword({email,password:pw});
-    if(error)throw error;
-    window.location.href='/gastroiq.html';
-  }catch(e){showMessage(translateError(e.message))}finally{setLoading('login-btn',false)}
+/* ══════════════════════
+   AUTH FUNCTIONS
+══════════════════════ */
+async function handleLogin() {
+  clearMsg('login');
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-pw').value;
+  if (!email || !pw) { showMsg('login','Bitte E-Mail und Passwort eingeben.'); return; }
+  if (!supabaseClient) { showMsg('login','Verbindung zum Server fehlgeschlagen.'); return; }
+  setLoading('login-btn', true);
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
+    if (error) throw error;
+    window.location.href = 'gastroiq.html';
+  } catch(e) { showMsg('login', translateError(e.message)); }
+  finally    { setLoading('login-btn', false); }
 }
 
-async function handleRegister(){
-  clearMessage();
-  const restaurant=document.getElementById('reg-restaurant').value.trim();
-  const name=document.getElementById('reg-name').value.trim();
-  const email=document.getElementById('reg-email').value.trim();
-  const pw=document.getElementById('reg-pw').value;
-  const dsgvo=document.getElementById('reg-dsgvo').checked;
-  if(!restaurant||!name||!email||!pw){showMessage('Bitte alle Felder ausfüllen.');return}
-  if(pw.length<8){showMessage('Passwort muss mindestens 8 Zeichen haben.');return}
-  if(!dsgvo){showMessage('Bitte stimme den AGB und der Datenschutzerklärung zu.');return}
-  if(!supabaseClient){showMessage('Verbindung zum Server fehlgeschlagen.');return}
-  setLoading('register-btn',true);
-  try{
-    const{data,error}=await supabaseClient.auth.signUp({email,password:pw,options:{data:{full_name:name,restaurant_name:restaurant,restaurant_type:selectedRestoType,plan:selectedPlan}}});
-    if(error)throw error;
-    if(data.user){await supabaseClient.from('restaurants').insert({user_id:data.user.id,name:restaurant,typ:selectedRestoType})}
-    document.getElementById('form-register').style.display='none';
-    document.getElementById('auth-tabs-bar').style.display='none';
-    document.getElementById('success-screen').style.display='block';
-  }catch(e){showMessage(translateError(e.message))}finally{setLoading('register-btn',false)}
+async function handleRegister() {
+  clearMsg('reg');
+  const restaurant = document.getElementById('reg-restaurant').value.trim();
+  const name       = document.getElementById('reg-name').value.trim();
+  const email      = document.getElementById('reg-email').value.trim();
+  const pw         = document.getElementById('reg-pw').value;
+  const dsgvo      = document.getElementById('reg-dsgvo').checked;
+  if (!restaurant||!name||!email||!pw) { showMsg('reg','Bitte alle Felder ausfüllen.'); return; }
+  if (pw.length < 8)   { showMsg('reg','Passwort muss mindestens 8 Zeichen haben.'); return; }
+  if (!dsgvo)          { showMsg('reg','Bitte stimme den AGB zu.'); return; }
+  if (!supabaseClient) { showMsg('reg','Verbindung zum Server fehlgeschlagen.'); return; }
+  setLoading('register-btn', true);
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email, password: pw,
+      options: { data: { full_name: name, restaurant_name: restaurant, restaurant_type: selectedRestoType, plan: selectedPlan } }
+    });
+    if (error) throw error;
+    if (data.user) await supabaseClient.from('restaurants').insert({ user_id: data.user.id, name: restaurant, typ: selectedRestoType });
+    document.getElementById('form-register').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'flex';
+  } catch(e) { showMsg('reg', translateError(e.message)); }
+  finally    { setLoading('register-btn', false); }
 }
 
-async function handleReset(){
-  clearMessage();
-  const email=document.getElementById('reset-email').value.trim();
-  if(!email){showMessage('Bitte E-Mail eingeben.');return}
-  if(!supabaseClient){showMessage('Verbindung zum Server fehlgeschlagen.');return}
-  try{
-    const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/reset-confirm.html'});
-    if(error)throw error;
-    showMessage('Reset-Link gesendet! Prüfe deine E-Mails.','success');
-  }catch(e){showMessage(translateError(e.message))}
+async function handleReset() {
+  clearMsg('login');
+  const email = document.getElementById('reset-email').value.trim();
+  if (!email) { showMsg('login','Bitte E-Mail eingeben.'); return; }
+  if (!supabaseClient) { showMsg('login','Verbindung zum Server fehlgeschlagen.'); return; }
+  try {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email,
+      { redirectTo: window.location.origin + '/reset-confirm.html' });
+    if (error) throw error;
+    showMsg('login','Reset-Link gesendet! Prüfe deine E-Mails.','success');
+  } catch(e) { showMsg('login', translateError(e.message)); }
 }
 
-async function handleGoogleLogin(){
-  if(!supabaseClient){showMessage('Verbindung zum Server fehlgeschlagen.');return}
-  try{
-    const{error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/gastroiq.html'}});
-    if(error)throw error;
-  }catch(e){showMessage(translateError(e.message))}
+async function handleGoogleLogin() {
+  if (!supabaseClient) { showMsg('login','Verbindung zum Server fehlgeschlagen.'); return; }
+  try {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/gastroiq.html' }
+    });
+    if (error) throw error;
+  } catch(e) { showMsg('login', translateError(e.message)); }
 }
 
-async function checkSession(){
-  if(!supabaseClient)return;
-  try{const{data:{session}}=await supabaseClient.auth.getSession();if(session)window.location.href='/gastroiq.html'}catch(e){}
+async function handleAppleLogin() {
+  if (!supabaseClient) { showMsg('login','Verbindung zum Server fehlgeschlagen.'); return; }
+  try {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'apple',
+      options: { redirectTo: window.location.origin + '/gastroiq.html' }
+    });
+    if (error) throw error;
+  } catch(e) { showMsg('login', translateError(e.message)); }
 }
 
-function translateError(msg){
-  const map={'Invalid login credentials':'E-Mail oder Passwort falsch.','Email not confirmed':'Bitte bestätige zuerst deine E-Mail-Adresse.','User already registered':'Diese E-Mail ist bereits registriert.','Password should be at least 6 characters':'Passwort zu kurz (min. 6 Zeichen).','Unable to validate email address: invalid format':'Ungültige E-Mail-Adresse.','Signup requires a valid password':'Bitte ein gültiges Passwort eingeben.'};
-  return map[msg]||'Fehler: '+msg;
+async function checkSession() {
+  if (!supabaseClient) return;
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) window.location.href = 'gastroiq.html';
+  } catch(e) {}
 }
 
-document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const t=document.querySelector('.auth-tab.active')?.id;if(t==='tab-login')handleLogin();else if(t==='tab-register')handleRegister()});
+/* keyboard */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const box = document.getElementById('authBox');
+  if (box.classList.contains('register-mode')) handleRegister();
+  else handleLogin();
+});
+
 checkSession();
 </script>
 </body>
