@@ -6032,5 +6032,1708 @@ function resetOnlyTestData() {
 }
 
 </script>
+  <!-- ═══════════════════════════════════════════════════════════════
+     GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
+     
+     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ─── FIX 1: KPI Hover — von -6px auf -3px reduziert ─────────────── */
+.kpi-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(124,58,237,.16) !important;
+  border-color: #c4b5fd !important;
+}
+
+/* ─── FIX 2: Badge-Button — Shadow von Orange auf Purple ─────────── */
+.badge-btn {
+  box-shadow: 0 2px 8px rgba(99,102,241,.28) !important;
+}
+.badge-btn:hover {
+  box-shadow: 0 4px 14px rgba(99,102,241,.42) !important;
+}
+
+/* ─── FIX 3: Hamburger Button ─────────────────────────────────────── */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #d0d3de;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.hamburger-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #4b5280;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+@media(max-width:900px) {
+  .hamburger-btn { display: flex; }
+  .topbar-right { gap: .5rem; }
+  .month-selector { font-size: .72rem; padding: .38rem .6rem; }
+  .badge-btn { font-size: .74rem; padding: .42rem .8rem; }
+}
+
+/* ─── FIX 4: Mobile Sidebar Overlay ──────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+}
+@media(max-width:900px) {
+  .sidebar-overlay.active { display: block; }
+  .sidebar.open { box-shadow: 4px 0 24px rgba(0,0,0,.3); }
+}
+
+/* ─── FIX 5: Nav Icons — leere Icon-Spans füllen ─────────────────── */
+#nav-ki .nav-item-icon,
+#nav-preisempfehlung .nav-item-icon {
+  /* Icons werden per JS gesetzt */
+}
+
+/* ─── FIX 6: Restaurant-Banner — Display Conflict Fix ─────────────── */
+#restaurant-info-banner {
+  /* display:none wird durch JS kontrolliert — inline conflict bereinigt */
+}
+
+/* ─── FIX 7: btn-connect primary hover — Orange weg ──────────────── */
+.btn-connect.primary:hover {
+  background: #4f52d9 !important;
+  color: #fff !important;
+  border-color: #4f52d9 !important;
+}
+
+/* ─── FIX 8: Topbar Mobile — kein overflow ───────────────────────── */
+@media(max-width:600px) {
+  .topbar-right {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .topbar-left h1 { font-size: .9rem; }
+  .topbar-left p { display: none; }
+}
+</style>
+
+<script>
+(function() {
+  // ────────────────────────────────────────────────────────────────
+  // FIX 1: Month Selector auf 2026 erweitern + März 2026 selektieren
+  // ────────────────────────────────────────────────────────────────
+  function fixMonthSelector() {
+    const sel = document.getElementById('currentMonth');
+    if(!sel) return;
+
+    const months2026 = [
+      ['2026-01', 'Jan 2026'],
+      ['2026-02', 'Feb 2026'],
+      ['2026-03', 'Mär 2026'],
+      ['2026-04', 'Apr 2026'],
+      ['2026-05', 'Mai 2026'],
+      ['2026-06', 'Jun 2026'],
+      ['2026-07', 'Jul 2026'],
+      ['2026-08', 'Aug 2026'],
+      ['2026-09', 'Sep 2026'],
+      ['2026-10', 'Okt 2026'],
+      ['2026-11', 'Nov 2026'],
+      ['2026-12', 'Dez 2026'],
+    ];
+
+    // Aktuell ausgewählte Option als "nicht selected" markieren
+    Array.from(sel.options).forEach(o => o.removeAttribute('selected'));
+
+    // 2026 Optionen hinzufügen
+    months2026.forEach(([val, label]) => {
+      if(!sel.querySelector(`option[value="${val}"]`)) {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      }
+    });
+
+    // Aktuellen Monat automatisch auswählen
+    const now = new Date();
+    const currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const matchingOption = sel.querySelector(`option[value="${currentMonth}"]`);
+    if(matchingOption) {
+      sel.value = currentMonth;
+    } else {
+      // Fallback: letzten verfügbaren Monat wählen
+      sel.value = sel.options[sel.options.length - 1].value;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 2: Hamburger Button in Topbar injizieren
+  // ────────────────────────────────────────────────────────────────
+  function addHamburger() {
+    const topbar = document.querySelector('.topbar');
+    if(!topbar || topbar.querySelector('.hamburger-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'hamburger-btn';
+    btn.title = 'Menü öffnen';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+    btn.addEventListener('click', toggleMobileSidebar);
+
+    // Vor topbar-left einfügen
+    const topbarLeft = topbar.querySelector('.topbar-left');
+    if(topbarLeft) {
+      topbar.insertBefore(btn, topbarLeft);
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 3: Mobile Overlay
+  // ────────────────────────────────────────────────────────────────
+  function addOverlay() {
+    if(document.getElementById('sidebar-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    overlay.id = 'sidebar-overlay';
+    overlay.addEventListener('click', closeMobileSidebar);
+    document.body.appendChild(overlay);
+  }
+
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(!sidebar) return;
+    const isOpen = sidebar.classList.contains('open');
+    if(isOpen) {
+      closeMobileSidebar();
+    } else {
+      sidebar.classList.add('open');
+      if(overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(sidebar) sidebar.classList.remove('open');
+    if(overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Sidebar schließen beim Nav-Klick (mobile)
+  function autoCloseSidebarOnNav() {
+    document.querySelectorAll('.nav-sub-item, .nav-util-item').forEach(el => {
+      el.addEventListener('click', () => {
+        if(window.innerWidth <= 900) closeMobileSidebar();
+      });
+    });
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 4: Restaurant-Info-Banner Display Conflict
+  // Das Element hat display:none UND display:flex inline — CSS-Konflikt.
+  // Wir setzen beide auf einen konsistenten Wert per JS.
+  // ────────────────────────────────────────────────────────────────
+  function fixBannerDisplay() {
+    const banner = document.getElementById('restaurant-info-banner');
+    if(!banner) return;
+    // Entferne den doppelten display-Wert aus dem style-Attribut
+    // Behalte nur das letzte (flex), damit der Banner korrekt gezeigt/versteckt wird
+    const style = banner.getAttribute('style') || '';
+    // Ersetze "display:none;...display:flex" durch nur "display:none" (JS steuert das später)
+    const fixed = style.replace(/display:\s*none;\s*(.*?)display:\s*flex/, 'display:none;$1');
+    banner.setAttribute('style', fixed);
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 5: Fehlende Icons in Nav (KI-Auswertung & Preisempfehlung)
+  // ────────────────────────────────────────────────────────────────
+  function fixNavIcons() {
+    const kiIcon = document.querySelector('#nav-ki .nav-item-icon');
+    if(kiIcon && !kiIcon.querySelector('svg')) {
+      kiIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M5 8c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3"/>
+        <circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+
+    const preisIcon = document.querySelector('#nav-preisempfehlung .nav-item-icon');
+    if(preisIcon && !preisIcon.querySelector('svg')) {
+      preisIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <path d="M3 10l4-4 2 2 4-4"/>
+        <circle cx="3" cy="10" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="7" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="9" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="13" cy="4" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 6: filter-month Input immer aktuellen Monat zeigen
+  // ────────────────────────────────────────────────────────────────
+  function fixFilterMonth() {
+    const fm = document.getElementById('filter-month');
+    if(!fm || fm.value) return;
+    const now = new Date();
+    fm.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 7: fk-monat immer auf aktuellen Monat vorbelegen
+  // ────────────────────────────────────────────────────────────────
+  function fixFkMonat() {
+    const fkM = document.getElementById('fk-monat');
+    if(!fkM || fkM.value) return;
+    const now = new Date();
+    fkM.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 8: Topbar Subtitle — dynamisch basierend auf Restaurantname
+  // ────────────────────────────────────────────────────────────────
+  function fixTopbarSubtitle() {
+    // Beim ersten Laden den gespeicherten Restaurantnamen laden
+    try {
+      const saved = localStorage.getItem('gastroiq');
+      if(saved) {
+        const data = JSON.parse(saved);
+        if(data?.settings?.name && data.settings.name !== 'Mein Restaurant') {
+          const sub = document.getElementById('topbar-sub');
+          if(sub && sub.textContent === 'Dein Restaurant auf einen Blick') {
+            sub.textContent = data.settings.name;
+          }
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 9: Datum-Inputs immer auf heute vorbelegen  
+  // ────────────────────────────────────────────────────────────────
+  function fixDateInputs() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const teDatum = document.getElementById('te-datum');
+    const vbDatum = document.getElementById('vb-datum');
+    if(teDatum && !teDatum.value) teDatum.value = todayStr;
+    if(vbDatum && !vbDatum.value) vbDatum.value = todayStr;
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 10: Sidebar-Navigation schließt auf Mobile nach Klick
+  // ────────────────────────────────────────────────────────────────
+  function patchNavigateSub() {
+    const originalNavigateSub = window.navigateSub;
+    if(!originalNavigateSub) return;
+    window.navigateSub = function(cat, page) {
+      originalNavigateSub(cat, page);
+      if(window.innerWidth <= 900) closeMobileSidebar();
+    };
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // ALLE FIXES AUSFÜHREN — nach DOMContentLoaded
+  // ────────────────────────────────────────────────────────────────
+  function applyAllFixes() {
+    fixMonthSelector();
+    addHamburger();
+    addOverlay();
+    fixBannerDisplay();
+    fixNavIcons();
+    fixFilterMonth();
+    fixFkMonat();
+    fixTopbarSubtitle();
+    fixDateInputs();
+    autoCloseSidebarOnNav();
+    // navigateSub patch nach kurzer Verzögerung (warte auf originale JS-Initialisierung)
+    setTimeout(patchNavigateSub, 500);
+    console.log('✅ GastroIQ Patch v1.0 — alle Fixes angewendet');
+  }
+
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyAllFixes);
+  } else {
+    applyAllFixes();
+  }
+
+  // Auch nach window.onload nochmal ausführen (falls JS-Initialisierung es überschreibt)
+  const origOnload = window.onload;
+  window.onload = function() {
+    if(origOnload) origOnload.apply(this, arguments);
+    setTimeout(applyAllFixes, 100);
+  };
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════════════════
+     GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
+     
+     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ─── FIX 1: KPI Hover — von -6px auf -3px reduziert ─────────────── */
+.kpi-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(124,58,237,.16) !important;
+  border-color: #c4b5fd !important;
+}
+
+/* ─── FIX 2: Badge-Button — Shadow von Orange auf Purple ─────────── */
+.badge-btn {
+  box-shadow: 0 2px 8px rgba(99,102,241,.28) !important;
+}
+.badge-btn:hover {
+  box-shadow: 0 4px 14px rgba(99,102,241,.42) !important;
+}
+
+/* ─── FIX 3: Hamburger Button ─────────────────────────────────────── */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #d0d3de;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.hamburger-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #4b5280;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+@media(max-width:900px) {
+  .hamburger-btn { display: flex; }
+  .topbar-right { gap: .5rem; }
+  .month-selector { font-size: .72rem; padding: .38rem .6rem; }
+  .badge-btn { font-size: .74rem; padding: .42rem .8rem; }
+}
+
+/* ─── FIX 4: Mobile Sidebar Overlay ──────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+}
+@media(max-width:900px) {
+  .sidebar-overlay.active { display: block; }
+  .sidebar.open { box-shadow: 4px 0 24px rgba(0,0,0,.3); }
+}
+
+/* ─── FIX 5: Nav Icons — leere Icon-Spans füllen ─────────────────── */
+#nav-ki .nav-item-icon,
+#nav-preisempfehlung .nav-item-icon {
+  /* Icons werden per JS gesetzt */
+}
+
+/* ─── FIX 6: Restaurant-Banner — Display Conflict Fix ─────────────── */
+#restaurant-info-banner {
+  /* display:none wird durch JS kontrolliert — inline conflict bereinigt */
+}
+
+/* ─── FIX 7: btn-connect primary hover — Orange weg ──────────────── */
+.btn-connect.primary:hover {
+  background: #4f52d9 !important;
+  color: #fff !important;
+  border-color: #4f52d9 !important;
+}
+
+/* ─── FIX 8: Topbar Mobile — kein overflow ───────────────────────── */
+@media(max-width:600px) {
+  .topbar-right {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .topbar-left h1 { font-size: .9rem; }
+  .topbar-left p { display: none; }
+}
+</style>
+
+<script>
+(function() {
+  // ────────────────────────────────────────────────────────────────
+  // FIX 1: Month Selector auf 2026 erweitern + März 2026 selektieren
+  // ────────────────────────────────────────────────────────────────
+  function fixMonthSelector() {
+    const sel = document.getElementById('currentMonth');
+    if(!sel) return;
+
+    const months2026 = [
+      ['2026-01', 'Jan 2026'],
+      ['2026-02', 'Feb 2026'],
+      ['2026-03', 'Mär 2026'],
+      ['2026-04', 'Apr 2026'],
+      ['2026-05', 'Mai 2026'],
+      ['2026-06', 'Jun 2026'],
+      ['2026-07', 'Jul 2026'],
+      ['2026-08', 'Aug 2026'],
+      ['2026-09', 'Sep 2026'],
+      ['2026-10', 'Okt 2026'],
+      ['2026-11', 'Nov 2026'],
+      ['2026-12', 'Dez 2026'],
+    ];
+
+    // Aktuell ausgewählte Option als "nicht selected" markieren
+    Array.from(sel.options).forEach(o => o.removeAttribute('selected'));
+
+    // 2026 Optionen hinzufügen
+    months2026.forEach(([val, label]) => {
+      if(!sel.querySelector(`option[value="${val}"]`)) {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      }
+    });
+
+    // Aktuellen Monat automatisch auswählen
+    const now = new Date();
+    const currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const matchingOption = sel.querySelector(`option[value="${currentMonth}"]`);
+    if(matchingOption) {
+      sel.value = currentMonth;
+    } else {
+      // Fallback: letzten verfügbaren Monat wählen
+      sel.value = sel.options[sel.options.length - 1].value;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 2: Hamburger Button in Topbar injizieren
+  // ────────────────────────────────────────────────────────────────
+  function addHamburger() {
+    const topbar = document.querySelector('.topbar');
+    if(!topbar || topbar.querySelector('.hamburger-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'hamburger-btn';
+    btn.title = 'Menü öffnen';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+    btn.addEventListener('click', toggleMobileSidebar);
+
+    // Vor topbar-left einfügen
+    const topbarLeft = topbar.querySelector('.topbar-left');
+    if(topbarLeft) {
+      topbar.insertBefore(btn, topbarLeft);
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 3: Mobile Overlay
+  // ────────────────────────────────────────────────────────────────
+  function addOverlay() {
+    if(document.getElementById('sidebar-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    overlay.id = 'sidebar-overlay';
+    overlay.addEventListener('click', closeMobileSidebar);
+    document.body.appendChild(overlay);
+  }
+
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(!sidebar) return;
+    const isOpen = sidebar.classList.contains('open');
+    if(isOpen) {
+      closeMobileSidebar();
+    } else {
+      sidebar.classList.add('open');
+      if(overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(sidebar) sidebar.classList.remove('open');
+    if(overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Sidebar schließen beim Nav-Klick (mobile)
+  function autoCloseSidebarOnNav() {
+    document.querySelectorAll('.nav-sub-item, .nav-util-item').forEach(el => {
+      el.addEventListener('click', () => {
+        if(window.innerWidth <= 900) closeMobileSidebar();
+      });
+    });
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 4: Restaurant-Info-Banner Display Conflict
+  // Das Element hat display:none UND display:flex inline — CSS-Konflikt.
+  // Wir setzen beide auf einen konsistenten Wert per JS.
+  // ────────────────────────────────────────────────────────────────
+  function fixBannerDisplay() {
+    const banner = document.getElementById('restaurant-info-banner');
+    if(!banner) return;
+    // Entferne den doppelten display-Wert aus dem style-Attribut
+    // Behalte nur das letzte (flex), damit der Banner korrekt gezeigt/versteckt wird
+    const style = banner.getAttribute('style') || '';
+    // Ersetze "display:none;...display:flex" durch nur "display:none" (JS steuert das später)
+    const fixed = style.replace(/display:\s*none;\s*(.*?)display:\s*flex/, 'display:none;$1');
+    banner.setAttribute('style', fixed);
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 5: Fehlende Icons in Nav (KI-Auswertung & Preisempfehlung)
+  // ────────────────────────────────────────────────────────────────
+  function fixNavIcons() {
+    const kiIcon = document.querySelector('#nav-ki .nav-item-icon');
+    if(kiIcon && !kiIcon.querySelector('svg')) {
+      kiIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M5 8c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3"/>
+        <circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+
+    const preisIcon = document.querySelector('#nav-preisempfehlung .nav-item-icon');
+    if(preisIcon && !preisIcon.querySelector('svg')) {
+      preisIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <path d="M3 10l4-4 2 2 4-4"/>
+        <circle cx="3" cy="10" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="7" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="9" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="13" cy="4" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 6: filter-month Input immer aktuellen Monat zeigen
+  // ────────────────────────────────────────────────────────────────
+  function fixFilterMonth() {
+    const fm = document.getElementById('filter-month');
+    if(!fm || fm.value) return;
+    const now = new Date();
+    fm.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 7: fk-monat immer auf aktuellen Monat vorbelegen
+  // ────────────────────────────────────────────────────────────────
+  function fixFkMonat() {
+    const fkM = document.getElementById('fk-monat');
+    if(!fkM || fkM.value) return;
+    const now = new Date();
+    fkM.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 8: Topbar Subtitle — dynamisch basierend auf Restaurantname
+  // ────────────────────────────────────────────────────────────────
+  function fixTopbarSubtitle() {
+    // Beim ersten Laden den gespeicherten Restaurantnamen laden
+    try {
+      const saved = localStorage.getItem('gastroiq');
+      if(saved) {
+        const data = JSON.parse(saved);
+        if(data?.settings?.name && data.settings.name !== 'Mein Restaurant') {
+          const sub = document.getElementById('topbar-sub');
+          if(sub && sub.textContent === 'Dein Restaurant auf einen Blick') {
+            sub.textContent = data.settings.name;
+          }
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 9: Datum-Inputs immer auf heute vorbelegen  
+  // ────────────────────────────────────────────────────────────────
+  function fixDateInputs() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const teDatum = document.getElementById('te-datum');
+    const vbDatum = document.getElementById('vb-datum');
+    if(teDatum && !teDatum.value) teDatum.value = todayStr;
+    if(vbDatum && !vbDatum.value) vbDatum.value = todayStr;
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 10: Sidebar-Navigation schließt auf Mobile nach Klick
+  // ────────────────────────────────────────────────────────────────
+  function patchNavigateSub() {
+    const originalNavigateSub = window.navigateSub;
+    if(!originalNavigateSub) return;
+    window.navigateSub = function(cat, page) {
+      originalNavigateSub(cat, page);
+      if(window.innerWidth <= 900) closeMobileSidebar();
+    };
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // ALLE FIXES AUSFÜHREN — nach DOMContentLoaded
+  // ────────────────────────────────────────────────────────────────
+  function applyAllFixes() {
+    fixMonthSelector();
+    addHamburger();
+    addOverlay();
+    fixBannerDisplay();
+    fixNavIcons();
+    fixFilterMonth();
+    fixFkMonat();
+    fixTopbarSubtitle();
+    fixDateInputs();
+    autoCloseSidebarOnNav();
+    // navigateSub patch nach kurzer Verzögerung (warte auf originale JS-Initialisierung)
+    setTimeout(patchNavigateSub, 500);
+    console.log('✅ GastroIQ Patch v1.0 — alle Fixes angewendet');
+  }
+
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyAllFixes);
+  } else {
+    applyAllFixes();
+  }
+
+  // Auch nach window.onload nochmal ausführen (falls JS-Initialisierung es überschreibt)
+  const origOnload = window.onload;
+  window.onload = function() {
+    if(origOnload) origOnload.apply(this, arguments);
+    setTimeout(applyAllFixes, 100);
+  };
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════════════════
+     GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
+     
+     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ─── FIX 1: KPI Hover — von -6px auf -3px reduziert ─────────────── */
+.kpi-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(124,58,237,.16) !important;
+  border-color: #c4b5fd !important;
+}
+
+/* ─── FIX 2: Badge-Button — Shadow von Orange auf Purple ─────────── */
+.badge-btn {
+  box-shadow: 0 2px 8px rgba(99,102,241,.28) !important;
+}
+.badge-btn:hover {
+  box-shadow: 0 4px 14px rgba(99,102,241,.42) !important;
+}
+
+/* ─── FIX 3: Hamburger Button ─────────────────────────────────────── */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #d0d3de;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.hamburger-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #4b5280;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+@media(max-width:900px) {
+  .hamburger-btn { display: flex; }
+  .topbar-right { gap: .5rem; }
+  .month-selector { font-size: .72rem; padding: .38rem .6rem; }
+  .badge-btn { font-size: .74rem; padding: .42rem .8rem; }
+}
+
+/* ─── FIX 4: Mobile Sidebar Overlay ──────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+}
+@media(max-width:900px) {
+  .sidebar-overlay.active { display: block; }
+  .sidebar.open { box-shadow: 4px 0 24px rgba(0,0,0,.3); }
+}
+
+/* ─── FIX 5: Nav Icons — leere Icon-Spans füllen ─────────────────── */
+#nav-ki .nav-item-icon,
+#nav-preisempfehlung .nav-item-icon {
+  /* Icons werden per JS gesetzt */
+}
+
+/* ─── FIX 6: Restaurant-Banner — Display Conflict Fix ─────────────── */
+#restaurant-info-banner {
+  /* display:none wird durch JS kontrolliert — inline conflict bereinigt */
+}
+
+/* ─── FIX 7: btn-connect primary hover — Orange weg ──────────────── */
+.btn-connect.primary:hover {
+  background: #4f52d9 !important;
+  color: #fff !important;
+  border-color: #4f52d9 !important;
+}
+
+/* ─── FIX 8: Topbar Mobile — kein overflow ───────────────────────── */
+@media(max-width:600px) {
+  .topbar-right {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .topbar-left h1 { font-size: .9rem; }
+  .topbar-left p { display: none; }
+}
+</style>
+
+<script>
+(function() {
+  // ────────────────────────────────────────────────────────────────
+  // FIX 1: Month Selector auf 2026 erweitern + März 2026 selektieren
+  // ────────────────────────────────────────────────────────────────
+  function fixMonthSelector() {
+    const sel = document.getElementById('currentMonth');
+    if(!sel) return;
+
+    const months2026 = [
+      ['2026-01', 'Jan 2026'],
+      ['2026-02', 'Feb 2026'],
+      ['2026-03', 'Mär 2026'],
+      ['2026-04', 'Apr 2026'],
+      ['2026-05', 'Mai 2026'],
+      ['2026-06', 'Jun 2026'],
+      ['2026-07', 'Jul 2026'],
+      ['2026-08', 'Aug 2026'],
+      ['2026-09', 'Sep 2026'],
+      ['2026-10', 'Okt 2026'],
+      ['2026-11', 'Nov 2026'],
+      ['2026-12', 'Dez 2026'],
+    ];
+
+    // Aktuell ausgewählte Option als "nicht selected" markieren
+    Array.from(sel.options).forEach(o => o.removeAttribute('selected'));
+
+    // 2026 Optionen hinzufügen
+    months2026.forEach(([val, label]) => {
+      if(!sel.querySelector(`option[value="${val}"]`)) {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      }
+    });
+
+    // Aktuellen Monat automatisch auswählen
+    const now = new Date();
+    const currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const matchingOption = sel.querySelector(`option[value="${currentMonth}"]`);
+    if(matchingOption) {
+      sel.value = currentMonth;
+    } else {
+      // Fallback: letzten verfügbaren Monat wählen
+      sel.value = sel.options[sel.options.length - 1].value;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 2: Hamburger Button in Topbar injizieren
+  // ────────────────────────────────────────────────────────────────
+  function addHamburger() {
+    const topbar = document.querySelector('.topbar');
+    if(!topbar || topbar.querySelector('.hamburger-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'hamburger-btn';
+    btn.title = 'Menü öffnen';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+    btn.addEventListener('click', toggleMobileSidebar);
+
+    // Vor topbar-left einfügen
+    const topbarLeft = topbar.querySelector('.topbar-left');
+    if(topbarLeft) {
+      topbar.insertBefore(btn, topbarLeft);
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 3: Mobile Overlay
+  // ────────────────────────────────────────────────────────────────
+  function addOverlay() {
+    if(document.getElementById('sidebar-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    overlay.id = 'sidebar-overlay';
+    overlay.addEventListener('click', closeMobileSidebar);
+    document.body.appendChild(overlay);
+  }
+
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(!sidebar) return;
+    const isOpen = sidebar.classList.contains('open');
+    if(isOpen) {
+      closeMobileSidebar();
+    } else {
+      sidebar.classList.add('open');
+      if(overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(sidebar) sidebar.classList.remove('open');
+    if(overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Sidebar schließen beim Nav-Klick (mobile)
+  function autoCloseSidebarOnNav() {
+    document.querySelectorAll('.nav-sub-item, .nav-util-item').forEach(el => {
+      el.addEventListener('click', () => {
+        if(window.innerWidth <= 900) closeMobileSidebar();
+      });
+    });
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 4: Restaurant-Info-Banner Display Conflict
+  // Das Element hat display:none UND display:flex inline — CSS-Konflikt.
+  // Wir setzen beide auf einen konsistenten Wert per JS.
+  // ────────────────────────────────────────────────────────────────
+  function fixBannerDisplay() {
+    const banner = document.getElementById('restaurant-info-banner');
+    if(!banner) return;
+    // Entferne den doppelten display-Wert aus dem style-Attribut
+    // Behalte nur das letzte (flex), damit der Banner korrekt gezeigt/versteckt wird
+    const style = banner.getAttribute('style') || '';
+    // Ersetze "display:none;...display:flex" durch nur "display:none" (JS steuert das später)
+    const fixed = style.replace(/display:\s*none;\s*(.*?)display:\s*flex/, 'display:none;$1');
+    banner.setAttribute('style', fixed);
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 5: Fehlende Icons in Nav (KI-Auswertung & Preisempfehlung)
+  // ────────────────────────────────────────────────────────────────
+  function fixNavIcons() {
+    const kiIcon = document.querySelector('#nav-ki .nav-item-icon');
+    if(kiIcon && !kiIcon.querySelector('svg')) {
+      kiIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M5 8c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3"/>
+        <circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+
+    const preisIcon = document.querySelector('#nav-preisempfehlung .nav-item-icon');
+    if(preisIcon && !preisIcon.querySelector('svg')) {
+      preisIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <path d="M3 10l4-4 2 2 4-4"/>
+        <circle cx="3" cy="10" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="7" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="9" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="13" cy="4" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 6: filter-month Input immer aktuellen Monat zeigen
+  // ────────────────────────────────────────────────────────────────
+  function fixFilterMonth() {
+    const fm = document.getElementById('filter-month');
+    if(!fm || fm.value) return;
+    const now = new Date();
+    fm.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 7: fk-monat immer auf aktuellen Monat vorbelegen
+  // ────────────────────────────────────────────────────────────────
+  function fixFkMonat() {
+    const fkM = document.getElementById('fk-monat');
+    if(!fkM || fkM.value) return;
+    const now = new Date();
+    fkM.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 8: Topbar Subtitle — dynamisch basierend auf Restaurantname
+  // ────────────────────────────────────────────────────────────────
+  function fixTopbarSubtitle() {
+    // Beim ersten Laden den gespeicherten Restaurantnamen laden
+    try {
+      const saved = localStorage.getItem('gastroiq');
+      if(saved) {
+        const data = JSON.parse(saved);
+        if(data?.settings?.name && data.settings.name !== 'Mein Restaurant') {
+          const sub = document.getElementById('topbar-sub');
+          if(sub && sub.textContent === 'Dein Restaurant auf einen Blick') {
+            sub.textContent = data.settings.name;
+          }
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 9: Datum-Inputs immer auf heute vorbelegen  
+  // ────────────────────────────────────────────────────────────────
+  function fixDateInputs() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const teDatum = document.getElementById('te-datum');
+    const vbDatum = document.getElementById('vb-datum');
+    if(teDatum && !teDatum.value) teDatum.value = todayStr;
+    if(vbDatum && !vbDatum.value) vbDatum.value = todayStr;
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 10: Sidebar-Navigation schließt auf Mobile nach Klick
+  // ────────────────────────────────────────────────────────────────
+  function patchNavigateSub() {
+    const originalNavigateSub = window.navigateSub;
+    if(!originalNavigateSub) return;
+    window.navigateSub = function(cat, page) {
+      originalNavigateSub(cat, page);
+      if(window.innerWidth <= 900) closeMobileSidebar();
+    };
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // ALLE FIXES AUSFÜHREN — nach DOMContentLoaded
+  // ────────────────────────────────────────────────────────────────
+  function applyAllFixes() {
+    fixMonthSelector();
+    addHamburger();
+    addOverlay();
+    fixBannerDisplay();
+    fixNavIcons();
+    fixFilterMonth();
+    fixFkMonat();
+    fixTopbarSubtitle();
+    fixDateInputs();
+    autoCloseSidebarOnNav();
+    // navigateSub patch nach kurzer Verzögerung (warte auf originale JS-Initialisierung)
+    setTimeout(patchNavigateSub, 500);
+    console.log('✅ GastroIQ Patch v1.0 — alle Fixes angewendet');
+  }
+
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyAllFixes);
+  } else {
+    applyAllFixes();
+  }
+
+  // Auch nach window.onload nochmal ausführen (falls JS-Initialisierung es überschreibt)
+  const origOnload = window.onload;
+  window.onload = function() {
+    if(origOnload) origOnload.apply(this, arguments);
+    setTimeout(applyAllFixes, 100);
+  };
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════════════════
+     GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
+     
+     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ─── FIX 1: KPI Hover — von -6px auf -3px reduziert ─────────────── */
+.kpi-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(124,58,237,.16) !important;
+  border-color: #c4b5fd !important;
+}
+
+/* ─── FIX 2: Badge-Button — Shadow von Orange auf Purple ─────────── */
+.badge-btn {
+  box-shadow: 0 2px 8px rgba(99,102,241,.28) !important;
+}
+.badge-btn:hover {
+  box-shadow: 0 4px 14px rgba(99,102,241,.42) !important;
+}
+
+/* ─── FIX 3: Hamburger Button ─────────────────────────────────────── */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #d0d3de;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.hamburger-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #4b5280;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+@media(max-width:900px) {
+  .hamburger-btn { display: flex; }
+  .topbar-right { gap: .5rem; }
+  .month-selector { font-size: .72rem; padding: .38rem .6rem; }
+  .badge-btn { font-size: .74rem; padding: .42rem .8rem; }
+}
+
+/* ─── FIX 4: Mobile Sidebar Overlay ──────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+}
+@media(max-width:900px) {
+  .sidebar-overlay.active { display: block; }
+  .sidebar.open { box-shadow: 4px 0 24px rgba(0,0,0,.3); }
+}
+
+/* ─── FIX 5: Nav Icons — leere Icon-Spans füllen ─────────────────── */
+#nav-ki .nav-item-icon,
+#nav-preisempfehlung .nav-item-icon {
+  /* Icons werden per JS gesetzt */
+}
+
+/* ─── FIX 6: Restaurant-Banner — Display Conflict Fix ─────────────── */
+#restaurant-info-banner {
+  /* display:none wird durch JS kontrolliert — inline conflict bereinigt */
+}
+
+/* ─── FIX 7: btn-connect primary hover — Orange weg ──────────────── */
+.btn-connect.primary:hover {
+  background: #4f52d9 !important;
+  color: #fff !important;
+  border-color: #4f52d9 !important;
+}
+
+/* ─── FIX 8: Topbar Mobile — kein overflow ───────────────────────── */
+@media(max-width:600px) {
+  .topbar-right {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .topbar-left h1 { font-size: .9rem; }
+  .topbar-left p { display: none; }
+}
+</style>
+
+<script>
+(function() {
+  // ────────────────────────────────────────────────────────────────
+  // FIX 1: Month Selector auf 2026 erweitern + März 2026 selektieren
+  // ────────────────────────────────────────────────────────────────
+  function fixMonthSelector() {
+    const sel = document.getElementById('currentMonth');
+    if(!sel) return;
+
+    const months2026 = [
+      ['2026-01', 'Jan 2026'],
+      ['2026-02', 'Feb 2026'],
+      ['2026-03', 'Mär 2026'],
+      ['2026-04', 'Apr 2026'],
+      ['2026-05', 'Mai 2026'],
+      ['2026-06', 'Jun 2026'],
+      ['2026-07', 'Jul 2026'],
+      ['2026-08', 'Aug 2026'],
+      ['2026-09', 'Sep 2026'],
+      ['2026-10', 'Okt 2026'],
+      ['2026-11', 'Nov 2026'],
+      ['2026-12', 'Dez 2026'],
+    ];
+
+    // Aktuell ausgewählte Option als "nicht selected" markieren
+    Array.from(sel.options).forEach(o => o.removeAttribute('selected'));
+
+    // 2026 Optionen hinzufügen
+    months2026.forEach(([val, label]) => {
+      if(!sel.querySelector(`option[value="${val}"]`)) {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      }
+    });
+
+    // Aktuellen Monat automatisch auswählen
+    const now = new Date();
+    const currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const matchingOption = sel.querySelector(`option[value="${currentMonth}"]`);
+    if(matchingOption) {
+      sel.value = currentMonth;
+    } else {
+      // Fallback: letzten verfügbaren Monat wählen
+      sel.value = sel.options[sel.options.length - 1].value;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 2: Hamburger Button in Topbar injizieren
+  // ────────────────────────────────────────────────────────────────
+  function addHamburger() {
+    const topbar = document.querySelector('.topbar');
+    if(!topbar || topbar.querySelector('.hamburger-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'hamburger-btn';
+    btn.title = 'Menü öffnen';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+    btn.addEventListener('click', toggleMobileSidebar);
+
+    // Vor topbar-left einfügen
+    const topbarLeft = topbar.querySelector('.topbar-left');
+    if(topbarLeft) {
+      topbar.insertBefore(btn, topbarLeft);
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 3: Mobile Overlay
+  // ────────────────────────────────────────────────────────────────
+  function addOverlay() {
+    if(document.getElementById('sidebar-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    overlay.id = 'sidebar-overlay';
+    overlay.addEventListener('click', closeMobileSidebar);
+    document.body.appendChild(overlay);
+  }
+
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(!sidebar) return;
+    const isOpen = sidebar.classList.contains('open');
+    if(isOpen) {
+      closeMobileSidebar();
+    } else {
+      sidebar.classList.add('open');
+      if(overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(sidebar) sidebar.classList.remove('open');
+    if(overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Sidebar schließen beim Nav-Klick (mobile)
+  function autoCloseSidebarOnNav() {
+    document.querySelectorAll('.nav-sub-item, .nav-util-item').forEach(el => {
+      el.addEventListener('click', () => {
+        if(window.innerWidth <= 900) closeMobileSidebar();
+      });
+    });
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 4: Restaurant-Info-Banner Display Conflict
+  // Das Element hat display:none UND display:flex inline — CSS-Konflikt.
+  // Wir setzen beide auf einen konsistenten Wert per JS.
+  // ────────────────────────────────────────────────────────────────
+  function fixBannerDisplay() {
+    const banner = document.getElementById('restaurant-info-banner');
+    if(!banner) return;
+    // Entferne den doppelten display-Wert aus dem style-Attribut
+    // Behalte nur das letzte (flex), damit der Banner korrekt gezeigt/versteckt wird
+    const style = banner.getAttribute('style') || '';
+    // Ersetze "display:none;...display:flex" durch nur "display:none" (JS steuert das später)
+    const fixed = style.replace(/display:\s*none;\s*(.*?)display:\s*flex/, 'display:none;$1');
+    banner.setAttribute('style', fixed);
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 5: Fehlende Icons in Nav (KI-Auswertung & Preisempfehlung)
+  // ────────────────────────────────────────────────────────────────
+  function fixNavIcons() {
+    const kiIcon = document.querySelector('#nav-ki .nav-item-icon');
+    if(kiIcon && !kiIcon.querySelector('svg')) {
+      kiIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M5 8c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3"/>
+        <circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+
+    const preisIcon = document.querySelector('#nav-preisempfehlung .nav-item-icon');
+    if(preisIcon && !preisIcon.querySelector('svg')) {
+      preisIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <path d="M3 10l4-4 2 2 4-4"/>
+        <circle cx="3" cy="10" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="7" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="9" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="13" cy="4" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 6: filter-month Input immer aktuellen Monat zeigen
+  // ────────────────────────────────────────────────────────────────
+  function fixFilterMonth() {
+    const fm = document.getElementById('filter-month');
+    if(!fm || fm.value) return;
+    const now = new Date();
+    fm.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 7: fk-monat immer auf aktuellen Monat vorbelegen
+  // ────────────────────────────────────────────────────────────────
+  function fixFkMonat() {
+    const fkM = document.getElementById('fk-monat');
+    if(!fkM || fkM.value) return;
+    const now = new Date();
+    fkM.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 8: Topbar Subtitle — dynamisch basierend auf Restaurantname
+  // ────────────────────────────────────────────────────────────────
+  function fixTopbarSubtitle() {
+    // Beim ersten Laden den gespeicherten Restaurantnamen laden
+    try {
+      const saved = localStorage.getItem('gastroiq');
+      if(saved) {
+        const data = JSON.parse(saved);
+        if(data?.settings?.name && data.settings.name !== 'Mein Restaurant') {
+          const sub = document.getElementById('topbar-sub');
+          if(sub && sub.textContent === 'Dein Restaurant auf einen Blick') {
+            sub.textContent = data.settings.name;
+          }
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 9: Datum-Inputs immer auf heute vorbelegen  
+  // ────────────────────────────────────────────────────────────────
+  function fixDateInputs() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const teDatum = document.getElementById('te-datum');
+    const vbDatum = document.getElementById('vb-datum');
+    if(teDatum && !teDatum.value) teDatum.value = todayStr;
+    if(vbDatum && !vbDatum.value) vbDatum.value = todayStr;
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // FIX 10: Sidebar-Navigation schließt auf Mobile nach Klick
+  // ────────────────────────────────────────────────────────────────
+  function patchNavigateSub() {
+    const originalNavigateSub = window.navigateSub;
+    if(!originalNavigateSub) return;
+    window.navigateSub = function(cat, page) {
+      originalNavigateSub(cat, page);
+      if(window.innerWidth <= 900) closeMobileSidebar();
+    };
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // ALLE FIXES AUSFÜHREN — nach DOMContentLoaded
+  // ────────────────────────────────────────────────────────────────
+  function applyAllFixes() {
+    fixMonthSelector();
+    addHamburger();
+    addOverlay();
+    fixBannerDisplay();
+    fixNavIcons();
+    fixFilterMonth();
+    fixFkMonat();
+    fixTopbarSubtitle();
+    fixDateInputs();
+    autoCloseSidebarOnNav();
+    // navigateSub patch nach kurzer Verzögerung (warte auf originale JS-Initialisierung)
+    setTimeout(patchNavigateSub, 500);
+    console.log('✅ GastroIQ Patch v1.0 — alle Fixes angewendet');
+  }
+
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyAllFixes);
+  } else {
+    applyAllFixes();
+  }
+
+  // Auch nach window.onload nochmal ausführen (falls JS-Initialisierung es überschreibt)
+  const origOnload = window.onload;
+  window.onload = function() {
+    if(origOnload) origOnload.apply(this, arguments);
+    setTimeout(applyAllFixes, 100);
+  };
+})();
+</script>
+<style>
+/* ─── FIX 1: KPI Hover — von -6px auf -3px reduziert ─────────────── */
+.kpi-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(124,58,237,.16) !important;
+  border-color: #c4b5fd !important;
+}
+ 
+/* ─── FIX 2: Badge-Button — Shadow von Orange auf Purple ─────────── */
+.badge-btn {
+  box-shadow: 0 2px 8px rgba(99,102,241,.28) !important;
+}
+.badge-btn:hover {
+  box-shadow: 0 4px 14px rgba(99,102,241,.42) !important;
+}
+ 
+/* ─── FIX 3: Hamburger Button ─────────────────────────────────────── */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #d0d3de;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.hamburger-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #4b5280;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+@media(max-width:900px) {
+  .hamburger-btn { display: flex; }
+  .topbar-right { gap: .5rem; }
+  .month-selector { font-size: .72rem; padding: .38rem .6rem; }
+  .badge-btn { font-size: .74rem; padding: .42rem .8rem; }
+}
+ 
+/* ─── FIX 4: Mobile Sidebar Overlay ──────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+}
+@media(max-width:900px) {
+  .sidebar-overlay.active { display: block; }
+  .sidebar.open { box-shadow: 4px 0 24px rgba(0,0,0,.3); }
+}
+ 
+/* ─── FIX 5: Nav Icons — leere Icon-Spans füllen ─────────────────── */
+#nav-ki .nav-item-icon,
+#nav-preisempfehlung .nav-item-icon {
+  /* Icons werden per JS gesetzt */
+}
+ 
+/* ─── FIX 6: Restaurant-Banner — Display Conflict Fix ─────────────── */
+#restaurant-info-banner {
+  /* display:none wird durch JS kontrolliert — inline conflict bereinigt */
+}
+ 
+/* ─── FIX 7: btn-connect primary hover — Orange weg ──────────────── */
+.btn-connect.primary:hover {
+  background: #4f52d9 !important;
+  color: #fff !important;
+  border-color: #4f52d9 !important;
+}
+ 
+/* ─── FIX 8: Topbar Mobile — kein overflow ───────────────────────── */
+@media(max-width:600px) {
+  .topbar-right {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .topbar-left h1 { font-size: .9rem; }
+  .topbar-left p { display: none; }
+}
+</style>
+ 
+<script>
+(function() {
+  // ────────────────────────────────────────────────────────────────
+  // FIX 1: Month Selector auf 2026 erweitern + März 2026 selektieren
+  // ────────────────────────────────────────────────────────────────
+  function fixMonthSelector() {
+    const sel = document.getElementById('currentMonth');
+    if(!sel) return;
+ 
+    const months2026 = [
+      ['2026-01', 'Jan 2026'],
+      ['2026-02', 'Feb 2026'],
+      ['2026-03', 'Mär 2026'],
+      ['2026-04', 'Apr 2026'],
+      ['2026-05', 'Mai 2026'],
+      ['2026-06', 'Jun 2026'],
+      ['2026-07', 'Jul 2026'],
+      ['2026-08', 'Aug 2026'],
+      ['2026-09', 'Sep 2026'],
+      ['2026-10', 'Okt 2026'],
+      ['2026-11', 'Nov 2026'],
+      ['2026-12', 'Dez 2026'],
+    ];
+ 
+    // Aktuell ausgewählte Option als "nicht selected" markieren
+    Array.from(sel.options).forEach(o => o.removeAttribute('selected'));
+ 
+    // 2026 Optionen hinzufügen
+    months2026.forEach(([val, label]) => {
+      if(!sel.querySelector(`option[value="${val}"]`)) {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      }
+    });
+ 
+    // Aktuellen Monat automatisch auswählen
+    const now = new Date();
+    const currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const matchingOption = sel.querySelector(`option[value="${currentMonth}"]`);
+    if(matchingOption) {
+      sel.value = currentMonth;
+    } else {
+      // Fallback: letzten verfügbaren Monat wählen
+      sel.value = sel.options[sel.options.length - 1].value;
+    }
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 2: Hamburger Button in Topbar injizieren
+  // ────────────────────────────────────────────────────────────────
+  function addHamburger() {
+    const topbar = document.querySelector('.topbar');
+    if(!topbar || topbar.querySelector('.hamburger-btn')) return;
+ 
+    const btn = document.createElement('button');
+    btn.className = 'hamburger-btn';
+    btn.title = 'Menü öffnen';
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+    btn.addEventListener('click', toggleMobileSidebar);
+ 
+    // Vor topbar-left einfügen
+    const topbarLeft = topbar.querySelector('.topbar-left');
+    if(topbarLeft) {
+      topbar.insertBefore(btn, topbarLeft);
+    }
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 3: Mobile Overlay
+  // ────────────────────────────────────────────────────────────────
+  function addOverlay() {
+    if(document.getElementById('sidebar-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    overlay.id = 'sidebar-overlay';
+    overlay.addEventListener('click', closeMobileSidebar);
+    document.body.appendChild(overlay);
+  }
+ 
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(!sidebar) return;
+    const isOpen = sidebar.classList.contains('open');
+    if(isOpen) {
+      closeMobileSidebar();
+    } else {
+      sidebar.classList.add('open');
+      if(overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+ 
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if(sidebar) sidebar.classList.remove('open');
+    if(overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+ 
+  // Sidebar schließen beim Nav-Klick (mobile)
+  function autoCloseSidebarOnNav() {
+    document.querySelectorAll('.nav-sub-item, .nav-util-item').forEach(el => {
+      el.addEventListener('click', () => {
+        if(window.innerWidth <= 900) closeMobileSidebar();
+      });
+    });
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 4: Restaurant-Info-Banner Display Conflict
+  // Das Element hat display:none UND display:flex inline — CSS-Konflikt.
+  // Wir setzen beide auf einen konsistenten Wert per JS.
+  // ────────────────────────────────────────────────────────────────
+  function fixBannerDisplay() {
+    const banner = document.getElementById('restaurant-info-banner');
+    if(!banner) return;
+    // Entferne den doppelten display-Wert aus dem style-Attribut
+    // Behalte nur das letzte (flex), damit der Banner korrekt gezeigt/versteckt wird
+    const style = banner.getAttribute('style') || '';
+    // Ersetze "display:none;...display:flex" durch nur "display:none" (JS steuert das später)
+    const fixed = style.replace(/display:\s*none;\s*(.*?)display:\s*flex/, 'display:none;$1');
+    banner.setAttribute('style', fixed);
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 5: Fehlende Icons in Nav (KI-Auswertung & Preisempfehlung)
+  // ────────────────────────────────────────────────────────────────
+  function fixNavIcons() {
+    const kiIcon = document.querySelector('#nav-ki .nav-item-icon');
+    if(kiIcon && !kiIcon.querySelector('svg')) {
+      kiIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M5 8c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3"/>
+        <circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+ 
+    const preisIcon = document.querySelector('#nav-preisempfehlung .nav-item-icon');
+    if(preisIcon && !preisIcon.querySelector('svg')) {
+      preisIcon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px">
+        <path d="M3 10l4-4 2 2 4-4"/>
+        <circle cx="3" cy="10" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="7" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="9" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="13" cy="4" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>`;
+    }
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 6: filter-month Input immer aktuellen Monat zeigen
+  // ────────────────────────────────────────────────────────────────
+  function fixFilterMonth() {
+    const fm = document.getElementById('filter-month');
+    if(!fm || fm.value) return;
+    const now = new Date();
+    fm.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 7: fk-monat immer auf aktuellen Monat vorbelegen
+  // ────────────────────────────────────────────────────────────────
+  function fixFkMonat() {
+    const fkM = document.getElementById('fk-monat');
+    if(!fkM || fkM.value) return;
+    const now = new Date();
+    fkM.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 8: Topbar Subtitle — dynamisch basierend auf Restaurantname
+  // ────────────────────────────────────────────────────────────────
+  function fixTopbarSubtitle() {
+    // Beim ersten Laden den gespeicherten Restaurantnamen laden
+    try {
+      const saved = localStorage.getItem('gastroiq');
+      if(saved) {
+        const data = JSON.parse(saved);
+        if(data?.settings?.name && data.settings.name !== 'Mein Restaurant') {
+          const sub = document.getElementById('topbar-sub');
+          if(sub && sub.textContent === 'Dein Restaurant auf einen Blick') {
+            sub.textContent = data.settings.name;
+          }
+        }
+      }
+    } catch(e) {}
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 9: Datum-Inputs immer auf heute vorbelegen  
+  // ────────────────────────────────────────────────────────────────
+  function fixDateInputs() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const teDatum = document.getElementById('te-datum');
+    const vbDatum = document.getElementById('vb-datum');
+    if(teDatum && !teDatum.value) teDatum.value = todayStr;
+    if(vbDatum && !vbDatum.value) vbDatum.value = todayStr;
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // FIX 10: Sidebar-Navigation schließt auf Mobile nach Klick
+  // ────────────────────────────────────────────────────────────────
+  function patchNavigateSub() {
+    const originalNavigateSub = window.navigateSub;
+    if(!originalNavigateSub) return;
+    window.navigateSub = function(cat, page) {
+      originalNavigateSub(cat, page);
+      if(window.innerWidth <= 900) closeMobileSidebar();
+    };
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // ALLE FIXES AUSFÜHREN — nach DOMContentLoaded
+  // ────────────────────────────────────────────────────────────────
+  function applyAllFixes() {
+    fixMonthSelector();
+    addHamburger();
+    addOverlay();
+    fixBannerDisplay();
+    fixNavIcons();
+    fixFilterMonth();
+    fixFkMonat();
+    fixTopbarSubtitle();
+    fixDateInputs();
+    autoCloseSidebarOnNav();
+    // navigateSub patch nach kurzer Verzögerung (warte auf originale JS-Initialisierung)
+    setTimeout(patchNavigateSub, 500);
+    console.log('✅ GastroIQ Patch v1.0 — alle Fixes angewendet');
+  }
+ 
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyAllFixes);
+  } else {
+    applyAllFixes();
+  }
+ 
+  // Auch nach window.onload nochmal ausführen (falls JS-Initialisierung es überschreibt)
+  const origOnload = window.onload;
+  window.onload = function() {
+    if(origOnload) origOnload.apply(this, arguments);
+    setTimeout(applyAllFixes, 100);
+  };
+})();
+</script>
 </body>
 </html>
