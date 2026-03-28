@@ -7735,5 +7735,291 @@ function resetOnlyTestData() {
   };
 })();
 </script>
+  <script>
+(function() {
+ 
+  // ────────────────────────────────────────────────────────────────
+  // HILFSFUNKTION: Feldwert sicher lesen
+  // ────────────────────────────────────────────────────────────────
+  function val(id, fallback) {
+    const el = document.getElementById(id);
+    if(!el) return fallback !== undefined ? fallback : '';
+    if(el.type === 'checkbox') return el.checked;
+    if(el.type === 'number') return parseFloat(el.value) || fallback || 0;
+    return el.value || fallback || '';
+  }
+ 
+  function setVal(id, value) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(el.type === 'checkbox') { el.checked = !!value; return; }
+    el.value = value !== undefined && value !== null ? value : '';
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // ALLE EINSTELLUNGEN SPEICHERN — ersetzt saveSettings()
+  // ────────────────────────────────────────────────────────────────
+  window.saveSettings = function() {
+    const settings = {
+      // Tab: Restaurant
+      name:         val('s-name', 'Mein Restaurant'),
+      typ:          val('s-typ', 'restaurant'),
+      kueche:       val('s-kueche', ''),
+      sitze:        parseInt(val('s-sitze', 40)),
+      sitzeAussen:  parseInt(val('s-sitze-aussen', 0)),
+      tage:         parseInt(val('s-tage', 6)),
+      schichten:    parseInt(val('s-schichten', 2)),
+      ust:          val('s-ust', ''),
+      // Tab: Adresse
+      strasse:      val('s-strasse', ''),
+      plz:          val('s-plz', ''),
+      stadt:        val('s-stadt', ''),
+      bundesland:   val('s-bundesland', 'Bayern'),
+      website:      val('s-website', ''),
+      beschreibung: val('s-beschreibung', ''),
+      // Tab: Kontakt
+      tel:          val('s-tel', ''),
+      email:        val('s-email', ''),
+      inhaber:      val('s-inhaber', ''),
+      stb:          val('s-stb', ''),
+      // Tab: Zielwerte
+      fcZiel:       parseFloat(val('s-fc-ziel', 28)),
+      pkZiel:       parseFloat(val('s-pk-ziel', 33)),
+      fkZiel:       parseFloat(val('s-fk-ziel', 25)),
+      margeZiel:    parseFloat(val('s-marge-ziel', 10)),
+      bonZiel:      parseFloat(val('s-bon-ziel', 22)),
+      gasteZiel:    parseInt(val('s-gaeste-ziel', 60)),
+      umsatzZiel:   parseFloat(val('s-umsatz-ziel', 0)),
+      breakevenGaeste: parseInt(val('s-breakeven-gaeste', 0)),
+      saison:       val('s-saison', 'standard'),
+      waehrung:     val('s-waehrung', 'EUR'),
+      mwst:         val('s-mwst', '7'),
+      // Öffnungszeiten
+      ohMoO: val('oh-mo-o', '11:00'), ohMoS: val('oh-mo-s', '22:00'), ohMoA: val('oh-mo-a', true),
+      ohDiO: val('oh-di-o', '11:00'), ohDiS: val('oh-di-s', '22:00'), ohDiA: val('oh-di-a', true),
+      ohMiO: val('oh-mi-o', '11:00'), ohMiS: val('oh-mi-s', '22:00'), ohMiA: val('oh-mi-a', true),
+      ohDoO: val('oh-do-o', '11:00'), ohDoS: val('oh-do-s', '22:30'), ohDoA: val('oh-do-a', true),
+      ohFrO: val('oh-fr-o', '11:00'), ohFrS: val('oh-fr-s', '23:00'), ohFrA: val('oh-fr-a', true),
+      ohSaO: val('oh-sa-o', '12:00'), ohSaS: val('oh-sa-s', '23:00'), ohSaA: val('oh-sa-a', true),
+      ohSoO: val('oh-so-o', '12:00'), ohSoS: val('oh-so-s', '21:00'), ohSoA: val('oh-so-a', false),
+    };
+ 
+    // In state speichern
+    if(window.state) {
+      window.state.settings = { ...window.state.settings, ...settings };
+    }
+ 
+    // In localStorage persistieren
+    try {
+      const existing = JSON.parse(localStorage.getItem('gastroiq') || '{}');
+      existing.settings = settings;
+      localStorage.setItem('gastroiq', JSON.stringify(existing));
+    } catch(e) {
+      console.warn('Settings save error:', e);
+    }
+    return settings;
+  };
+ 
+  // ────────────────────────────────────────────────────────────────
+  // EINSTELLUNGEN LADEN — ersetzt loadSettingsFields()
+  // ────────────────────────────────────────────────────────────────
+  window.loadSettingsFields = function() {
+    let s = {};
+ 
+    // Zuerst aus state laden
+    if(window.state?.settings) {
+      s = window.state.settings;
+    }
+ 
+    // Dann aus localStorage (persistiert über Seitenneuladen)
+    try {
+      const saved = JSON.parse(localStorage.getItem('gastroiq') || '{}');
+      if(saved.settings) s = { ...s, ...saved.settings };
+    } catch(e) {}
+ 
+    if(!s || Object.keys(s).length === 0) return;
+ 
+    // Tab: Restaurant
+    setVal('s-name',         s.name        || '');
+    setVal('s-typ',          s.typ         || 'restaurant');
+    setVal('s-kueche',       s.kueche      || '');
+    setVal('s-sitze',        s.sitze       || 40);
+    setVal('s-sitze-aussen', s.sitzeAussen || 0);
+    setVal('s-tage',         s.tage        || 6);
+    setVal('s-schichten',    s.schichten   || 2);
+    setVal('s-ust',          s.ust         || '');
+    // Tab: Adresse
+    setVal('s-strasse',      s.strasse     || '');
+    setVal('s-plz',          s.plz         || '');
+    setVal('s-stadt',        s.stadt       || '');
+    setVal('s-bundesland',   s.bundesland  || 'Bayern');
+    setVal('s-website',      s.website     || '');
+    setVal('s-beschreibung', s.beschreibung|| '');
+    // Tab: Kontakt
+    setVal('s-tel',          s.tel         || '');
+    setVal('s-email',        s.email       || '');
+    setVal('s-inhaber',      s.inhaber     || '');
+    setVal('s-stb',          s.stb         || '');
+    // Tab: Zielwerte
+    setVal('s-fc-ziel',      s.fcZiel      || 28);
+    setVal('s-pk-ziel',      s.pkZiel      || 33);
+    setVal('s-fk-ziel',      s.fkZiel      || 25);
+    setVal('s-marge-ziel',   s.margeZiel   || 10);
+    setVal('s-bon-ziel',     s.bonZiel     || 22);
+    setVal('s-gaeste-ziel',  s.gasteZiel   || 60);
+    setVal('s-umsatz-ziel',  s.umsatzZiel  || '');
+    setVal('s-breakeven-gaeste', s.breakevenGaeste || '');
+    setVal('s-saison',       s.saison      || 'standard');
+    setVal('s-waehrung',     s.waehrung    || 'EUR');
+    setVal('s-mwst',         s.mwst        || '7');
+    // Öffnungszeiten
+    setVal('oh-mo-o', s.ohMoO || '11:00'); setVal('oh-mo-s', s.ohMoS || '22:00'); setVal('oh-mo-a', s.ohMoA !== false);
+    setVal('oh-di-o', s.ohDiO || '11:00'); setVal('oh-di-s', s.ohDiS || '22:00'); setVal('oh-di-a', s.ohDiA !== false);
+    setVal('oh-mi-o', s.ohMiO || '11:00'); setVal('oh-mi-s', s.ohMiS || '22:00'); setVal('oh-mi-a', s.ohMiA !== false);
+    setVal('oh-do-o', s.ohDoO || '11:00'); setVal('oh-do-s', s.ohDoS || '22:30'); setVal('oh-do-a', s.ohDoA !== false);
+    setVal('oh-fr-o', s.ohFrO || '11:00'); setVal('oh-fr-s', s.ohFrS || '23:00'); setVal('oh-fr-a', s.ohFrA !== false);
+    setVal('oh-sa-o', s.ohSaO || '12:00'); setVal('oh-sa-s', s.ohSaS || '23:00'); setVal('oh-sa-a', s.ohSaA !== false);
+    setVal('oh-so-o', s.ohSoO || '12:00'); setVal('oh-so-s', s.ohSoS || '21:00'); setVal('oh-so-a', !!s.ohSoA);
+ 
+    // Preview-Bar aktualisieren
+    updateSettingsPreview(s);
+ 
+    // Sidebar Restaurantname
+    const sidebarName = document.getElementById('sidebar-res-name');
+    if(sidebarName && s.name) sidebarName.textContent = s.name;
+  };
+ 
+  // ────────────────────────────────────────────────────────────────
+  // PREVIEW BAR LIVE AKTUALISIEREN
+  // ────────────────────────────────────────────────────────────────
+  function updateSettingsPreview(s) {
+    const name = s?.name || val('s-name') || 'Mein Restaurant';
+    const typ  = s?.typ  || val('s-typ')  || '';
+    const ort  = s?.stadt ? s.stadt : (val('s-stadt') || '');
+    const kueche = s?.kueche || val('s-kueche') || '';
+ 
+    const spbName = document.getElementById('spb-name');
+    if(spbName) spbName.textContent = name;
+ 
+    const spbMeta = document.getElementById('spb-meta');
+    if(spbMeta) {
+      const parts = [];
+      if(typ) { const typLabels = {restaurant:'Restaurant',bistro:'Bistro / Café',fastfood:'Fast Food',fine:'Fine Dining',hotel:'Hotel',lieferdienst:'Lieferdienst',bar:'Bar / Lounge'}; parts.push(typLabels[typ]||typ); }
+      if(kueche) parts.push(kueche);
+      if(ort) parts.push(ort);
+      spbMeta.textContent = parts.join(' · ') || 'Restaurantprofil';
+    }
+ 
+    const spbAv = document.getElementById('spb-av');
+    if(spbAv && name) {
+      const initials = name.split(' ').map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase() || 'IQ';
+      spbAv.textContent = initials;
+    }
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // SPEICHERN + FEEDBACK — ersetzt saveSettingsAndRefresh()
+  // ────────────────────────────────────────────────────────────────
+  window.saveSettingsAndRefresh = function() {
+    const settings = window.saveSettings();
+ 
+    // ✅ "Gespeichert" Badge zeigen
+    const badge = document.getElementById('spb-saved');
+    if(badge) {
+      badge.style.display = 'flex';
+      setTimeout(() => { badge.style.display = 'none'; }, 3000);
+    }
+ 
+    // ✅ Toast
+    if(window.toast) window.toast('✅ Einstellungen gespeichert');
+ 
+    // ✅ Preview Bar aktualisieren
+    updateSettingsPreview(settings);
+ 
+    // ✅ Sidebar Restaurantname updaten
+    const sidebarName = document.getElementById('sidebar-res-name');
+    if(sidebarName && settings.name) sidebarName.textContent = settings.name;
+ 
+    // ✅ Dashboard-Header updaten falls sichtbar
+    if(window.updateDashboardHeader) window.updateDashboardHeader();
+    if(window.renderDashboard && document.getElementById('page-dashboard')?.classList.contains('active')) {
+      window.renderDashboard();
+    }
+ 
+    // ✅ Topbar Subtitle updaten
+    const topbarSub = document.getElementById('topbar-sub');
+    if(topbarSub && document.getElementById('page-einstellungen')?.classList.contains('active')) {
+      const parts = [];
+      if(settings.name) parts.push(settings.name);
+      if(settings.kueche) parts.push(settings.kueche);
+      if(settings.stadt) parts.push(settings.stadt);
+      topbarSub.textContent = parts.join(' · ') || 'Einstellungen';
+    }
+  };
+ 
+  // ────────────────────────────────────────────────────────────────
+  // LIVE PREVIEW — Eingaben sofort in der Preview-Bar zeigen
+  // ────────────────────────────────────────────────────────────────
+  function attachLivePreview() {
+    const triggerIds = ['s-name','s-typ','s-kueche','s-stadt'];
+    triggerIds.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) {
+        el.addEventListener('input', () => updateSettingsPreview(null));
+        el.addEventListener('change', () => updateSettingsPreview(null));
+      }
+    });
+  }
+ 
+  // ────────────────────────────────────────────────────────────────
+  // BEIM LADEN: Settings aus localStorage wiederherstellen
+  // ────────────────────────────────────────────────────────────────
+  function initSettingsFix() {
+    // Settings beim Seitenstart laden
+    try {
+      const saved = JSON.parse(localStorage.getItem('gastroiq') || '{}');
+      if(saved.settings && window.state) {
+        window.state.settings = { ...window.state.settings, ...saved.settings };
+      }
+    } catch(e) {}
+ 
+    attachLivePreview();
+ 
+    // Wenn Einstellungsseite direkt geöffnet wird
+    const origNavigateSub = window.navigateSub;
+    if(origNavigateSub) {
+      window.navigateSub = function(cat, page) {
+        origNavigateSub(cat, page);
+        if(page === 'einstellungen') {
+          setTimeout(window.loadSettingsFields, 50);
+        }
+      };
+    }
+  }
+ 
+  // Ausführen sobald DOM bereit
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSettingsFix);
+  } else {
+    initSettingsFix();
+  }
+ 
+  // Auch nach window.onload (falls original JS Settings überschreibt)
+  const origOnload = window.onload;
+  window.onload = function() {
+    if(origOnload) origOnload.apply(this, arguments);
+    setTimeout(() => {
+      initSettingsFix();
+      // Settings sofort laden wenn Einstellungsseite aktiv
+      if(document.getElementById('page-einstellungen')?.classList.contains('active')) {
+        window.loadSettingsFields();
+      }
+    }, 200);
+  };
+ 
+  console.log('✅ GastroIQ Settings Fix geladen');
+ 
+})();
+</script>
 </body>
 </html>
