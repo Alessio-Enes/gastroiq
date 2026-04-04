@@ -427,6 +427,8 @@ body::before {
         </div>
         <div style="font-family:'Fraunces',serif;font-weight:900;font-size:1.3rem;color:var(--ink)">Willkommen!</div>
         <div style="font-size:.8rem;color:var(--ink3);line-height:1.6">Bestätige deine E-Mail,<br>dann geht's los.</div>
+        <div id="resend-msg" style="font-size:.75rem;color:var(--ink3);min-height:1.2rem"></div>
+        <button id="resend-btn" onclick="handleResendConfirmation()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.45rem 1rem;font-size:.78rem;font-weight:600;color:var(--ink2);cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='#6366f1';this.style.color='#6366f1'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink2)'">E-Mail erneut senden</button>
       </div>
 
       <div id="form-register">
@@ -642,8 +644,15 @@ async function handleLogin() {
   try {
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
     if (error) throw error;
-    window.location.href = 'gastroiq.html';
-  } catch(e) { showMsg('login', translateError(e.message)); }
+    window.location.href = '/gastroiq';
+  } catch(e) {
+    if (e.message && e.message.includes('Email not confirmed')) {
+      window._pendingConfirmEmail = email;
+      showMsg('login', 'E-Mail noch nicht bestätigt. <a href="#" onclick="handleResendFromLogin(event)" style="color:#6366f1;font-weight:600">Bestätigungsmail erneut senden</a>');
+    } else {
+      showMsg('login', translateError(e.message));
+    }
+  }
   finally    { setLoading('login-btn', false); }
 }
 
@@ -666,6 +675,7 @@ async function handleRegister() {
     });
     if (error) throw error;
     if (data.user) await supabaseClient.from('restaurants').insert({ user_id: data.user.id, name: restaurant, typ: selectedRestoType });
+    window._pendingConfirmEmail = email;
     document.getElementById('form-register').style.display = 'none';
     document.getElementById('success-screen').style.display = 'flex';
   } catch(e) { showMsg('reg', translateError(e.message)); }
@@ -694,6 +704,46 @@ async function handleGoogleLogin() {
     });
     if (error) throw error;
   } catch(e) { showMsg('login', translateError(e.message)); }
+}
+
+async function handleResendConfirmation() {
+  const email = window._pendingConfirmEmail;
+  if (!email || !supabaseClient) return;
+  const btn = document.getElementById('resend-btn');
+  const msg = document.getElementById('resend-msg');
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet...';
+  try {
+    const { error } = await supabaseClient.auth.resend({ type: 'signup', email });
+    if (error) throw error;
+    msg.style.color = '#16a34a';
+    msg.textContent = 'E-Mail gesendet! Bitte Posteingang und Spam prüfen.';
+    let sec = 60;
+    btn.textContent = `Erneut senden (${sec}s)`;
+    const t = setInterval(() => {
+      sec--;
+      btn.textContent = `Erneut senden (${sec}s)`;
+      if (sec <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = 'E-Mail erneut senden'; }
+    }, 1000);
+  } catch(e) {
+    msg.style.color = '#ef4444';
+    msg.textContent = translateError(e.message);
+    btn.disabled = false;
+    btn.textContent = 'E-Mail erneut senden';
+  }
+}
+
+async function handleResendFromLogin(e) {
+  e.preventDefault();
+  const email = window._pendingConfirmEmail;
+  if (!email || !supabaseClient) return;
+  try {
+    const { error } = await supabaseClient.auth.resend({ type: 'signup', email });
+    if (error) throw error;
+    showMsg('login', 'Bestätigungsmail gesendet! Bitte Posteingang und Spam prüfen.', 'success');
+  } catch(err) {
+    showMsg('login', translateError(err.message));
+  }
 }
 
 async function handleAppleLogin() {
