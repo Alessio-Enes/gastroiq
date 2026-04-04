@@ -51,7 +51,7 @@ window.addEventListener('DOMContentLoaded', function() {
   --radius-sm:8px;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;display:flex;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;display:flex;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
 /* SIDEBAR */
 .sidebar{width:240px;min-height:100vh;background:#2e1f5e;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;border-right:none}
@@ -293,6 +293,12 @@ table tr:hover td{background:#f8f9fc}
   .grid-4{grid-template-columns:1fr 1fr}
   .topbar{padding:.8rem 1rem}
   .content{padding:1.2rem 1rem}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr}
+  .grid-4{grid-template-columns:1fr}
+  .content{padding:.9rem .75rem}
+  .topbar{padding:.65rem .75rem}
 }
 
 /* WORKSPACE CARD in sidebar */
@@ -635,7 +641,7 @@ table tr:hover td{background:#f8f9fc}
 
     <!-- Utility -->
     <div class="nav-util">
-      <div class="nav-sub-item" onclick="window.location.href='gastroiq-pos-integration.html'" id="nav-kassen">
+      <div class="nav-sub-item" onclick="window.location.href='/gastroiq-pos-integration'" id="nav-kassen">
         <span class="nav-item-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px"><path d="M2 8h12M10 4l4 4-4 4M6 4L2 8l4 4"/></svg></span>
         <span class="nav-item-text">
           <span class="nav-item-label">Kassensysteme verbinden</span>
@@ -1430,7 +1436,7 @@ table tr:hover td{background:#f8f9fc}
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-          <button onclick="window.location.href='gastroiq-pos-integration.html'" style="display:inline-flex;align-items:center;gap:.6rem;background:#c8440a;color:#fff;border:none;border-radius:10px;padding:.75rem 1.5rem;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:0 4px 16px rgba(200,68,10,.4)" onmouseover="this.style.background='#a83608';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#c8440a';this.style.transform='none'">
+          <button onclick="window.location.href='/gastroiq-pos-integration'" style="display:inline-flex;align-items:center;gap:.6rem;background:#c8440a;color:#fff;border:none;border-radius:10px;padding:.75rem 1.5rem;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:0 4px 16px rgba(200,68,10,.4)" onmouseover="this.style.background='#a83608';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#c8440a';this.style.transform='none'">
             🔌 Kassensystem verbinden
             <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
