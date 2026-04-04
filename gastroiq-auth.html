@@ -617,8 +617,15 @@ function translateError(msg) {
     'User already registered':'Diese E-Mail ist bereits registriert.',
     'Password should be at least 6 characters':'Passwort zu kurz (min. 6 Zeichen).',
     'Unable to validate email address: invalid format':'Ungültige E-Mail-Adresse.',
-    'Signup requires a valid password':'Bitte gültiges Passwort eingeben.'
+    'Signup requires a valid password':'Bitte gültiges Passwort eingeben.',
+    'Failed to fetch':'Serververbindung fehlgeschlagen. Bitte Seite neu laden oder später versuchen.',
+    'fetch failed':'Serververbindung fehlgeschlagen. Bitte Seite neu laden oder später versuchen.',
+    'NetworkError when attempting to fetch resource.':'Keine Verbindung zum Server. Bitte Internetverbindung prüfen.'
   };
+  const lower = msg ? msg.toLowerCase() : '';
+  if (lower.includes('failed to fetch') || lower.includes('fetch failed') || lower.includes('network')) {
+    return 'Serververbindung fehlgeschlagen. Bitte Seite neu laden oder später versuchen.';
+  }
   return map[msg] || 'Fehler: ' + msg;
 }
 
@@ -672,7 +679,7 @@ async function handleReset() {
   if (!supabaseClient) { showMsg('login','Verbindung zum Server fehlgeschlagen.'); return; }
   try {
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email,
-      { redirectTo: window.location.origin + '/reset-confirm.html' });
+      { redirectTo: window.location.origin + '/reset-confirm' });
     if (error) throw error;
     showMsg('login','Reset-Link gesendet! Prüfe deine E-Mails.','success');
   } catch(e) { showMsg('login', translateError(e.message)); }
@@ -683,7 +690,7 @@ async function handleGoogleLogin() {
   try {
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/gastroiq.html' }
+      options: { redirectTo: window.location.origin + '/gastroiq' }
     });
     if (error) throw error;
   } catch(e) { showMsg('login', translateError(e.message)); }
@@ -694,7 +701,7 @@ async function handleAppleLogin() {
   try {
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'apple',
-      options: { redirectTo: window.location.origin + '/gastroiq.html' }
+      options: { redirectTo: window.location.origin + '/gastroiq' }
     });
     if (error) throw error;
   } catch(e) { showMsg('login', translateError(e.message)); }
