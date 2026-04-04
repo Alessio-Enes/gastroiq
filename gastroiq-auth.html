@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GastroIQ – Anmelden</title>
+<meta name="description" content="Melde dich bei GastroIQ an – Intelligentes Restaurant-Controlling für Gastronomen.">
+<meta property="og:title" content="GastroIQ – Anmelden">
+<meta property="og:description" content="Intelligentes Controlling für dein Restaurant. Umsatz, Kosten, Personal – alles in einem Dashboard.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gastroiq.vercel.app/gastroiq-auth">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -689,7 +694,7 @@ async function handleReset() {
   if (!supabaseClient) { showMsg('login','Verbindung zum Server fehlgeschlagen.'); return; }
   try {
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email,
-      { redirectTo: window.location.origin + '/reset-confirm' });
+      { redirectTo: window.location.origin + '/gastroiq-reset-confirm' });
     if (error) throw error;
     showMsg('login','Reset-Link gesendet! Prüfe deine E-Mails.','success');
   } catch(e) { showMsg('login', translateError(e.message)); }

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neues Passwort – GastroIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:wght@900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f4f5f9;color:#1a1d3a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+.card{background:#fff;border-radius:16px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 4px 24px rgba(99,102,241,.08)}
+.logo{font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:800;color:#1a1d3a;margin-bottom:2rem;display:block}
+.logo span{color:#6366f1}
+h1{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:900;margin-bottom:.4rem}
+.sub{font-size:.82rem;color:#8b92b8;margin-bottom:1.5rem}
+.field{margin-bottom:1rem}
+label{display:block;font-size:.75rem;font-weight:600;color:#4b5280;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em}
+input{width:100%;padding:.65rem .9rem;border:1.5px solid #e5e7f0;border-radius:8px;font-family:inherit;font-size:.88rem;color:#1a1d3a;outline:none;transition:border-color .15s}
+input:focus{border-color:#6366f1}
+.btn{width:100%;padding:.75rem;background:#6366f1;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .15s;margin-top:.5rem}
+.btn:hover{background:#4f46e5}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.msg{font-size:.82rem;padding:.65rem .9rem;border-radius:8px;margin-bottom:1rem;display:none}
+.msg.error{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2);display:block}
+.msg.success{background:rgba(16,185,129,.08);color:#10b981;border:1px solid rgba(16,185,129,.2);display:block}
+.pw-strength{height:3px;border-radius:2px;margin-top:.35rem;transition:all .3s;background:#e5e7f0}
+</style>
+</head>
+<body>
+<div class="card">
+  <a href="/" class="logo">Gastro<span>IQ</span></a>
+  <h1>Neues Passwort</h1>
+  <p class="sub">Gib dein neues Passwort ein.</p>
+
+  <div id="msg" class="msg"></div>
+
+  <div id="form-reset">
+    <div class="field">
+      <label>Neues Passwort</label>
+      <input type="password" id="pw1" placeholder="Min. 8 Zeichen" oninput="checkStrength(this.value)">
+      <div class="pw-strength" id="pw-bar"></div>
+    </div>
+    <div class="field">
+      <label>Passwort bestätigen</label>
+      <input type="password" id="pw2" placeholder="Passwort wiederholen">
+    </div>
+    <button class="btn" id="submit-btn" onclick="handleReset()">Passwort speichern</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://vrksgszggavczivojqvr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZya3Nnc3pnZ2F2Y3ppdm9qcXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTI1OTksImV4cCI6MjA4ODQ4ODU5OX0.IHEvAtDiUpMr_RgzSvaQSybNTgoY7YyQAP69cHvwKtI';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function showMsg(text, type) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+function checkStrength(pw) {
+  const bar = document.getElementById('pw-bar');
+  if (!pw) { bar.style.background = '#e5e7f0'; bar.style.width = '0'; return; }
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors = ['#ef4444','#f59e0b','#10b981','#6366f1'];
+  bar.style.background = colors[score - 1] || '#e5e7f0';
+  bar.style.width = (score * 25) + '%';
+}
+
+async function handleReset() {
+  const pw1 = document.getElementById('pw1').value;
+  const pw2 = document.getElementById('pw2').value;
+  if (!pw1 || pw1.length < 8) { showMsg('Passwort muss mindestens 8 Zeichen haben.', 'error'); return; }
+  if (pw1 !== pw2) { showMsg('Passwörter stimmen nicht überein.', 'error'); return; }
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Wird gespeichert...';
+  try {
+    const { error } = await db.auth.updateUser({ password: pw1 });
+    if (error) throw error;
+    showMsg('Passwort erfolgreich geändert! Du wirst weitergeleitet...', 'success');
+    document.getElementById('form-reset').style.opacity = '.4';
+    setTimeout(() => window.location.replace('/gastroiq'), 2000);
+  } catch(e) {
+    showMsg('Fehler: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = 'Passwort speichern';
+  }
+}
+
+// Supabase Auth-Event abfangen (Token aus URL-Hash)
+db.auth.onAuthStateChange((event) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    showMsg('', '');
+  }
+});
+</script>
+</body>
+</html>

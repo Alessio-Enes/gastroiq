@@ -819,12 +819,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;min-he
 <div class="toast" id="toast"></div>
 
 <script>
-function go(){window.location.href='gastroiq.html'}
+function go(){window.location.href='/gastroiq'}
 function handleLogout() {
   localStorage.removeItem('gastroiq');
   sessionStorage.clear();
   try { if(window.supabase) window.supabase.auth.signOut(); } catch(e){}
-  window.location.replace('gastroiq-auth.html');
+  window.location.replace('/gastroiq-auth');
 }
 function tc(id){const el=document.getElementById('cat-'+id);document.querySelectorAll('.nav-cat').forEach(c=>c.classList.remove('open'));if(!el.classList.contains('open'))el.classList.add('open')}
 function openModal(id){document.getElementById('modal-'+id).classList.add('open')}
