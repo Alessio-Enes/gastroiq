@@ -8492,8 +8492,16 @@ setTimeout(() => {
   }
 
   // Nach Login prüfen
+  function waitForSupabase(callback, tries = 0) {
+    if (window.supabase && window.supabase.auth) {
+      callback();
+    } else if (tries < 20) {
+      setTimeout(() => waitForSupabase(callback, tries + 1), 500);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(checkTrialStatus, 2000);
+    waitForSupabase(checkTrialStatus);
   });
 
   // Upgrade Success/Cancel handling
