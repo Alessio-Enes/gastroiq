@@ -8405,7 +8405,7 @@ setTimeout(() => {
     btn.textContent = 'Wird geladen...';
 
     try {
-      const { data: { session } } = await window.supabase.auth.getSession();
+      const { data: { session } } = await db.auth.getSession();
       if (!session) {
         alert('Bitte zuerst einloggen.');
         btn.disabled = false;
@@ -8443,18 +8443,18 @@ setTimeout(() => {
   // Trial Status prüfen
   async function checkTrialStatus() {
     try {
-      const { data: { session } } = await window.supabase.auth.getSession();
+      const { data: { session } } = await db.auth.getSession();
       console.log('Session:', session ? session.user.id : 'KEIN LOGIN');
       if (!session) return;
 
-      const { data: sub } = await window.supabase
+      const { data: sub } = await db
         .from('subscriptions')
         .select('*')
         .eq('user_id', session.user.id)
         .maybeSingle();
 
       if (!sub) {
-        await window.supabase.from('subscriptions').insert({
+        await db.from('subscriptions').insert({
           user_id: session.user.id,
           plan: 'trial',
           status: 'trialing',
@@ -8491,7 +8491,7 @@ setTimeout(() => {
 
   // Nach Seitenload prüfen
   setTimeout(function() {
-    if (window.supabase && window.supabase.auth) {
+    if (window.db || db) {
       checkTrialStatus();
     } else {
       console.log('Supabase nicht gefunden nach 5 Sekunden');
