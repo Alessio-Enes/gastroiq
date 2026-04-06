@@ -12,10 +12,10 @@
 - gastroiq-pos-integration.html → POS Integration Hub
 
 ## Design-Regeln
+- Background: #0e0c1f (Dark Navy)
 - Sidebar: #2e1f5e (Dark Purple)
 - Primary: #6366f1 (Brand Purple)
-- Accent: #c8440a (Burnt Orange)
-- Background: #faf7f2 (Cream)
+- Accent: #a78bfa (Soft Violet)
 - Headlines: Fraunces serif (900)
 - Body: DM Sans / Inter
 - Alle UI-Texte auf DEUTSCH
