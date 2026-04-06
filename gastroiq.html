@@ -8492,17 +8492,13 @@ setTimeout(() => {
   }
 
   // Nach Login prüfen
-  function waitForSupabase(callback, tries = 0) {
+  setTimeout(function() {
     if (window.supabase && window.supabase.auth) {
-      callback();
-    } else if (tries < 20) {
-      setTimeout(() => waitForSupabase(callback, tries + 1), 500);
+      checkTrialStatus();
+    } else {
+      console.log('Supabase nicht gefunden nach 5 Sekunden');
     }
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    waitForSupabase(checkTrialStatus);
-  });
+  }, 5000);
 
   // Upgrade Success/Cancel handling
   const urlParams = new URLSearchParams(window.location.search);
