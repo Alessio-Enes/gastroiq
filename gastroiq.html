@@ -8173,14 +8173,342 @@ setTimeout(() => {
 })();
 </script>
 
+<!-- ============================================================
+     STRIPE UPGRADE SYSTEM – Injectable Snippet
+     ============================================================ -->
+<style>
+  .upgrade-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  .upgrade-modal-overlay.active {
+    display: flex;
+  }
+  .upgrade-modal {
+    background: #1a1535;
+    border: 1px solid #6366f1;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+  }
+  .upgrade-modal h2 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+  .upgrade-modal p {
+    color: #a0a0b8;
+    margin-bottom: 32px;
+  }
+  .upgrade-plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .upgrade-plan {
+    background: #0e0c1f;
+    border: 2px solid #2e1f5e;
+    border-radius: 12px;
+    padding: 20px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .upgrade-plan:hover,
+  .upgrade-plan.selected {
+    border-color: #6366f1;
+    background: #1a1535;
+  }
+  .upgrade-plan.popular {
+    border-color: #a78bfa;
+    position: relative;
+  }
+  .popular-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #a78bfa;
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 2px 10px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .upgrade-plan h3 {
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  .upgrade-plan .price {
+    color: #6366f1;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .upgrade-plan .price span {
+    font-size: 0.8rem;
+    color: #a0a0b8;
+    font-weight: 400;
+  }
+  .upgrade-plan ul {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    text-align: left;
+  }
+  .upgrade-plan ul li {
+    color: #a0a0b8;
+    font-size: 0.78rem;
+    padding: 3px 0;
+  }
+  .upgrade-plan ul li::before {
+    content: "✓ ";
+    color: #6366f1;
+  }
+  .btn-checkout {
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+  .btn-checkout:hover {
+    background: #4f52d4;
+  }
+  .btn-checkout:disabled {
+    background: #444;
+    cursor: not-allowed;
+  }
+  .close-modal {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #a0a0b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  .upgrade-modal { position: relative; }
+  .trial-banner {
+    background: linear-gradient(90deg, #2e1f5e, #1a1535);
+    border-bottom: 1px solid #6366f1;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #a78bfa;
+  }
+  .trial-banner strong { color: #fff; }
+  .trial-banner button {
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+</style>
+
+<!-- Trial Banner (wird dynamisch eingeblendet) -->
+<div id="trialBanner" class="trial-banner" style="display:none;">
+  <span>🎁 Du testest GastroIQ kostenlos – <strong id="trialDaysLeft"></strong> verbleiben</span>
+  <button onclick="openUpgradeModal()">Jetzt upgraden</button>
+</div>
+
+<!-- Upgrade Modal -->
+<div class="upgrade-modal-overlay" id="upgradeModal">
+  <div class="upgrade-modal">
+    <button class="close-modal" onclick="closeUpgradeModal()">×</button>
+    <h2>Wähle deinen Plan</h2>
+    <p>14 Tage kostenlos testen – keine Kreditkarte sofort nötig</p>
+
+    <div class="upgrade-plans">
+      <div class="upgrade-plan" onclick="selectPlan('bronze')" id="plan-bronze">
+        <h3>Bronze</h3>
+        <div class="price">29€ <span>/ Monat</span></div>
+        <ul>
+          <li>Dashboard</li>
+          <li>Umsatzanalyse</li>
+          <li>Einfache Reports</li>
+        </ul>
+      </div>
+      <div class="upgrade-plan popular selected" onclick="selectPlan('silber')" id="plan-silber">
+        <span class="popular-badge">Beliebteste</span>
+        <h3>Silber</h3>
+        <div class="price">59€ <span>/ Monat</span></div>
+        <ul>
+          <li>Alles in Bronze</li>
+          <li>Kostenanalyse</li>
+          <li>Personal-Insights</li>
+          <li>Erweiterte Reports</li>
+        </ul>
+      </div>
+      <div class="upgrade-plan" onclick="selectPlan('gold')" id="plan-gold">
+        <h3>Gold</h3>
+        <div class="price">99€ <span>/ Monat</span></div>
+        <ul>
+          <li>Alles in Silber</li>
+          <li>KI-Insights</li>
+          <li>Forecasting</li>
+          <li>Multi-Standort</li>
+        </ul>
+      </div>
+    </div>
+
+    <button class="btn-checkout" id="checkoutBtn" onclick="startCheckout()">
+      14 Tage kostenlos starten
+    </button>
+  </div>
+</div>
+
 <script>
-window.addEventListener('load', function() {
+(function() {
+  const SUPABASE_URL = 'https://vrksgszggavczivojqvr.supabase.co';
+
+  let selectedPlan = 'silber';
+
+  // Plan auswählen
+  window.selectPlan = function(plan) {
+    selectedPlan = plan;
+    document.querySelectorAll('.upgrade-plan').forEach(el => el.classList.remove('selected'));
+    document.getElementById('plan-' + plan).classList.add('selected');
+  };
+
+  // Modal öffnen/schließen
+  window.openUpgradeModal = function() {
+    document.getElementById('upgradeModal').classList.add('active');
+  };
+  window.closeUpgradeModal = function() {
+    document.getElementById('upgradeModal').classList.remove('active');
+  };
+
+  // Checkout starten
+  window.startCheckout = async function() {
+    const btn = document.getElementById('checkoutBtn');
+    btn.disabled = true;
+    btn.textContent = 'Wird geladen...';
+
+    try {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      if (!session) {
+        alert('Bitte zuerst einloggen.');
+        btn.disabled = false;
+        btn.textContent = '14 Tage kostenlos starten';
+        return;
+      }
+
+      const response = await fetch(
+        SUPABASE_URL + '/functions/v1/create-checkout-session',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            plan: selectedPlan,
+            user_id: session.user.id,
+            email: session.user.email
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Unbekannter Fehler');
+      }
+    } catch (err) {
+      alert('Fehler: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = '14 Tage kostenlos starten';
+    }
+  };
+
+  // Trial Status prüfen
+  async function checkTrialStatus() {
+    try {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      console.log('Session:', session ? session.user.id : 'KEIN LOGIN');
+      if (!session) return;
+
+      const { data: sub } = await window.supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (!sub) {
+        await window.supabase.from('subscriptions').insert({
+          user_id: session.user.id,
+          plan: 'trial',
+          status: 'trialing',
+          trial_end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+        });
+        showTrialBanner(14);
+        return;
+      }
+
+      if (sub.status === 'trialing') {
+        const trialEnd = new Date(sub.trial_end);
+        const now = new Date();
+        const daysLeft = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
+        if (daysLeft > 0) {
+          showTrialBanner(daysLeft);
+        } else {
+          openUpgradeModal();
+        }
+      }
+    } catch (err) {
+      console.log('Trial check error:', err.message, JSON.stringify(err));
+    }
+  }
+
+  function showTrialBanner(days) {
+    const banner = document.getElementById('trialBanner');
+    const daysEl = document.getElementById('trialDaysLeft');
+    if (banner && daysEl) {
+      daysEl.textContent = days + ' Tag' + (days !== 1 ? 'e' : '');
+      banner.style.display = 'flex';
+      document.body.insertBefore(banner, document.body.firstChild);
+    }
+  }
+
+  // Nach Seitenload prüfen
   setTimeout(function() {
-    console.log('STRIPE TEST: läuft');
-    console.log('Supabase:', typeof window.supabase);
-  }, 3000);
-});
+    if (window.supabase && window.supabase.auth) {
+      checkTrialStatus();
+    } else {
+      console.log('Supabase nicht gefunden nach 5 Sekunden');
+    }
+  }, 5000);
+
+  // Upgrade Success/Cancel handling
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('upgrade') === 'success') {
+    setTimeout(() => {
+      alert('🎉 Willkommen! Dein Abo ist aktiv.');
+      window.history.replaceState({}, '', window.location.pathname);
+    }, 500);
+  }
+})();
 </script>
+<!-- ============================================================ -->
 
 </body>
 </html>
