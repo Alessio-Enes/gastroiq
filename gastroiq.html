@@ -696,6 +696,7 @@ table tr:hover td{background:#f8f9fc}
         <option value="2025-12">Dez 2025</option>
       </select>
       <button class="badge-btn" onclick="navigateSub('betrieb','tageserfassung')">+ Tageseintrag</button>
+      <button onclick="openUpgradeModal()" style="background: linear-gradient(135deg, #6366f1, #a78bfa); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;" id="upgradeTopBtn">Upgrade · <span id="trialDaysTopLeft">14</span> Tage gratis</button>
     </div>
   </div>
 
@@ -8302,40 +8303,7 @@ setTimeout(() => {
     cursor: pointer;
   }
   .upgrade-modal { position: relative; }
-  .trial-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 99999;
-    width: 100%;
-    background: linear-gradient(90deg, #2e1f5e, #1a1535);
-    border-bottom: 1px solid #6366f1;
-    padding: 10px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #a78bfa;
-  }
-  .trial-banner strong { color: #fff; }
-  .trial-banner button {
-    background: #6366f1;
-    color: #fff;
-    border: none;
-    padding: 6px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
 </style>
-
-<!-- Trial Banner (wird dynamisch eingeblendet) -->
-<div id="trialBanner" class="trial-banner" style="display:none;">
-  <span>🎁 Du testest GastroIQ kostenlos – <strong id="trialDaysLeft"></strong> verbleiben</span>
-  <button onclick="openUpgradeModal()">Jetzt upgraden</button>
-</div>
 
 <!-- Upgrade Modal -->
 <div class="upgrade-modal-overlay" id="upgradeModal">
@@ -8458,13 +8426,8 @@ setTimeout(() => {
   }
 
   function showTrialBanner(days) {
-    const banner = document.getElementById('trialBanner');
-    const daysEl = document.getElementById('trialDaysLeft');
-    if (banner && daysEl) {
-      daysEl.textContent = days + ' Tag' + (days !== 1 ? 'e' : '');
-      banner.style.display = 'flex';
-      document.body.insertBefore(banner, document.body.firstChild);
-    }
+    const el = document.getElementById('trialDaysTopLeft');
+    if (el) el.textContent = days;
   }
 
   // Nach Seitenload prüfen
