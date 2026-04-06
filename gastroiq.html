@@ -8445,6 +8445,7 @@ setTimeout(() => {
   async function checkTrialStatus() {
     try {
       const { data: { session } } = await window.supabase.auth.getSession();
+      console.log('Session:', session ? session.user.id : 'KEIN LOGIN');
       if (!session) return;
 
       const { data: sub } = await window.supabase
@@ -8475,8 +8476,7 @@ setTimeout(() => {
         }
       }
     } catch (err) {
-      console.log('Trial check:', err.message);
-      console.log('Trial check error details:', JSON.stringify(err));
+      console.log('Trial check error:', err.message, JSON.stringify(err));
     }
   }
 
