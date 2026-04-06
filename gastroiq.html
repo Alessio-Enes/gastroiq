@@ -8444,38 +8444,10 @@ setTimeout(() => {
   async function checkTrialStatus() {
     try {
       const { data: { session } } = await db.auth.getSession();
-      console.log('Session:', session ? session.user.id : 'KEIN LOGIN');
       if (!session) return;
-
-      const { data: sub } = await db
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (!sub) {
-        await db.from('subscriptions').insert({
-          user_id: session.user.id,
-          plan: 'trial',
-          status: 'trialing',
-          trial_end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
-        });
-        showTrialBanner(14);
-        return;
-      }
-
-      if (sub.status === 'trialing') {
-        const trialEnd = new Date(sub.trial_end);
-        const now = new Date();
-        const daysLeft = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
-        if (daysLeft > 0) {
-          showTrialBanner(daysLeft);
-        } else {
-          openUpgradeModal();
-        }
-      }
+      showTrialBanner(14);
     } catch (err) {
-      console.log('Trial check error:', err.message, JSON.stringify(err));
+      console.log('Trial check error:', err.message);
     }
   }
 
