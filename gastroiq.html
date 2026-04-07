@@ -8388,10 +8388,13 @@ setTimeout(() => {
       }
 
       const response = await fetch(
-        SUPABASE_URL + '/functions/v1/create-checkout-session',
+        'https://vrksgszggavczivojqvr.supabase.co/functions/v1/create-checkout-session',
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + session.access_token
+          },
           body: JSON.stringify({
             plan: selectedPlan,
             user_id: session.user.id,
