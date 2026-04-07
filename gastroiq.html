@@ -8451,5 +8451,382 @@ setTimeout(() => {
 </script>
 <!-- ============================================================ -->
 
+<!-- ============================================================
+     FEATURE GATING SYSTEM
+     ============================================================ -->
+<style>
+  /* Lock badge on nav items */
+  .nav-sub-item .gate-lock {
+    margin-left: auto;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.55;
+  }
+  .nav-sub-item.gated {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .nav-sub-item.gated:hover {
+    background: transparent;
+  }
+
+  /* Feature gate overlay inside page */
+  .feature-gate-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 12, 31, 0.88);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius, 12px);
+  }
+  .feature-gate-overlay.active {
+    display: flex;
+  }
+  .page { position: relative; }
+
+  .gate-box {
+    background: #1a1535;
+    border: 1px solid #6366f1;
+    border-radius: 16px;
+    padding: 40px 36px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+  }
+  .gate-box-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    background: rgba(99,102,241,0.12);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gate-box h3 {
+    color: #fff;
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+  }
+  .gate-box p {
+    color: #a0a0b8;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+  .gate-plan-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .gate-plan-badge.silber { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+  .gate-plan-badge.gold   { background: rgba(251,191,36,0.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .gate-box .btn-upgrade {
+    background: linear-gradient(135deg, #6366f1, #a78bfa);
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+  }
+  .gate-box .btn-upgrade:hover { opacity: 0.9; }
+
+  /* Topbar upgrade button hidden when user has paid plan */
+  #upgradeTopBtn.plan-active { display: none; }
+</style>
+
+<script>
+(function() {
+  /* ── Plan levels ── */
+  const PLAN_LEVELS = { trial: 0, bronze: 1, silber: 2, gold: 3 };
+
+  /* ── Which plan is required per page ── */
+  const GATE = {
+    'cockpit/dashboard':        'bronze',
+    'cockpit/briefing':         'bronze',
+    'betrieb/tageserfassung':   'bronze',
+    'analyse/monatshistorie':   'bronze',
+    'betrieb/speisekarte':      'silber',
+    'betrieb/verbrauch':        'silber',
+    'team/personal':            'silber',
+    'team/schichtplan':         'silber',
+    'finanzen/fixkosten':       'silber',
+    'finanzen/simulator':       'silber',
+    'analyse/statistik':        'silber',
+    'analyse/preisempfehlung':  'silber',
+    'analyse/ki':               'gold',
+    'analyse/prognose':         'gold',
+  };
+
+  const GATE_LABELS = {
+    silber: { badge: 'Silber', text: 'Dieses Feature ist ab dem Silber-Plan verfügbar.' },
+    gold:   { badge: 'Gold',   text: 'Dieses Feature ist exklusiv im Gold-Plan enthalten.' },
+  };
+
+  window.GASTROIQ_PLAN = 'trial';
+
+  /* ── Load plan from Supabase ── */
+  async function loadUserPlan() {
+    try {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return;
+
+      const { data } = await db
+        .from('subscriptions')
+        .select('plan, status, trial_ends_at, current_period_end')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (!data) { window.GASTROIQ_PLAN = 'trial'; applyGating(); return; }
+
+      const now = new Date();
+      if (data.status === 'active') {
+        window.GASTROIQ_PLAN = data.plan || 'bronze';
+      } else if (data.status === 'trialing') {
+        const trialEnd = data.trial_ends_at ? new Date(data.trial_ends_at) : null;
+        window.GASTROIQ_PLAN = (trialEnd && trialEnd > now) ? 'trial' : 'expired';
+        if (trialEnd && trialEnd > now) {
+          const days = Math.ceil((trialEnd - now) / 86400000);
+          const el = document.getElementById('trialDaysTopLeft');
+          if (el) el.textContent = days;
+        }
+      } else {
+        window.GASTROIQ_PLAN = 'expired';
+      }
+    } catch(e) {
+      window.GASTROIQ_PLAN = 'trial';
+    }
+    applyGating();
+  }
+
+  /* ── Inject gate overlays into gated pages ── */
+  function injectGateOverlays() {
+    Object.entries(GATE).forEach(([key, requiredPlan]) => {
+      if (requiredPlan === 'bronze') return; // always accessible
+      const [cat, sub] = key.split('/');
+      const pageId = 'page-' + sub;
+      const page = document.getElementById(pageId);
+      if (!page) return;
+      if (page.querySelector('.feature-gate-overlay')) return; // already injected
+
+      const info = GATE_LABELS[requiredPlan] || GATE_LABELS['silber'];
+      const overlay = document.createElement('div');
+      overlay.className = 'feature-gate-overlay';
+      overlay.id = 'gate-' + sub;
+      overlay.innerHTML = `
+        <div class="gate-box">
+          <div class="gate-box-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </div>
+          <h3>Funktion gesperrt</h3>
+          <p>${info.text}</p>
+          <div class="gate-plan-badge ${requiredPlan}">${info.badge}</div>
+          <button class="btn-upgrade" onclick="openUpgradeModal()">Plan upgraden</button>
+        </div>`;
+      page.appendChild(overlay);
+    });
+  }
+
+  /* ── Apply gating: show/hide overlays, add lock icons to nav ── */
+  function applyGating() {
+    const userLevel = PLAN_LEVELS[window.GASTROIQ_PLAN] ?? 0;
+
+    // Topbar upgrade button
+    const topBtn = document.getElementById('upgradeTopBtn');
+    if (topBtn && userLevel >= PLAN_LEVELS['bronze'] && window.GASTROIQ_PLAN !== 'trial') {
+      topBtn.classList.add('plan-active');
+    }
+
+    Object.entries(GATE).forEach(([key, requiredPlan]) => {
+      const requiredLevel = PLAN_LEVELS[requiredPlan] ?? 1;
+      const locked = userLevel < requiredLevel;
+      const [cat, sub] = key.split('/');
+
+      // Nav item
+      const navEl = document.getElementById('nav-' + sub);
+      if (navEl) {
+        if (locked) {
+          navEl.classList.add('gated');
+          if (!navEl.querySelector('.gate-lock')) {
+            const lockSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            lockSvg.setAttribute('viewBox', '0 0 24 24');
+            lockSvg.setAttribute('fill', 'none');
+            lockSvg.setAttribute('stroke', 'currentColor');
+            lockSvg.setAttribute('stroke-width', '2');
+            lockSvg.setAttribute('stroke-linecap', 'round');
+            lockSvg.setAttribute('stroke-linejoin', 'round');
+            lockSvg.classList.add('gate-lock');
+            lockSvg.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
+            navEl.appendChild(lockSvg);
+          }
+        } else {
+          navEl.classList.remove('gated');
+          const lock = navEl.querySelector('.gate-lock');
+          if (lock) lock.remove();
+        }
+      }
+
+      // Page overlay
+      const overlay = document.getElementById('gate-' + sub);
+      if (overlay) {
+        overlay.classList.toggle('active', locked);
+      }
+    });
+  }
+
+  /* ── Override navigateSub to intercept locked pages ── */
+  const _originalNavigateSub = window.navigateSub;
+  window.navigateSub = function(cat, sub) {
+    const key = (cat ? cat + '/' : '') + sub;
+    const requiredPlan = GATE[key];
+    if (requiredPlan) {
+      const userLevel = PLAN_LEVELS[window.GASTROIQ_PLAN] ?? 0;
+      const requiredLevel = PLAN_LEVELS[requiredPlan] ?? 1;
+      if (userLevel < requiredLevel) {
+        // Still navigate (so overlay is visible), but show overlay
+        if (_originalNavigateSub) _originalNavigateSub(cat, sub);
+        const overlay = document.getElementById('gate-' + sub);
+        if (overlay) overlay.classList.add('active');
+        return;
+      }
+    }
+    if (_originalNavigateSub) _originalNavigateSub(cat, sub);
+  };
+
+  /* ── Init ── */
+  function init() {
+    injectGateOverlays();
+    applyGating(); // apply immediately with default 'trial' plan
+    if (window.db) {
+      loadUserPlan();
+    } else {
+      // wait for db to be ready
+      let attempts = 0;
+      const iv = setInterval(() => {
+        if (window.db || ++attempts > 20) {
+          clearInterval(iv);
+          if (window.db) loadUserPlan();
+        }
+      }, 300);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Re-apply after login/logout
+  if (window.db) {
+    db.auth.onAuthStateChange(() => loadUserPlan());
+  }
+})();
+</script>
+<!-- ============================================================ -->
+
+<script>
+(function() {
+  const PLAN_FEATURES = {
+    trial:  ['nav-dashboard','nav-briefing','nav-tageserfassung','nav-monatshistorie'],
+    bronze: ['nav-dashboard','nav-briefing','nav-tageserfassung','nav-monatshistorie'],
+    silber: ['nav-dashboard','nav-briefing','nav-tageserfassung','nav-monatshistorie',
+             'nav-speisekarte','nav-verbrauch','nav-personal','nav-schichtplan',
+             'nav-fixkosten','nav-simulator','nav-statistik','nav-preisempfehlung'],
+    gold:   ['nav-dashboard','nav-briefing','nav-tageserfassung','nav-monatshistorie',
+             'nav-speisekarte','nav-verbrauch','nav-personal','nav-schichtplan',
+             'nav-fixkosten','nav-simulator','nav-statistik','nav-preisempfehlung',
+             'nav-prognose','nav-ki']
+  };
+
+  const PLAN_LABELS = {
+    trial: 'Bronze / Trial',
+    bronze: 'Bronze',
+    silber: 'Silber',
+    gold: 'Gold'
+  };
+
+  async function applyFeatureGating() {
+    try {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return;
+
+      const { data: sub } = await db
+        .from('subscriptions')
+        .select('plan, status')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      const plan = sub?.plan || 'trial';
+      const allowedNavIds = PLAN_FEATURES[plan] || PLAN_FEATURES['trial'];
+
+      const ALL_NAV_IDS = [
+        'nav-speisekarte','nav-verbrauch','nav-personal','nav-schichtplan',
+        'nav-fixkosten','nav-simulator','nav-statistik','nav-preisempfehlung',
+        'nav-prognose','nav-ki'
+      ];
+
+      ALL_NAV_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        if (!allowedNavIds.includes(id)) {
+          el.style.position = 'relative';
+          el.style.opacity = '0.45';
+          el.style.pointerEvents = 'none';
+
+          if (!el.querySelector('.lock-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'lock-badge';
+            badge.innerHTML = '🔒';
+            badge.style.cssText = `
+              position: absolute;
+              right: 12px;
+              top: 50%;
+              transform: translateY(-50%);
+              font-size: 0.75rem;
+            `;
+            el.style.position = 'relative';
+            el.appendChild(badge);
+
+            el.addEventListener('click', function(e) {
+              e.stopPropagation();
+              openUpgradeModal();
+            }, true);
+            el.style.pointerEvents = 'auto';
+          }
+        }
+      });
+
+      console.log('Feature Gating aktiv – Plan:', PLAN_LABELS[plan] || plan);
+
+    } catch (err) {
+      console.log('Feature Gating Fehler:', err.message);
+    }
+  }
+
+  setTimeout(function() {
+    if (window.db || db) {
+      applyFeatureGating();
+    }
+  }, 5000);
+})();
+</script>
+
 </body>
 </html>
