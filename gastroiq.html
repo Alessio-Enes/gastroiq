@@ -8730,8 +8730,8 @@ setTimeout(() => {
   };
 
   /* ── Init ── */
-  function init() {
-    injectGateOverlays();
+  async function init() {
+    await injectGateOverlays();
     applyGating(); // apply immediately with default 'trial' plan
     if (window.db) {
       loadUserPlan();
