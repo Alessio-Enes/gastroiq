@@ -8615,9 +8615,27 @@ setTimeout(() => {
   }
 
   /* ── Inject gate overlays into gated pages ── */
-  function injectGateOverlays() {
+  async function injectGateOverlays() {
+    // Plan aus Datenbank lesen
+    let userPlan = 'trial';
+    try {
+      const { data: { session } } = await db.auth.getSession();
+      if (session) {
+        const { data: sub } = await db
+          .from('subscriptions')
+          .select('plan')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+        userPlan = sub?.plan || 'trial';
+      }
+    } catch(e) {}
+
+    const PLAN_RANK = { trial: 0, bronze: 1, silber: 2, gold: 3 };
+    const userRank = PLAN_RANK[userPlan] || 0;
+
     Object.entries(GATE).forEach(([key, requiredPlan]) => {
-      if (requiredPlan === 'bronze') return; // always accessible
+      const requiredRank = PLAN_RANK[requiredPlan] || 1;
+      if (userRank >= requiredRank) return; // freigeschaltet
       const [cat, sub] = key.split('/');
       const pageId = 'page-' + sub;
       const page = document.getElementById(pageId);
