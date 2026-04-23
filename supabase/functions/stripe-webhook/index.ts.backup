@@ -1,0 +1,77 @@
+import Stripe from "https://esm.sh/stripe@13.3.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
+  apiVersion: "2023-10-16",
+  httpClient: Stripe.createFetchHttpClient(),
+});
+
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+);
+
+function safeDate(timestamp: number | null | undefined): string | null {
+  if (!timestamp || timestamp <= 0) return null;
+  try {
+    return new Date(timestamp * 1000).toISOString();
+  } catch {
+    return null;
+  }
+}
+
+Deno.serve(async (req) => {
+  const signature = req.headers.get("stripe-signature")!;
+  const body = await req.text();
+
+  let event: Stripe.Event;
+
+  try {
+    const cryptoProvider = Stripe.createSubtleCryptoProvider();
+    event = await stripe.webhooks.constructEventAsync(
+      body,
+      signature,
+      Deno.env.get("STRIPE_WEBHOOK_SECRET")!,
+      undefined,
+      cryptoProvider
+    );
+  } catch (err) {
+    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+  }
+
+  if (event.type === "customer.subscription.created" ||
+      event.type === "customer.subscription.updated" ||
+      event.type === "customer.subscription.deleted") {
+
+    const subscription = event.data.object as Stripe.Subscription;
+    const metadata = subscription.metadata || {};
+    const user_id = metadata.user_id;
+    const plan = metadata.plan;
+
+    if (!user_id) {
+      return new Response("Kein user_id in metadata", { status: 400 });
+    }
+
+    if (event.type === "customer.subscription.deleted") {
+      await supabase.from("subscriptions")
+        .update({ status: "canceled", plan: "trial" })
+        .eq("user_id", user_id);
+    } else {
+      console.log("user_id:", user_id, "plan:", plan);
+      const { error } = await supabase.from("subscriptions").upsert({
+        user_id,
+        plan:                   plan ?? "bronze",
+        status:                 subscription.status,
+        stripe_customer_id:     subscription.customer as string,
+        stripe_subscription_id: subscription.id,
+        current_period_start:   safeDate(subscription.current_period_start),
+        current_period_end:     safeDate(subscription.current_period_end),
+      }, { onConflict: "user_id" });
+      console.log("Upsert result:", error ? error.message : "success");
+    }
+  }
+
+  return new Response(JSON.stringify({ received: true }), {
+    headers: { "Content-Type": "application/json" },
+  });
+});

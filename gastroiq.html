@@ -696,7 +696,7 @@ table tr:hover td{background:#f8f9fc}
         <option value="2025-12">Dez 2025</option>
       </select>
       <button class="badge-btn" onclick="navigateSub('betrieb','tageserfassung')">+ Tageseintrag</button>
-      <button onclick="openUpgradeModal()" style="background: linear-gradient(135deg, #6366f1, #a78bfa); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;" id="upgradeTopBtn">Upgrade · <span id="trialDaysTopLeft">14</span> Tage gratis</button>
+      <button onclick="openUpgradeModal()" style="background: linear-gradient(135deg, #6366f1, #a78bfa); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;" id="upgradeTopBtn">Upgrade · <span id="trialDaysTopLeft">14</span> Tage gratis</button><button id="portalBtn" onclick="openCustomerPortal()" style="background:transparent;color:var(--ink2);border:1px solid var(--border);padding:6px 16px;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer;margin-left:8px;">Abo verwalten</button>
     </div>
   </div>
 
@@ -9141,3 +9141,28 @@ setTimeout(() => {
 </script>
 </body>
 </html>
+<script>
+async function openCustomerPortal() {
+  const { data: { user } } = await db.auth.getUser();
+  if (!user) return;
+  const btn = document.getElementById('portalBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Lädt...'; }
+  try {
+    const res = await fetch('https://vrksgszggavczivojqvr.supabase.co/functions/v1/create-portal-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: user.id })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Fehler: ' + (data.error || 'Unbekannt'));
+      if (btn) { btn.disabled = false; btn.textContent = 'Abo verwalten'; }
+    }
+  } catch (e) {
+    alert('Fehler beim Öffnen des Portals');
+    if (btn) { btn.disabled = false; btn.textContent = 'Abo verwalten'; }
+  }
+}
+</script>
