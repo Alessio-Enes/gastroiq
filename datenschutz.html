@@ -1,74 +1,33 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Datenschutz – GastroIQ</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:#f4f5f9;color:#1a1d3a;min-height:100vh;padding:3rem 1rem}
-.container{max-width:680px;margin:0 auto;background:#fff;border-radius:16px;padding:2.5rem;box-shadow:0 4px 24px rgba(99,102,241,.07)}
-.logo{font-size:1.1rem;font-weight:800;color:#1a1d3a;margin-bottom:2rem;display:block}
-.logo span{color:#6366f1}
-h1{font-size:1.4rem;font-weight:700;margin-bottom:1.5rem}
-h2{font-size:1rem;font-weight:600;margin:1.5rem 0 .5rem}
-p,li{font-size:.9rem;line-height:1.7;color:#4b5280;margin-bottom:.5rem}
-ul{padding-left:1.2rem;margin-bottom:.5rem}
-a{color:#6366f1;text-decoration:none}
-.back{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:#6366f1;margin-bottom:1.5rem;text-decoration:none}
-.notice{background:#fef3cd;border:1px solid #f59e0b;border-radius:8px;padding:.8rem 1rem;font-size:.8rem;color:#92400e;margin-bottom:1.5rem}
-</style>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Datenschutz - GastroIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Inter",sans-serif;background:#0e0c1f;color:rgba(255,255,255,.85)}.nav{padding:1rem 2rem;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center}.logo{font-size:18px;font-weight:600;color:#a78bfa;text-decoration:none}.logo span{color:#6366f1}.back{font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;margin-left:auto}.content{max-width:720px;margin:0 auto;padding:3rem 2rem}h1{font-size:28px;font-weight:600;margin-bottom:.5rem}.sub{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:2.5rem}h2{font-size:16px;font-weight:500;color:#a78bfa;margin:2rem 0 .75rem;border-top:1px solid rgba(255,255,255,.06);padding-top:1.5rem}h3{font-size:14px;font-weight:500;margin:1.25rem 0 .5rem;color:rgba(255,255,255,.9)}p,li{font-size:14px;line-height:1.75;color:rgba(255,255,255,.65);margin-bottom:.5rem}ul{padding-left:1.25rem}a{color:#6366f1}strong{font-weight:500;color:rgba(255,255,255,.85)}.ph{background:rgba(99,102,241,.1);border:1px dashed rgba(99,102,241,.4);border-radius:6px;padding:.25rem .5rem;font-size:13px;color:#a78bfa}.warn{background:rgba(99,102,241,.08);border-left:3px solid #6366f1;padding:.75rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:13px;color:rgba(255,255,255,.5)}table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:13px}th{text-align:left;padding:.5rem .75rem;background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-weight:500}td{padding:.5rem .75rem;border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.65);vertical-align:top}.footer{border-top:1px solid rgba(255,255,255,.08);padding:1.5rem 2rem;display:flex;gap:1.5rem;font-size:13px;max-width:720px;margin:0 auto}.footer a{color:rgba(255,255,255,.35);text-decoration:none}</style>
 </head>
 <body>
-<div class="container">
-  <a href="/" class="back">← Zurück zur Startseite</a>
-  <a href="/" class="logo">Gastro<span>IQ</span></a>
-
-  <div class="notice">Diese Datenschutzerklärung ist ein Platzhalter. Bitte von einem Rechtsanwalt prüfen lassen vor dem Launch.</div>
-
-  <h1>Datenschutzerklärung</h1>
-
-  <h2>1. Verantwortlicher</h2>
-  <p>[Name und Anschrift des Verantwortlichen – siehe Impressum]</p>
-
-  <h2>2. Welche Daten wir verarbeiten</h2>
-  <ul>
-    <li>E-Mail-Adresse und Passwort (für Account und Login)</li>
-    <li>Restaurantname, Typ und Betriebsdaten (Umsatz, Personal, Kosten), die du selbst eingibst</li>
-    <li>Technische Daten: IP-Adresse, Browser, Zeitzone (via Supabase Auth)</li>
-  </ul>
-
-  <h2>3. Zweck der Verarbeitung</h2>
-  <p>Deine Daten werden ausschließlich zur Bereitstellung des GastroIQ-Dashboards, zur Authentifizierung und zur Verbesserung des Dienstes genutzt. Eine Weitergabe an Dritte erfolgt nicht, außer im Rahmen der unten genannten Auftragsverarbeiter.</p>
-
-  <h2>4. Auftragsverarbeiter</h2>
-  <ul>
-    <li><strong>Supabase Inc.</strong> (Datenbank & Auth) – Server in der EU (Frankfurt). <a href="https://supabase.com/privacy" target="_blank">Datenschutzerklärung</a></li>
-    <li><strong>Vercel Inc.</strong> (Hosting) – <a href="https://vercel.com/legal/privacy-policy" target="_blank">Datenschutzerklärung</a></li>
-    <li><strong>Stripe Inc.</strong> (Zahlungsabwicklung) – <a href="https://stripe.com/de/privacy" target="_blank">Datenschutzerklärung</a></li>
-  </ul>
-
-  <h2>5. Speicherdauer</h2>
-  <p>Deine Daten werden gespeichert, solange dein Account aktiv ist. Bei Kündigung werden alle personenbezogenen Daten innerhalb von 30 Tagen gelöscht.</p>
-
-  <h2>6. Deine Rechte</h2>
-  <ul>
-    <li>Auskunft über gespeicherte Daten (Art. 15 DSGVO)</li>
-    <li>Berichtigung unrichtiger Daten (Art. 16 DSGVO)</li>
-    <li>Löschung deiner Daten (Art. 17 DSGVO)</li>
-    <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
-    <li>Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)</li>
-  </ul>
-  <p>Zur Ausübung deiner Rechte wende dich an: <a href="mailto:info@gastroiq.de">info@gastroiq.de</a></p>
-
-  <h2>7. Cookies</h2>
-  <p>GastroIQ verwendet technisch notwendige Cookies für die Authentifizierung (Session-Cookie von Supabase). Es werden keine Tracking- oder Marketing-Cookies gesetzt.</p>
-
-  <h2>8. Beschwerderecht</h2>
-  <p>Du hast das Recht, dich bei der zuständigen Datenschutzaufsichtsbehörde zu beschweren.</p>
-
-  <p style="margin-top:1.5rem;font-size:.78rem;color:#8b92b8">Stand: April 2026</p>
+<nav class="nav"><a href="/" class="logo">Gastro<span>IQ</span></a><a href="/" class="back">zurueck</a></nav>
+<div class="content">
+<h1>Datenschutzerklaerung</h1><p class="sub">Stand: <span class="ph">[ DATUM EINTRAGEN ]</span></p>
+<div class="warn">Hinweis: Entwurf - bitte durch Datenschutzanwalt pruefen lassen vor Launch.</div>
+<h2>1. Verantwortlicher</h2><p><span class="ph">[ Firmenname, Adresse, E-Mail ]</span></p>
+<h2>2. Erhobene Daten</h2>
+<h3>2.1 Nutzerkonto</h3><p>E-Mail, Passwort (bcrypt), Registrierungszeitpunkt. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO</p>
+<h3>2.2 Zahlungsdaten</h3><p>Abwicklung ueber Stripe. Wir speichern nur Stripe-Customer-ID und Subscription-Status. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO</p>
+<h3>2.3 Betriebsdaten</h3><p>Eure eingegebenen Daten werden ausschliesslich fuer euch gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO</p>
+<h3>2.4 Analyse (nur mit Einwilligung)</h3><p>Vercel Analytics (anonym) - nur bei Einwilligung. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO</p>
+<h2>3. Sub-Prozessoren (Art. 28 DSGVO)</h2>
+<table><tr><th>Anbieter</th><th>Zweck</th><th>Serverstandort</th></tr>
+<tr><td>Supabase, Inc.</td><td>Datenbank, Auth</td><td>EU (Frankfurt)</td></tr>
+<tr><td>Stripe, Inc.</td><td>Zahlungen</td><td>EU</td></tr>
+<tr><td>Vercel, Inc.</td><td>Hosting</td><td>EU</td></tr></table>
+<h2>4. Speicherdauer</h2>
+<ul><li>Kontodaten: bis Account-Loeschung</li><li>Rechnungsdaten: 10 Jahre (Paragraph 147 AO)</li><li>Server-Logs: max. 30 Tage</li></ul>
+<h2>5. Eure Rechte (Art. 15-22 DSGVO)</h2>
+<ul><li>Auskunft, Berichtigung, Loeschung (im Account-Bereich), Datenuebertragbarkeit, Widerspruch</li></ul>
+<p>Anfragen: <span class="ph">[ datenschutz@gastroiq.de ]</span> - Antwort innerhalb 30 Tagen.</p>
+<h2>6. Datensicherheit</h2>
+<ul><li>HTTPS/TLS 1.2+, Passwoerter bcrypt-gehasht, Row Level Security, EU-Server</li></ul>
+<h2>7. Beschwerderecht</h2><p>Zustaendige Behoerde: <a href="https://www.bfdi.bund.de" target="_blank">BfDI</a></p>
 </div>
-</body>
-</html>
+<div class="footer"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></div>
+</body></html>
