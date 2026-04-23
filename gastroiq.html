@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -6042,7 +6042,65 @@ function resetOnlyTestData() {
   <!-- ═══════════════════════════════════════════════════════════════
      GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
      
-     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     ANLEITUNG: Diesen Block direkt vor <!-- GastroIQ Cookie-Consent -->
+<style>
+#giq-cb{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1a1533;border-top:1px solid rgba(99,102,241,.3);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-family:"Inter",sans-serif;font-size:13px;color:rgba(255,255,255,.8);box-shadow:0 -4px 24px rgba(0,0,0,.4)}
+#giq-cb.hidden{display:none}
+.giq-txt{flex:1;min-width:200px;line-height:1.5}
+.giq-txt a{color:#a78bfa;text-decoration:none}
+.giq-acts{display:flex;gap:.5rem;flex-shrink:0;flex-wrap:wrap}
+.giq-btn{padding:.45rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:"Inter",sans-serif;transition:opacity .15s}
+.giq-btn:hover{opacity:.85}
+.giq-acc{background:#6366f1;color:#fff}
+.giq-ess{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.2)}
+#giq-cm{display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+#giq-cm.open{display:flex}
+.giq-box{background:#1a1533;border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:1.5rem;max-width:480px;width:90%;font-family:"Inter",sans-serif;color:rgba(255,255,255,.85)}
+.giq-box h3{font-size:16px;font-weight:600;margin-bottom:1rem;color:#fff}
+.giq-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}
+.giq-row:last-of-type{border-bottom:none}
+.giq-lbl{font-weight:500;color:#fff;font-size:13px}
+.giq-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.giq-tog{position:relative;width:36px;height:20px;flex-shrink:0}
+.giq-tog input{opacity:0;width:0;height:0}
+.giq-sl{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.15);border-radius:20px;transition:background .2s}
+.giq-tog input:checked+.giq-sl{background:#6366f1}
+.giq-sl:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.giq-tog input:checked+.giq-sl:before{transform:translateX(16px)}
+.giq-macts{display:flex;gap:.5rem;margin-top:1.25rem;justify-content:flex-end}
+</style>
+<div id="giq-cb" class="hidden">
+  <div class="giq-txt">Wir verwenden Cookies. Notwendige sind immer aktiv. <a href="/datenschutz">Datenschutz</a></div>
+  <div class="giq-acts">
+    <button class="giq-btn giq-ess" onclick="GIQ.ess()">Nur notwendige</button>
+    <button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button>
+    <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit" onclick="GIQ.open()">Einstellungen</button>
+  </div>
+</div>
+<div id="giq-cm">
+  <div class="giq-box">
+    <h3>Cookie-Einstellungen</h3>
+    <div class="giq-row"><div><div class="giq-lbl">Notwendige</div><div class="giq-sub">Login, Session - immer aktiv</div></div><label class="giq-tog"><input type="checkbox" checked disabled><span class="giq-sl"></span></label></div>
+    <div class="giq-row"><div><div class="giq-lbl">Analyse</div><div class="giq-sub">Anonyme Nutzungsstatistiken (Vercel Analytics)</div></div><label class="giq-tog"><input type="checkbox" id="giq-an"><span class="giq-sl"></span></label></div>
+    <div class="giq-macts"><button class="giq-btn giq-ess" onclick="GIQ.save()">Speichern</button><button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  var K="giq_consent",b=document.getElementById("giq-cb"),m=document.getElementById("giq-cm");
+  window.GIQ={
+    init:function(){var c=localStorage.getItem(K);if(!c){b.classList.remove("hidden");}else{this._apply(JSON.parse(c));}},
+    all:function(){var p={e:true,a:true,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    ess:function(){var p={e:true,a:false,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");},
+    open:function(){var c=localStorage.getItem(K);if(c){document.getElementById("giq-an").checked=!!JSON.parse(c).a;}m.classList.add("open");},
+    save:function(){var p={e:true,a:document.getElementById("giq-an").checked,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    reset:function(){localStorage.removeItem(K);b.classList.remove("hidden");},
+    _apply:function(p){if(p.a&&typeof window.va==="undefined"){var s=document.createElement("script");s.src="/_vercel/insights/script.js";s.defer=true;document.head.appendChild(s);}}
+  };
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){GIQ.init();});}else{GIQ.init();}
+})();
+</script>
+</body> in gastroiq.html einfügen.
      Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
      ═══════════════════════════════════════════════════════════════ -->
 
@@ -6384,7 +6442,65 @@ function resetOnlyTestData() {
 <!-- ═══════════════════════════════════════════════════════════════
      GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
      
-     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     ANLEITUNG: Diesen Block direkt vor <!-- GastroIQ Cookie-Consent -->
+<style>
+#giq-cb{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1a1533;border-top:1px solid rgba(99,102,241,.3);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-family:"Inter",sans-serif;font-size:13px;color:rgba(255,255,255,.8);box-shadow:0 -4px 24px rgba(0,0,0,.4)}
+#giq-cb.hidden{display:none}
+.giq-txt{flex:1;min-width:200px;line-height:1.5}
+.giq-txt a{color:#a78bfa;text-decoration:none}
+.giq-acts{display:flex;gap:.5rem;flex-shrink:0;flex-wrap:wrap}
+.giq-btn{padding:.45rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:"Inter",sans-serif;transition:opacity .15s}
+.giq-btn:hover{opacity:.85}
+.giq-acc{background:#6366f1;color:#fff}
+.giq-ess{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.2)}
+#giq-cm{display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+#giq-cm.open{display:flex}
+.giq-box{background:#1a1533;border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:1.5rem;max-width:480px;width:90%;font-family:"Inter",sans-serif;color:rgba(255,255,255,.85)}
+.giq-box h3{font-size:16px;font-weight:600;margin-bottom:1rem;color:#fff}
+.giq-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}
+.giq-row:last-of-type{border-bottom:none}
+.giq-lbl{font-weight:500;color:#fff;font-size:13px}
+.giq-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.giq-tog{position:relative;width:36px;height:20px;flex-shrink:0}
+.giq-tog input{opacity:0;width:0;height:0}
+.giq-sl{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.15);border-radius:20px;transition:background .2s}
+.giq-tog input:checked+.giq-sl{background:#6366f1}
+.giq-sl:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.giq-tog input:checked+.giq-sl:before{transform:translateX(16px)}
+.giq-macts{display:flex;gap:.5rem;margin-top:1.25rem;justify-content:flex-end}
+</style>
+<div id="giq-cb" class="hidden">
+  <div class="giq-txt">Wir verwenden Cookies. Notwendige sind immer aktiv. <a href="/datenschutz">Datenschutz</a></div>
+  <div class="giq-acts">
+    <button class="giq-btn giq-ess" onclick="GIQ.ess()">Nur notwendige</button>
+    <button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button>
+    <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit" onclick="GIQ.open()">Einstellungen</button>
+  </div>
+</div>
+<div id="giq-cm">
+  <div class="giq-box">
+    <h3>Cookie-Einstellungen</h3>
+    <div class="giq-row"><div><div class="giq-lbl">Notwendige</div><div class="giq-sub">Login, Session - immer aktiv</div></div><label class="giq-tog"><input type="checkbox" checked disabled><span class="giq-sl"></span></label></div>
+    <div class="giq-row"><div><div class="giq-lbl">Analyse</div><div class="giq-sub">Anonyme Nutzungsstatistiken (Vercel Analytics)</div></div><label class="giq-tog"><input type="checkbox" id="giq-an"><span class="giq-sl"></span></label></div>
+    <div class="giq-macts"><button class="giq-btn giq-ess" onclick="GIQ.save()">Speichern</button><button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  var K="giq_consent",b=document.getElementById("giq-cb"),m=document.getElementById("giq-cm");
+  window.GIQ={
+    init:function(){var c=localStorage.getItem(K);if(!c){b.classList.remove("hidden");}else{this._apply(JSON.parse(c));}},
+    all:function(){var p={e:true,a:true,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    ess:function(){var p={e:true,a:false,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");},
+    open:function(){var c=localStorage.getItem(K);if(c){document.getElementById("giq-an").checked=!!JSON.parse(c).a;}m.classList.add("open");},
+    save:function(){var p={e:true,a:document.getElementById("giq-an").checked,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    reset:function(){localStorage.removeItem(K);b.classList.remove("hidden");},
+    _apply:function(p){if(p.a&&typeof window.va==="undefined"){var s=document.createElement("script");s.src="/_vercel/insights/script.js";s.defer=true;document.head.appendChild(s);}}
+  };
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){GIQ.init();});}else{GIQ.init();}
+})();
+</script>
+</body> in gastroiq.html einfügen.
      Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
      ═══════════════════════════════════════════════════════════════ -->
 
@@ -6726,7 +6842,65 @@ function resetOnlyTestData() {
 <!-- ═══════════════════════════════════════════════════════════════
      GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
      
-     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     ANLEITUNG: Diesen Block direkt vor <!-- GastroIQ Cookie-Consent -->
+<style>
+#giq-cb{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1a1533;border-top:1px solid rgba(99,102,241,.3);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-family:"Inter",sans-serif;font-size:13px;color:rgba(255,255,255,.8);box-shadow:0 -4px 24px rgba(0,0,0,.4)}
+#giq-cb.hidden{display:none}
+.giq-txt{flex:1;min-width:200px;line-height:1.5}
+.giq-txt a{color:#a78bfa;text-decoration:none}
+.giq-acts{display:flex;gap:.5rem;flex-shrink:0;flex-wrap:wrap}
+.giq-btn{padding:.45rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:"Inter",sans-serif;transition:opacity .15s}
+.giq-btn:hover{opacity:.85}
+.giq-acc{background:#6366f1;color:#fff}
+.giq-ess{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.2)}
+#giq-cm{display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+#giq-cm.open{display:flex}
+.giq-box{background:#1a1533;border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:1.5rem;max-width:480px;width:90%;font-family:"Inter",sans-serif;color:rgba(255,255,255,.85)}
+.giq-box h3{font-size:16px;font-weight:600;margin-bottom:1rem;color:#fff}
+.giq-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}
+.giq-row:last-of-type{border-bottom:none}
+.giq-lbl{font-weight:500;color:#fff;font-size:13px}
+.giq-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.giq-tog{position:relative;width:36px;height:20px;flex-shrink:0}
+.giq-tog input{opacity:0;width:0;height:0}
+.giq-sl{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.15);border-radius:20px;transition:background .2s}
+.giq-tog input:checked+.giq-sl{background:#6366f1}
+.giq-sl:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.giq-tog input:checked+.giq-sl:before{transform:translateX(16px)}
+.giq-macts{display:flex;gap:.5rem;margin-top:1.25rem;justify-content:flex-end}
+</style>
+<div id="giq-cb" class="hidden">
+  <div class="giq-txt">Wir verwenden Cookies. Notwendige sind immer aktiv. <a href="/datenschutz">Datenschutz</a></div>
+  <div class="giq-acts">
+    <button class="giq-btn giq-ess" onclick="GIQ.ess()">Nur notwendige</button>
+    <button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button>
+    <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit" onclick="GIQ.open()">Einstellungen</button>
+  </div>
+</div>
+<div id="giq-cm">
+  <div class="giq-box">
+    <h3>Cookie-Einstellungen</h3>
+    <div class="giq-row"><div><div class="giq-lbl">Notwendige</div><div class="giq-sub">Login, Session - immer aktiv</div></div><label class="giq-tog"><input type="checkbox" checked disabled><span class="giq-sl"></span></label></div>
+    <div class="giq-row"><div><div class="giq-lbl">Analyse</div><div class="giq-sub">Anonyme Nutzungsstatistiken (Vercel Analytics)</div></div><label class="giq-tog"><input type="checkbox" id="giq-an"><span class="giq-sl"></span></label></div>
+    <div class="giq-macts"><button class="giq-btn giq-ess" onclick="GIQ.save()">Speichern</button><button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  var K="giq_consent",b=document.getElementById("giq-cb"),m=document.getElementById("giq-cm");
+  window.GIQ={
+    init:function(){var c=localStorage.getItem(K);if(!c){b.classList.remove("hidden");}else{this._apply(JSON.parse(c));}},
+    all:function(){var p={e:true,a:true,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    ess:function(){var p={e:true,a:false,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");},
+    open:function(){var c=localStorage.getItem(K);if(c){document.getElementById("giq-an").checked=!!JSON.parse(c).a;}m.classList.add("open");},
+    save:function(){var p={e:true,a:document.getElementById("giq-an").checked,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    reset:function(){localStorage.removeItem(K);b.classList.remove("hidden");},
+    _apply:function(p){if(p.a&&typeof window.va==="undefined"){var s=document.createElement("script");s.src="/_vercel/insights/script.js";s.defer=true;document.head.appendChild(s);}}
+  };
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){GIQ.init();});}else{GIQ.init();}
+})();
+</script>
+</body> in gastroiq.html einfügen.
      Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
      ═══════════════════════════════════════════════════════════════ -->
 
@@ -7068,7 +7242,65 @@ function resetOnlyTestData() {
 <!-- ═══════════════════════════════════════════════════════════════
      GastroIQ PATCH v1.0 — Alle Fixes auf einen Schlag
      
-     ANLEITUNG: Diesen Block direkt vor </body> in gastroiq.html einfügen.
+     ANLEITUNG: Diesen Block direkt vor <!-- GastroIQ Cookie-Consent -->
+<style>
+#giq-cb{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1a1533;border-top:1px solid rgba(99,102,241,.3);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-family:"Inter",sans-serif;font-size:13px;color:rgba(255,255,255,.8);box-shadow:0 -4px 24px rgba(0,0,0,.4)}
+#giq-cb.hidden{display:none}
+.giq-txt{flex:1;min-width:200px;line-height:1.5}
+.giq-txt a{color:#a78bfa;text-decoration:none}
+.giq-acts{display:flex;gap:.5rem;flex-shrink:0;flex-wrap:wrap}
+.giq-btn{padding:.45rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:"Inter",sans-serif;transition:opacity .15s}
+.giq-btn:hover{opacity:.85}
+.giq-acc{background:#6366f1;color:#fff}
+.giq-ess{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.2)}
+#giq-cm{display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+#giq-cm.open{display:flex}
+.giq-box{background:#1a1533;border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:1.5rem;max-width:480px;width:90%;font-family:"Inter",sans-serif;color:rgba(255,255,255,.85)}
+.giq-box h3{font-size:16px;font-weight:600;margin-bottom:1rem;color:#fff}
+.giq-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}
+.giq-row:last-of-type{border-bottom:none}
+.giq-lbl{font-weight:500;color:#fff;font-size:13px}
+.giq-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.giq-tog{position:relative;width:36px;height:20px;flex-shrink:0}
+.giq-tog input{opacity:0;width:0;height:0}
+.giq-sl{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.15);border-radius:20px;transition:background .2s}
+.giq-tog input:checked+.giq-sl{background:#6366f1}
+.giq-sl:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.giq-tog input:checked+.giq-sl:before{transform:translateX(16px)}
+.giq-macts{display:flex;gap:.5rem;margin-top:1.25rem;justify-content:flex-end}
+</style>
+<div id="giq-cb" class="hidden">
+  <div class="giq-txt">Wir verwenden Cookies. Notwendige sind immer aktiv. <a href="/datenschutz">Datenschutz</a></div>
+  <div class="giq-acts">
+    <button class="giq-btn giq-ess" onclick="GIQ.ess()">Nur notwendige</button>
+    <button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button>
+    <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit" onclick="GIQ.open()">Einstellungen</button>
+  </div>
+</div>
+<div id="giq-cm">
+  <div class="giq-box">
+    <h3>Cookie-Einstellungen</h3>
+    <div class="giq-row"><div><div class="giq-lbl">Notwendige</div><div class="giq-sub">Login, Session - immer aktiv</div></div><label class="giq-tog"><input type="checkbox" checked disabled><span class="giq-sl"></span></label></div>
+    <div class="giq-row"><div><div class="giq-lbl">Analyse</div><div class="giq-sub">Anonyme Nutzungsstatistiken (Vercel Analytics)</div></div><label class="giq-tog"><input type="checkbox" id="giq-an"><span class="giq-sl"></span></label></div>
+    <div class="giq-macts"><button class="giq-btn giq-ess" onclick="GIQ.save()">Speichern</button><button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  var K="giq_consent",b=document.getElementById("giq-cb"),m=document.getElementById("giq-cm");
+  window.GIQ={
+    init:function(){var c=localStorage.getItem(K);if(!c){b.classList.remove("hidden");}else{this._apply(JSON.parse(c));}},
+    all:function(){var p={e:true,a:true,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    ess:function(){var p={e:true,a:false,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");},
+    open:function(){var c=localStorage.getItem(K);if(c){document.getElementById("giq-an").checked=!!JSON.parse(c).a;}m.classList.add("open");},
+    save:function(){var p={e:true,a:document.getElementById("giq-an").checked,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    reset:function(){localStorage.removeItem(K);b.classList.remove("hidden");},
+    _apply:function(p){if(p.a&&typeof window.va==="undefined"){var s=document.createElement("script");s.src="/_vercel/insights/script.js";s.defer=true;document.head.appendChild(s);}}
+  };
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){GIQ.init();});}else{GIQ.init();}
+})();
+</script>
+</body> in gastroiq.html einfügen.
      Kein Code löschen, nichts umbenennen — einfach hinzufügen und speichern.
      ═══════════════════════════════════════════════════════════════ -->
 
@@ -8849,5 +9081,63 @@ setTimeout(() => {
 })();
 </script>
 
+<!-- GastroIQ Cookie-Consent -->
+<style>
+#giq-cb{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1a1533;border-top:1px solid rgba(99,102,241,.3);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-family:"Inter",sans-serif;font-size:13px;color:rgba(255,255,255,.8);box-shadow:0 -4px 24px rgba(0,0,0,.4)}
+#giq-cb.hidden{display:none}
+.giq-txt{flex:1;min-width:200px;line-height:1.5}
+.giq-txt a{color:#a78bfa;text-decoration:none}
+.giq-acts{display:flex;gap:.5rem;flex-shrink:0;flex-wrap:wrap}
+.giq-btn{padding:.45rem 1rem;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:"Inter",sans-serif;transition:opacity .15s}
+.giq-btn:hover{opacity:.85}
+.giq-acc{background:#6366f1;color:#fff}
+.giq-ess{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.2)}
+#giq-cm{display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+#giq-cm.open{display:flex}
+.giq-box{background:#1a1533;border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:1.5rem;max-width:480px;width:90%;font-family:"Inter",sans-serif;color:rgba(255,255,255,.85)}
+.giq-box h3{font-size:16px;font-weight:600;margin-bottom:1rem;color:#fff}
+.giq-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}
+.giq-row:last-of-type{border-bottom:none}
+.giq-lbl{font-weight:500;color:#fff;font-size:13px}
+.giq-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.giq-tog{position:relative;width:36px;height:20px;flex-shrink:0}
+.giq-tog input{opacity:0;width:0;height:0}
+.giq-sl{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.15);border-radius:20px;transition:background .2s}
+.giq-tog input:checked+.giq-sl{background:#6366f1}
+.giq-sl:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.giq-tog input:checked+.giq-sl:before{transform:translateX(16px)}
+.giq-macts{display:flex;gap:.5rem;margin-top:1.25rem;justify-content:flex-end}
+</style>
+<div id="giq-cb" class="hidden">
+  <div class="giq-txt">Wir verwenden Cookies. Notwendige sind immer aktiv. <a href="/datenschutz">Datenschutz</a></div>
+  <div class="giq-acts">
+    <button class="giq-btn giq-ess" onclick="GIQ.ess()">Nur notwendige</button>
+    <button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button>
+    <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit" onclick="GIQ.open()">Einstellungen</button>
+  </div>
+</div>
+<div id="giq-cm">
+  <div class="giq-box">
+    <h3>Cookie-Einstellungen</h3>
+    <div class="giq-row"><div><div class="giq-lbl">Notwendige</div><div class="giq-sub">Login, Session - immer aktiv</div></div><label class="giq-tog"><input type="checkbox" checked disabled><span class="giq-sl"></span></label></div>
+    <div class="giq-row"><div><div class="giq-lbl">Analyse</div><div class="giq-sub">Anonyme Nutzungsstatistiken (Vercel Analytics)</div></div><label class="giq-tog"><input type="checkbox" id="giq-an"><span class="giq-sl"></span></label></div>
+    <div class="giq-macts"><button class="giq-btn giq-ess" onclick="GIQ.save()">Speichern</button><button class="giq-btn giq-acc" onclick="GIQ.all()">Alle akzeptieren</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  var K="giq_consent",b=document.getElementById("giq-cb"),m=document.getElementById("giq-cm");
+  window.GIQ={
+    init:function(){var c=localStorage.getItem(K);if(!c){b.classList.remove("hidden");}else{this._apply(JSON.parse(c));}},
+    all:function(){var p={e:true,a:true,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    ess:function(){var p={e:true,a:false,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");},
+    open:function(){var c=localStorage.getItem(K);if(c){document.getElementById("giq-an").checked=!!JSON.parse(c).a;}m.classList.add("open");},
+    save:function(){var p={e:true,a:document.getElementById("giq-an").checked,t:Date.now()};localStorage.setItem(K,JSON.stringify(p));b.classList.add("hidden");m.classList.remove("open");this._apply(p);},
+    reset:function(){localStorage.removeItem(K);b.classList.remove("hidden");},
+    _apply:function(p){if(p.a&&typeof window.va==="undefined"){var s=document.createElement("script");s.src="/_vercel/insights/script.js";s.defer=true;document.head.appendChild(s);}}
+  };
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){GIQ.init();});}else{GIQ.init();}
+})();
+</script>
 </body>
 </html>
